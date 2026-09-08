@@ -1,0 +1,516 @@
+{
+  "info": {
+    "_postman_id": "fidelity-collection-2026-06-14",
+    "name": "话术还原度 (fidelity)",
+    "description": "话术还原度功能完整接口集 — Slice A 标准稿 + Slice B 触发/状态 + Slice C 详情。\n\n**导入前**：\n1. 同时导入 `fidelity.postman_environment.json`（test 环境）\n2. 在 environment 里填实际 `baseUrl` / `secUid` / `videoId`\n3. Workspace 右上角切到 `fidelity-test` 环境\n\n**跑通顺序（首次）**：\n0. Auth → Login（拿 token，自动写入 environment）\n1. 配置 → anchorBasicConfig（验环境通 + 看开关状态）\n2. 标准稿 → generateStandardScript → confirmStandardScript → standardScriptDetail（链路 + 自动写 standardScriptId）\n3. 开关 → setMonitorEnabled（开还原度）\n4. 触发 → triggerReport（开始生成）\n5. 状态 → reportStatus（轮询直到 status=2；自动写 reportId）\n6. 详情 → fidelityReportDetail（看正文 + 已读语义）\n\n**Collection Runner**：选中本 collection → Run → 按顺序执行。预期通过率 100%（除生成耗时的 status=1 中间态外）。\n\n来源：`.claude/llm_wiki/wiki/frontend-api/fidelity.md` + `docs/2.6.01/REQ-2026-0508-话术还原度/TEST-GUIDE-话术还原度.md`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Collection 级前置：所有请求自动带 Content-Type（POST 时）",
+          "// token 由 Login 接口 test 脚本写入 environment"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Collection 级后置断言：所有响应必须 HTTP 200",
+          "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Auth",
+      "item": [
+        {
+          "name": "Login (密码登录拿 token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('code=0', function () { pm.expect(json.code).to.eql(0); });",
+                  "pm.test('data.token 非空', function () { pm.expect(json.data.token).to.be.a('string').and.not.empty; });",
+                  "if (json.code === 0 && json.data && json.data.token) {",
+                  "  pm.environment.set('token', json.data.token);",
+                  "  console.log('[Login] token 已写入 environment');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"userType\": {{userType}},\n  \"phone\": \"\",\n  \"code\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/replay/user/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "user", "login"]
+            },
+            "description": "密码模式登录（phone/code 传空，Controller 未 @Validated 不校验，业务方法走 username+password 分支）。\n\n**响应**：`R<UserLoginVo>`，data.token 自动写入 environment.token；后续所有接口共用。"
+          }
+        }
+      ],
+      "description": "登录拿 token。必须先跑这条，否则其他接口 401。"
+    },
+    {
+      "name": "1. 配置与开关",
+      "item": [
+        {
+          "name": "1.1 anchorBasicConfig (查直播间配置)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('code=0', function () { pm.expect(json.code).to.eql(0); });",
+                  "pm.test('含还原度开关字段', function () {",
+                  "  pm.expect(json.data).to.have.property('isScriptFidelityMonitor');",
+                  "  pm.expect([0,1]).to.include(json.data.isScriptFidelityMonitor);",
+                  "});",
+                  "pm.test('含 standardScriptId 字段（可为 null）', function () {",
+                  "  pm.expect(json.data).to.have.property('standardScriptId');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/replay/script-monitor/anchorBasicConfig?secUid={{secUid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "script-monitor", "anchorBasicConfig"],
+              "query": [
+                { "key": "secUid", "value": "{{secUid}}" }
+              ]
+            },
+            "description": "查直播间配置（含 3 类监控开关 + 当前已确认标准稿 ID）。\n\n关键字段：`isScriptFidelityMonitor` / `standardScriptId`。"
+          }
+        },
+        {
+          "name": "1.2 setMonitorEnabled (开还原度开关)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "// 成功或已开（幂等）都算通过；70005 未确认标准稿需先跑 2.2 confirmStandardScript",
+                  "pm.test('code=0 或 70005（未确认标准稿）', function () {",
+                  "  pm.expect([0, 70005]).to.include(json.code);",
+                  "});",
+                  "if (json.code === 70005) {",
+                  "  console.warn('[setMonitorEnabled] 70005 未确认标准稿；请先跑 2.2 confirmStandardScript');",
+                  "} else {",
+                  "  pm.test('data=true', function () { pm.expect(json.data).to.eql(true); });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/replay/script-monitor/setMonitorEnabled?secUid={{secUid}}&monitorType=1&enabled=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "script-monitor", "setMonitorEnabled"],
+              "query": [
+                { "key": "secUid", "value": "{{secUid}}" },
+                { "key": "monitorType", "value": "1", "description": "1=还原度" },
+                { "key": "enabled", "value": "1", "description": "0=关 1=开" }
+              ]
+            },
+            "description": "切换单能力开关。还原度时 `monitorType=1`。\n\n**触发前置校验**（按序）：算力 → 授权数 → 标准稿存在 → 实际写库。\n\n**幂等**：当前状态==目标状态时直接返 true 不写库。"
+          }
+        }
+      ],
+      "description": "直播间配置查询 + 还原度开关切换。"
+    },
+    {
+      "name": "2. 标准稿",
+      "item": [
+        {
+          "name": "2.1 generateStandardScript (AI 生成不落库)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('code=0', function () { pm.expect(json.code).to.eql(0); });",
+                  "pm.test('timeAxisScript 非空', function () {",
+                  "  pm.expect(json.data.timeAxisScript).to.be.an('array').and.not.empty;",
+                  "});",
+                  "pm.test('每条时间轴有 timeRange/title/content', function () {",
+                  "  const item = json.data.timeAxisScript[0];",
+                  "  pm.expect(item).to.have.property('timeRange');",
+                  "  pm.expect(item).to.have.property('title');",
+                  "  pm.expect(item).to.have.property('content');",
+                  "});",
+                  "pm.test('响应不含 standardScriptId（不落库）', function () {",
+                  "  pm.expect(json.data).to.not.have.property('standardScriptId');",
+                  "});",
+                  "// 把生成的 timeAxisScript 暂存到 environment 供 2.2 用",
+                  "if (json.code === 0) {",
+                  "  pm.environment.set('generatedTimeAxisScript', JSON.stringify(json.data.timeAxisScript));",
+                  "  console.log('[generate] timeAxisScript 已暂存供 confirmStandardScript 使用');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"speechMode\": 0,\n  \"speechSpeed\": 280,\n  \"cycleDurationMinutes\": null,\n  \"referenceScript\": \"大家好，欢迎进入我们的直播间。今天给大家带来三款明星产品：第一款是我们的爆品面膜，原价399，今晚直播间特惠99元限量100份；第二款是新品精华液，主打抗老修护，原价699直播价399；第三款是我们的明星套装，原价1200直播价699，下单还送价值199的赠品包。每款产品我都会详细讲解功效和适用人群，过敏体质请先做手腕测试。售后承诺7天无理由+30天质量问题包退，签收后有问题随时联系客服。\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/replay/script-monitor/generateStandardScript",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "script-monitor", "generateStandardScript"]
+            },
+            "description": "AI 同步生成（60s 内超时抛 70008）。**不落库**，前端编辑后由 2.2 confirmStandardScript 入库。\n\n**关键**：响应不含 `standardScriptId`。"
+          }
+        },
+        {
+          "name": "2.2 confirmStandardScript (确认落库)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 如果 2.1 已经跑过，用它生成的 timeAxisScript；否则用一个 minimal 兜底",
+                  "let timeAxis = pm.environment.get('generatedTimeAxisScript');",
+                  "if (!timeAxis) {",
+                  "  timeAxis = JSON.stringify([",
+                  "    { timeRange: '00:00-03:00', title: '开场介绍', content: '大家好，欢迎进入直播间...' },",
+                  "    { timeRange: '03:00-08:00', title: '产品讲解', content: '今天我们带来三款产品...' }",
+                  "  ]);",
+                  "  console.warn('[confirm] 未找到 2.1 生成的 timeAxisScript，使用 minimal 兜底');",
+                  "}",
+                  "pm.variables.set('_timeAxisJson', timeAxis);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('code=0', function () { pm.expect(json.code).to.eql(0); });",
+                  "pm.test('返回 standardScriptId (Snowflake string)', function () {",
+                  "  pm.expect(json.data.standardScriptId).to.be.a('string').and.match(/^\\d{15,20}$/);",
+                  "});",
+                  "if (json.code === 0 && json.data.standardScriptId) {",
+                  "  pm.environment.set('standardScriptId', json.data.standardScriptId);",
+                  "  console.log('[confirm] standardScriptId 已写入: ' + json.data.standardScriptId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"secUid\": \"{{secUid}}\",\n  \"speechMode\": 0,\n  \"speechSpeed\": 280,\n  \"cycleDurationMinutes\": null,\n  \"referenceScript\": \"大家好，欢迎来到我们的直播间...\",\n  \"timeAxisScript\": {{_timeAxisJson}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/replay/script-monitor/confirmStandardScript",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "script-monitor", "confirmStandardScript"]
+            },
+            "description": "落库标准稿（旧稿软删 + INSERT 新稿）。**timeAxisScript 自动复用 2.1 的响应**。\n\n返回 `standardScriptId` 自动写入 environment。"
+          }
+        },
+        {
+          "name": "2.3 standardScriptDetail (查标准稿)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('code=0', function () { pm.expect(json.code).to.eql(0); });",
+                  "pm.test('hasScript=true（2.2 已确认）', function () {",
+                  "  pm.expect(json.data.hasScript).to.eql(true);",
+                  "});",
+                  "pm.test('speechSpeed 在 100-500 范围', function () {",
+                  "  pm.expect(json.data.speechSpeed).to.be.within(100, 500);",
+                  "});",
+                  "pm.test('timeAxisScript 非空', function () {",
+                  "  pm.expect(json.data.timeAxisScript).to.be.an('array').and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/replay/script-monitor/standardScriptDetail?secUid={{secUid}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "script-monitor", "standardScriptDetail"],
+              "query": [
+                { "key": "secUid", "value": "{{secUid}}" }
+              ]
+            },
+            "description": "查当前直播间已确认标准稿。无稿时 `hasScript=false` + `speechSpeed=280` 兜底。"
+          }
+        }
+      ],
+      "description": "标准稿三件套：AI 生成（不落库）→ 用户编辑 → 确认落库 → 查详情。"
+    },
+    {
+      "name": "3. 报告触发与状态",
+      "item": [
+        {
+          "name": "3.1 triggerReport (手动触发还原度)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('code=0 或已知前置错误码 (70001/70002/70004/70005/70014)', function () {",
+                  "  pm.expect([0, 70001, 70002, 70004, 70005, 70014]).to.include(json.code);",
+                  "});",
+                  "if (json.code === 0) {",
+                  "  pm.test('data=true', function () { pm.expect(json.data).to.eql(true); });",
+                  "  console.log('[trigger] 异步生成已触发，等 60-120s 后跑 3.2 reportStatus 轮询');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sourceType\": 0,\n  \"sceneType\": 0,\n  \"sourceId\": \"{{videoId}}\",\n  \"monitorType\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/replay/script-monitor/triggerReport",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "script-monitor", "triggerReport"]
+            },
+            "description": "手动触发还原度报告生成（异步）。\n\n**防重提交**：`sourceType_sceneType_sourceId_monitorType_token`，5s 内重复点击会被拦。\n\n触发后约 60-120s 完成（4 次 AI 串行）。轮询 3.2 reportStatus 直到 status=2。"
+          }
+        },
+        {
+          "name": "3.2 reportStatus (单查 + 自动写 reportId)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('code=0', function () { pm.expect(json.code).to.eql(0); });",
+                  "pm.test('monitors 数组含 3 项', function () {",
+                  "  pm.expect(json.data.monitors).to.be.an('array').with.lengthOf(3);",
+                  "});",
+                  "const fidelity = json.data.monitors.find(m => m.monitorType === 1);",
+                  "pm.test('找到 monitorType=1 还原度项', function () {",
+                  "  pm.expect(fidelity).to.exist;",
+                  "  pm.expect(fidelity.monitorTypeText).to.eql('话术还原度');",
+                  "});",
+                  "pm.test('status 在 0-4', function () { pm.expect([0,1,2,3,4]).to.include(fidelity.status); });",
+                  "if (fidelity.reportId) {",
+                  "  pm.environment.set('reportId', fidelity.reportId);",
+                  "  console.log('[reportStatus] reportId 已写入: ' + fidelity.reportId + ' / status=' + fidelity.status);",
+                  "}",
+                  "if (fidelity.status === 1) {",
+                  "  console.warn('[reportStatus] status=1 生成中，60s 后再跑一次');",
+                  "} else if (fidelity.status === 2) {",
+                  "  console.log('[reportStatus] status=2 已生成，可跑 4.1 fidelityReportDetail');",
+                  "  if (fidelity.summary) {",
+                  "    pm.test('summary 为 Markdown 文本（非 JSON）', function () {",
+                  "      // 还原度 summary 是 markdown 文本，不应是合法 JSON",
+                  "      try { JSON.parse(fidelity.summary); pm.expect.fail('summary 不应被 JSON.parse 解析'); } catch (e) { /* OK */ }",
+                  "    });",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sourceType\": 0,\n  \"sceneType\": 0,\n  \"sourceId\": \"{{videoId}}\",\n  \"secUid\": \"{{secUid}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/replay/script-monitor/reportStatus",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "script-monitor", "reportStatus"]
+            },
+            "description": "查单资源 3 类监控状态。响应 monitors 含 3 项（0=质检 / 1=还原度 / 2=巡检）。\n\n本接口自动把还原度的 `reportId` 写入 environment，供 4.1 fidelityReportDetail 使用。\n\n**轮询用法**：status=1 时等 60s 再重跑；status=2 时进 4.1。"
+          }
+        },
+        {
+          "name": "3.3 batchReportStatus (批量查)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('code=0', function () { pm.expect(json.code).to.eql(0); });",
+                  "pm.test('返回数组', function () { pm.expect(json.data).to.be.an('array'); });",
+                  "if (json.data.length > 0) {",
+                  "  pm.test('每个元素 monitors 含 3 项', function () {",
+                  "    pm.expect(json.data[0].monitors).to.have.lengthOf(3);",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sources\": [\n    { \"sourceType\": 0, \"sceneType\": 0, \"sourceId\": \"{{videoId}}\", \"secUid\": \"{{secUid}}\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/replay/script-monitor/batchReportStatus",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "script-monitor", "batchReportStatus"]
+            },
+            "description": "批量查（最多 100 条；跳过无权限/不存在）。结构同 reportStatus 单查。"
+          }
+        }
+      ],
+      "description": "触发还原度报告生成 + 查报告状态。"
+    },
+    {
+      "name": "4. 报告详情",
+      "item": [
+        {
+          "name": "4.1 fidelityReportDetail (还原度详情 + 已读语义)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get('reportId')) {",
+                  "  console.warn('[fidelityReportDetail] reportId 为空，请先跑 3.2 reportStatus 或手填');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "pm.test('code=0 或 70012/70011（边界）', function () {",
+                  "  pm.expect([0, 70011, 70012]).to.include(json.code);",
+                  "});",
+                  "if (json.code !== 0) return;",
+                  "pm.test('响应 13 字段齐全', function () {",
+                  "  const expectedKeys = ['reportId','sourceType','sceneType','sourceId','status','summaryJson','reportContent','anchorName','liveTitle','liveTime','isRead','confirmedAt','createDate'];",
+                  "  expectedKeys.forEach(k => pm.expect(json.data).to.have.property(k));",
+                  "});",
+                  "pm.test('reportId 为 Snowflake string', function () {",
+                  "  pm.expect(json.data.reportId).to.match(/^\\d{15,20}$/);",
+                  "});",
+                  "pm.test('sourceType=0 sceneType=0（还原度仅录制视频）', function () {",
+                  "  pm.expect(json.data.sourceType).to.eql(0);",
+                  "  pm.expect(json.data.sceneType).to.eql(0);",
+                  "});",
+                  "if (json.data.status === 2) {",
+                  "  pm.test('status=2 时 summaryJson 为 Markdown 文本', function () {",
+                  "    pm.expect(json.data.summaryJson).to.be.a('string').and.not.empty;",
+                  "  });",
+                  "  pm.test('status=2 时 reportContent 非空', function () {",
+                  "    pm.expect(json.data.reportContent).to.be.a('string').and.not.empty;",
+                  "  });",
+                  "  pm.test('isRead 自动置 1（录制人首次查）', function () {",
+                  "    pm.expect(json.data.isRead).to.eql(1);",
+                  "  });",
+                  "  pm.test('confirmedAt 非空', function () {",
+                  "    pm.expect(json.data.confirmedAt).to.be.a('string').and.not.empty;",
+                  "  });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/replay/script-monitor/fidelityReportDetail?reportId={{reportId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["replay", "script-monitor", "fidelityReportDetail"],
+              "query": [
+                { "key": "reportId", "value": "{{reportId}}" }
+              ]
+            },
+            "description": "查还原度报告详情。13 字段 mirror 质检 VO。\n\n**自动写已读**：录制人首次查时后端 fail-safe 独立事务写 `is_read=1` + `confirmed_at=NOW()`；非录制人查不写。\n\n**跨租户**：抛 70011；**已删除**：抛 70012。"
+          }
+        }
+      ],
+      "description": "还原度报告详情查询 + 已读自动写入。"
+    }
+  ]
+}

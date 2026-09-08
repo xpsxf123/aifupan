@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuyu.replay.order.repository.dao.UserPowerRollupDao">
+
+    <!--
+        唯一一条增量聚合 SQL：走 tb_user_property_details 主键范围扫（id > 水位线）
+        口径 = 净额：signs=0 为扣减，signs=1 为执行失败回退，必须冲减；quantity 存绝对值
+        ⚠️ 只算「用户创建」的真实消费：IFNULL(asset_creation_type,0)=0 排除系统清零/reset(=1)，
+           否则清零余量(signs=0)/月度reset(signs=1)会污染算力口径
+        租户 tenant_id 直接取明细行 upd.tenant_id（写入时已落：消费=当时active_tenant_id，清零/reset=订单固化租户），
+           不再 JOIN tb_tenant（避免一主账号多租户 fan-out）
+        租户维度不在此处再跑一条 GROUP BY，由调用方内存归并
+
+        ⚠️ 为什么必须有 create_date 安全滞后（少了会永久丢数据）：
+        tb_user_property_details.id 是 Snowflake，在「对象构造时刻」分配，不保证「id 序 == 事务提交序」。
+        若某扣费事务在 T1 拿到 id=105 但直到 T3 才提交，而本任务在 T2 建立快照、只读到已提交的 id=106
+        并把水位线推到 106，则 id=105 永久漏算（下一轮 id > 106 再也扫不到它）。
+        create_date 与 id 同在构造时刻赋值、二者顺序一致，因此只处理「已静置 >= 1 小时」的行，
+        即可保证这些行所属的事务早已提交，不会出现「id 小于水位线但当时尚不可见」的行。
+        性能：查询仍由 id > #{lastDetailId} 走主键范围扫驱动，create_date 只是附加过滤，无需新建索引。
+    -->
+    <select id="aggregateIncrementalPowerConsume" resultType="com.jiuyu.replay.order.vo.PowerAggregateVo">
+        SELECT upd.user_id AS userId,
+               upd.tenant_id AS tenantId,
+               SUM(CASE WHEN upd.signs = 0 THEN upd.quantity ELSE -upd.quantity END) AS powerConsume,
+               MAX(upd.id) AS maxDetailId
+        FROM tb_user_property_details upd
+        WHERE upd.commodity_type_code = #{commodityTypeCode}
+          AND IFNULL(upd.asset_creation_type, 0) = 0
+          AND upd.id &gt; #{lastDetailId}
+          AND upd.create_date &lt; DATE_SUB(NOW(), INTERVAL 1 HOUR)
+        GROUP BY upd.user_id, upd.tenant_id
+    </select>
+
+    <!-- 批量累加（+= delta，非覆盖）；按 (user_id, tenant_id) 复合键命中 uk_user_tenant，
+         未命中的 (用户,租户) 由调用方走 save 分支。同一用户多租户各自累加，互不干扰 -->
+    <update id="accumulateUserPowerConsume">
+        UPDATE tb_user_power_rollup
+        SET user_power_consume = user_power_consume +
+        <foreach collection="deltaList" item="item" open="CASE" close=" ELSE 0 END" separator=" ">
+            WHEN user_id = #{item.userId} AND tenant_id = #{item.tenantId} THEN #{item.powerConsume}
+        </foreach>
+        , update_date = #{updateDate}
+        WHERE
+        <foreach collection="deltaList" item="item" open="(" separator=" OR " close=")">
+            (user_id = #{item.userId} AND tenant_id = #{item.tenantId})
+        </foreach>
+    </update>
+
+</mapper>

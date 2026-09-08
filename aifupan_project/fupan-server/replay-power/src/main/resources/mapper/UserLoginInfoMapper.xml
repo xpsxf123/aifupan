@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.power.repository.dao.UserLoginInfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jiuyu.replay.power.entity.UserLoginInfoEntity">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="token" property="token"/>
+        <result column="source" property="source"/>
+        <result column="fingerprint" property="fingerprint"/>
+        <result column="last_request_time" property="lastRequestTime"/>
+        <result column="expire_time" property="expireTime"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , user_id, token, source, fingerprint, last_request_time,expire_time, create_date, update_date, is_deleted
+    </sql>
+
+    <!-- 更新用户信息过期时间 -->
+    <update id="updateUserLoginInfoExpireTimeByUserIdAndToken">
+        UPDATE tb_user_login_info
+        SET last_request_time = NOW(),
+        update_date = NOW()
+        <if test="expireTime != null">
+            ,expire_time = #{expireTime}
+        </if>
+        WHERE user_id = #{userId}
+        AND token = #{token}
+        AND is_deleted = 0
+    </update>
+
+</mapper>

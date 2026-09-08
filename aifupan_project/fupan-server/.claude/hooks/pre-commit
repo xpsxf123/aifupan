@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Git pre-commit hook — 共享版本（项目级）
+#
+# 启用：git config core.hooksPath .claude/hooks
+#   （或跑 .claude/scripts/tools/install_git_hooks.sh 一次性 setup）
+#
+# 检查项：
+#   - 文件名规则：仅允许 [a-zA-Z0-9._-]（Windows 跨平台兼容）
+#     详见 .claude/scripts/gates/filename_linter.py
+#
+# 添加新检查项时，在下方追加调用 + 累计 exit code 即可。
+
+set -u
+
+# 找到 repo 根（hook 总是从 repo 根跑，但稳健起见显式 cd）
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "${REPO_ROOT}" || exit 1
+
+EXIT_CODE=0
+
+# ============================================================
+# 1. 文件名规则检查（仅检查 staged 新增 / 改名文件）
+# ============================================================
+echo "🔍 [pre-commit] 检查 staged 文件名规则..."
+if ! python3 .claude/scripts/gates/filename_linter.py --staged; then
+    EXIT_CODE=1
+fi
+
+# ============================================================
+# 退出
+# ============================================================
+if [ "${EXIT_CODE}" -ne 0 ]; then
+    echo ""
+    echo "❌ pre-commit 拒绝提交：发现违规文件名"
+    echo ""
+    echo "如果确认要绕过（非常不推荐），可用："
+    echo "    git commit --no-verify"
+    echo "但请先评估违规文件名在 Windows 上是否真能 clone / checkout。"
+    exit 1
+fi
+
+echo "✅ [pre-commit] 检查通过"
+exit 0

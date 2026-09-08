@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.video.project.dao.VideoHotSearchVideoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jiuyu.replay.video.project.entity.VideoHotSearchVideoEntity">
+        <id column="id" property="id"/>
+        <result column="search_id" property="searchId"/>
+        <result column="video_id" property="videoId"/>
+        <result column="influencer_platform_type" property="influencerPlatformType"/>
+        <result column="influencer_platform_user_id" property="influencerPlatformUserId"/>
+        <result column="influencer_nickname" property="influencerNickname"/>
+        <result column="influencer_avatar" property="influencerAvatar"/>
+        <result column="influencer_followers_count" property="influencerFollowersCount"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="created_date" property="createdDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, search_id, video_id, influencer_platform_type, influencer_platform_user_id,
+        influencer_nickname, influencer_avatar, influencer_followers_count, sort_order,
+        created_date, update_date, is_deleted
+    </sql>
+
+    <!-- 根据平台类型和关键词查询爆款视频关联数据 -->
+    <select id="listVideoHotSearchVideoByPlatformTypeAndKeyWord"
+            resultMap="BaseResultMap">
+        SELECT
+        vhsv.id,
+        vhsv.search_id,
+        vhsv.video_id,
+        vhsv.influencer_platform_type,
+        vhsv.influencer_platform_user_id,
+        vhsv.influencer_nickname,
+        vhsv.influencer_avatar,
+        vhsv.influencer_followers_count,
+        vhsv.sort_order,
+        vhsv.created_date,
+        vhsv.update_date,
+        vhsv.is_deleted
+        FROM
+        tb_video_hot_search_video vhsv
+        INNER JOIN
+        tb_video_hot_search vhs ON vhsv.search_id = vhs.id
+        WHERE
+        vhs.platform_type = #{platformType}
+        AND vhs.search_keyword = #{searchKeyword}
+        AND vhs.is_deleted = 0
+        AND vhsv.is_deleted = 0
+        ORDER BY
+        vhsv.sort_order DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+</mapper>
+

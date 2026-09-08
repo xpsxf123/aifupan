@@ -1,0 +1,20 @@
+CREATE TABLE `tb_anchor_video_recycle` (
+  `id`             BIGINT       NOT NULL             COMMENT '主键，雪花ID',
+  `video_id`       VARCHAR(64)  NOT NULL             COMMENT '视频唯一标识（UUID）',
+  `video_name`     VARCHAR(255) NOT NULL DEFAULT ''  COMMENT '视频名称',
+  `play_url`       VARCHAR(512) NOT NULL DEFAULT ''  COMMENT '在线播放地址',
+  `file_id`        VARCHAR(64)  NOT NULL DEFAULT ''  COMMENT '腾讯云 VOD fileId（从 play_url 解析；playUrl 为空则存空串）',
+  `video_size`     BIGINT       NOT NULL DEFAULT 0   COMMENT '视频大小，单位：B（对应 AnchorVideoEntity.vedioSizie）',
+  `user_id`        BIGINT       NOT NULL             COMMENT '执行删除操作的用户 ID',
+  `user_name`      VARCHAR(64)  NOT NULL DEFAULT ''  COMMENT '执行删除操作的用户昵称（取 UserCacheVo.nickName）',
+  `tenant_id`      BIGINT       NOT NULL             COMMENT '租户 ID',
+  `delete_time`    DATETIME     NOT NULL             COMMENT '删除时间（= LocalDateTime.now()）',
+  `restore_status` TINYINT      NOT NULL DEFAULT 0   COMMENT '恢复状态（预留）：0 未恢复 1 已恢复',
+  `vod_deleted`    TINYINT      NOT NULL DEFAULT 0   COMMENT 'VOD 兜底删除状态（预留）：0 未删除 1 已删除',
+  `is_deleted`     TINYINT      NOT NULL DEFAULT 0   COMMENT '软删除标记：0 正常 1 已删除',
+  `create_date`    DATETIME     NOT NULL             COMMENT '创建时间',
+  `update_date`    DATETIME     NOT NULL             COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_tenant_delete_time` (`tenant_id`, `delete_time`),
+  KEY `idx_video_id` (`video_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='云空间视频回收站';

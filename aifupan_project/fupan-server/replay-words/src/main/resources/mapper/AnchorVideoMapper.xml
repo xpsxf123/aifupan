@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.AnchorVideoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jiuyu.replay.words.entity.AnchorVideoDetailEntity">
+        <id column="id" property="id"/>
+        <result column="video_id" property="videoId"/>
+        <result column="nature_content_status" property="natureContentStatus"/>
+        <result column="optimize_content_status" property="optimizeContentStatus"/>
+        <result column="has_diagnosis_report" property="hasDiagnosisReport"/>
+        <result column="diagnosis_oss_name" property="diagnosisOssName"/>
+        <result column="user_id" property="userId"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="nat_set_time" property="natSetTime"/>
+        <result column="opt_set_time" property="optSetTime"/>
+        <result column="nat_set_job" property="natSetJob"/>
+        <result column="opt_set_job" property="optSetJob"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , video_id, nature_content_status, optimize_content_status, has_diagnosis_report, diagnosis_oss_name, user_id, tenant_id, create_date, update_date, is_deleted, nat_set_time, opt_set_time, nat_set_job, opt_set_job
+    </sql>
+
+    <select id="selectVideoDetailData" resultType="com.jiuyu.replay.words.entity.AnchorVideoDetailEntity">
+        SELECT anchorVideoDetail.id,
+               anchorVideoDetail.video_id,
+               anchorVideoDetail.nature_content_status,
+               anchorVideoDetail.optimize_content_status,
+               anchorVideoDetail.has_diagnosis_report,
+               anchorVideoDetail.diagnosis_oss_name,
+               anchorVideoDetail.user_id,
+               anchorVideoDetail.tenant_id,
+               anchorVideoDetail.create_date,
+               anchorVideoDetail.update_date,
+               anchorVideoDetail.is_deleted,
+               anchorVideoDetail.nat_set_time,
+               anchorVideoDetail.opt_set_time,
+               anchorVideoDetail.nat_set_job,
+               anchorVideoDetail.opt_set_job
+        FROM tb_anchor_video_detail AS anchorVideoDetail
+                 LEFT JOIN tb_anchor_video AS anchorVideo ON anchorVideoDetail.video_id = anchorVideo.video_id
+        WHERE anchorVideo.analysis_status = 2
+          AND anchorVideo.is_deleted = 0
+          AND anchorVideoDetail.is_deleted = 0
+          AND (
+--                 条件为：自然原文内容，生成中，没有扫描到的，来源是服务器的
+            (anchorVideoDetail.nature_content_status = 1 AND anchorVideoDetail.nat_set_job = 0 AND
+             anchorVideoDetail.nature_source_type = 0)
+                OR
+--                 条件为：优化原文内容，生成中，没有扫描到的，来源是服务器的
+            (anchorVideoDetail.optimize_content_status = 1 AND anchorVideoDetail.opt_set_job = 0 AND
+             anchorVideoDetail.optimize_source_type = 0)
+            )
+        ORDER BY anchorVideoDetail.id ASC
+            LIMIT #{limit}
+    </select>
+
+
+    <select id="historyBatchNumberList" parameterType="com.jiuyu.replay.words.bo.video.HistoryBatchNumberListBo"
+            resultType="com.jiuyu.replay.words.entity.AnchorVideoEntity">
+        SELECT
+        a.id,a.video_id,a.video_name,a.start_time,a.paragraph,
+        a.subsection_type,a.duration,a.vedio_sizie,a.end_time,
+        a.batch_number,a.video_type,a.definition,
+        a.storage_path,a.live_url,a.share_url,a.source_url,
+        a.anchor_id,a.is_recording,a.source_type,a.live_title,
+        a.analysis_status,a.analysis_time,
+        a.error_reason,a.sec_uid,a.trade_id,a.platform_type,a.user_id,a.type,
+        a.create_date,a.update_date,a.upload_status,a.is_mark,
+        a.play_url,a.cloud_store,a.delete_status,a.tenant_id
+        FROM
+        tb_anchor_video a
+        <if test="dataType != null and dataType == 0">
+            INNER JOIN (
+            select
+            source_id as video_id
+            from
+            tb_data_screenshot
+            where
+            source_type = 0
+            and screenshot_status = 3
+            and user_id = #{userId}
+            and tenant_id = #{tenantId}
+            GROUP BY
+            source_id
+            ) temp ON a.video_id = temp.video_id
+        </if>
+        <if test="dataType != null and dataType == 1">
+            INNER JOIN (
+            select
+            video_id
+            from
+            tb_video_data_viewing_confuse
+            where
+            is_deleted = 0
+            and data_status = 1
+            and user_id = #{userId}
+            and tenant_id = #{tenantId}
+            GROUP BY video_id
+            ) temp ON a.video_id = temp.video_id
+        </if>
+        WHERE
+        a.is_deleted = 0
+        AND a.video_slice_type = 0
+        AND a.analysis_status = #{analysisStatus}
+        AND a.sec_uid = #{secUid}
+        AND a.user_id = #{userId}
+        AND a.tenant_id = #{tenantId}
+        <if test="uploadStatus != null and uploadStatus == 0">
+            AND a.delete_status = 0
+        </if>
+        <if test="uploadStatus != null and uploadStatus == 1">
+            AND a.delete_status in (0, 1)
+            AND a.upload_status = #{uploadStatus}
+        </if>
+        AND a.video_id &lt;&gt; #{videoId}
+        AND a.duration &gt;= 60
+        AND a.end_time &lt;= #{endTime}
+        ORDER BY
+        a.start_time DESC
+        LIMIT #{limit};
+    </select>
+
+
+    <select id="pageList" resultType="com.jiuyu.replay.generic.vo.words.AnchorVideoVO">
+        SELECT
+        av.*
+        FROM
+        tb_anchor_video av
+        <if test="bo.anchorName != null and bo.anchorName != ''">
+            JOIN tb_anchor_url au on av.sec_uid = au.sec_uid and au.anchor_name like CONCAT('%', #{bo.anchorName}, '%')
+        </if>
+        <if test="bo.userName != null and bo.userName != ''">
+            JOIN tb_user u ON av.user_id = u.id and (u.nick_name like CONCAT('%', #{bo.userName}, '%') or u.username
+            like CONCAT('%', #{bo.userName}, '%') or u.phone LIKE CONCAT('%', #{bo.userName}, '%'))
+        </if>
+        <if test="bo.userSalesID != null">
+            join tb_user_details ud on av.user_id = ud.user_id and ud.sale_id = #{bo.userSalesID}
+        </if>
+
+        <if test="bo.accountType != null">
+            join tb_anchor_url_user auu on av.sec_uid = auu.anchor_url_sec_uid and av.user_id = auu.user_id and
+            auu.is_deleted = 0 and auu.account_type = #{bo.accountType}
+        </if>
+        WHERE
+        av.is_deleted = 0
+        and av.duration >= 60
+        and av.analysis_status = 2
+        <if test="bo.videoName != null and bo.videoName != ''">
+            and av.video_name like CONCAT('%', #{bo.videoName}, '%')
+        </if>
+
+        <if test="bo.userId != null and bo.userId != ''">
+            and av.user_id = #{bo.userId}
+        </if>
+
+        <if test="bo.startTime != null and bo.endTime != null">
+            and av.create_date BETWEEN #{bo.startTime} and #{bo.endTime}
+        </if>
+
+        <if test="bo.videoId != null and bo.videoId != ''">
+            and av.video_id = #{bo.videoId}
+        </if>
+
+        <if test="bo.tradeId != null and bo.tradeId != ''">
+            and av.trade_id = #{bo.tradeId}
+        </if>
+
+        <if test="bo.userIdS != null and bo.userIdS.size() > 0">
+            AND av.user_id IN (
+            <foreach collection="bo.userIdS" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+
+        <if test="bo.tenantIds != null and bo.tenantIds.size() > 0">
+            AND av.tenant_id IN (
+            <foreach collection="bo.tenantIds" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+
+        order by av.id desc
+    </select>
+
+    <select id="selectDataHubAnalysisStats" resultType="com.jiuyu.replay.words.vo.datahub.DataHubAnalysisStatsVo">
+        SELECT tenant_id          AS tenantId,
+               sec_uid            AS secUid,
+               COUNT(*)           AS analysisCount,
+               MIN(analysis_time) AS firstAnalyzedDate,
+               MAX(analysis_time) AS lastAnalyzedDate
+        FROM tb_anchor_video
+        WHERE tenant_id IN
+        <foreach collection="tenantIds" item="tid" open="(" separator="," close=")">
+            #{tid}
+        </foreach>
+          AND is_deleted = 0
+          AND analysis_status = 2
+        <if test="startDate != null">
+          AND analysis_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+          AND analysis_time &lt; #{endDate}
+        </if>
+        GROUP BY tenant_id, sec_uid
+    </select>
+</mapper>

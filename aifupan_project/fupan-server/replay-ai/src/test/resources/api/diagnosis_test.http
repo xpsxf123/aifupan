@@ -1,0 +1,83 @@
+### 数据诊断相关接口测试
+### 描述: updateReadStatus、listUnreadDataDiagnosis、getDataDiagnosisStatus 接口测试
+
+### ========================================
+### 变量配置
+### ========================================
+
+@baseUrl = http://localhost:6606
+@token = 30ceda03c12f4e73899713839b157249
+@videoId = 14321334-910e-474a-b03b-1cd6d6c48773
+
+### ========================================
+### 1. 获取数据诊断未读报告列表
+### ========================================
+
+### 1.1 获取未读报告列表 - 正常请求
+GET {{baseUrl}}/replay/ai/diagnosis/listUnreadDataDiagnosis
+token: {{token}}
+
+### ========================================
+### 2. 获取视频数据诊断状态与内容
+### ========================================
+
+### 2.1 获取数据诊断状态 - 正常请求
+GET {{baseUrl}}/replay/ai/diagnosis/getDataDiagnosisStatus?videoId={{videoId}}
+token: {{token}}
+
+### 2.2 获取数据诊断状态 - 不存在的videoId
+GET {{baseUrl}}/replay/ai/diagnosis/getDataDiagnosisStatus?videoId=00000000-0000-0000-0000-000000000000
+token: {{token}}
+
+### ========================================
+### 3. 批量更新诊断报告已读状态
+### ========================================
+
+### 3.1 更新为已读 - 正常请求（ids替换为实际的诊断记录id）
+POST {{baseUrl}}/replay/ai/diagnosis/updateReadStatus
+Content-Type: application/json
+token: {{token}}
+
+{
+  "ids": [
+    1
+  ],
+  "isRead": 1
+}
+
+### 3.2 更新为未读
+POST {{baseUrl}}/replay/ai/diagnosis/updateReadStatus
+Content-Type: application/json
+token: {{token}}
+
+{
+  "ids": [
+    1
+  ],
+  "isRead": 0
+}
+
+### 3.3 批量更新多条为已读
+POST {{baseUrl}}/replay/ai/diagnosis/updateReadStatus
+Content-Type: application/json
+token: {{token}}
+
+{
+  "ids": [
+    1,
+    2,
+    3
+  ],
+  "isRead": 1
+}
+
+### 3.4 不传isRead，默认已读
+POST {{baseUrl}}/replay/ai/diagnosis/updateReadStatus
+Content-Type: application/json
+token: {{token}}
+
+{
+  "ids": [
+    1
+  ]
+}

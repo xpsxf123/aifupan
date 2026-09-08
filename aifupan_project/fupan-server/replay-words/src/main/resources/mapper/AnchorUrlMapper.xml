@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.AnchorUrlDao">
+
+    <select id="pageList" resultType="com.jiuyu.replay.words.entity.AnchorUrlEntity">
+        select au.* from tb_anchor_url au
+        <where>
+            <if test="bo.platform != null">
+                and au.platform = #{bo.platform}
+            </if>
+            <if test="bo.anchorName != null and bo.anchorName != ''">
+                and au.anchor_name like CONCAT('%', #{bo.anchorName}, '%')
+            </if>
+            <if test="bo.systemTradeId != null">
+                and au.system_trade_id = #{bo.systemTradeId}
+            </if>
+            <if test="bo.isBindSystemTrade != null and bo.isBindSystemTrade == 0">
+                and au.system_trade_id is null
+            </if>
+            <if test="bo.isBindSystemTrade != null and bo.isBindSystemTrade == 1">
+                and au.system_trade_id is not null
+            </if>
+            <if test="bo.isNon != null and bo.isNon == 0">
+                and EXISTS (SELECT 1 FROM tb_anchor_url_white auw where auw.sec_uid = au.sec_uid)
+            </if>
+            <if test="bo.isNon != null and bo.isNon == 1">
+                and not EXISTS (SELECT 1 FROM tb_anchor_url_white auw where auw.sec_uid = au.sec_uid)
+            </if>
+            <if test="bo.tradeId != null">
+                and EXISTS (SELECT 1 FROM tb_anchor_url_user auu WHERE auu.anchor_url_sec_uid = au.sec_uid AND auu.trade_id = #{bo.tradeId} AND auu.is_deleted = 0)
+            </if>
+            <if test="bo.anchorKeyword != null and bo.anchorKeyword != ''">
+                and EXISTS (
+                    SELECT 1 FROM tb_anchor_crux_words_rela acwr
+                    INNER JOIN tb_anchor_crux_words acw ON acwr.keyword_id = acw.id
+                    WHERE acwr.sec_uid = au.sec_uid
+                    AND acw.keyword LIKE CONCAT('%', #{bo.anchorKeyword}, '%')
+                )
+            </if>
+        </where>
+        order by au.id desc
+
+    </select>
+</mapper>

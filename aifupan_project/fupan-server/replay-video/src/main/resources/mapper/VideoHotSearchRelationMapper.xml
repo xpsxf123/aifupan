@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.video.project.dao.VideoHotSearchRelationDao">
+
+    <!-- 连表查询爆款搜索结果 -->
+    <select id="queryHotSearchResultsWithJoin"
+
+            resultType="com.jiuyu.replay.video.project.vo.hotsearch.VideoHotSearchResultVo">
+        SELECT
+        v.id as videoId,
+        uv.id as extractId,
+        v.platform_type as platformType,
+        v.platform_video_id as platformVideoId,
+        v.title as videoTitle,
+        v.cover_url as videoCover,
+        v.video_url as videoUrl,
+        v.duration as duration,
+        v.publish_time as publishTime,
+        r.influencer_nickname as influencerNickname,
+        r.influencer_platform_user_id as influencerPlatformUserId,
+        r.influencer_avatar as influencerAvatar,
+        r.influencer_followers_count as followersCount,
+        v.like_count as likeCount,
+        v.comment_count as commentCount,
+        v.share_count as shareCount,
+        v.collect_count as collectCount,
+        COALESCE(uv.extract_status, 0) as extractStatus
+        FROM tb_video_hot_search_relation r
+        LEFT JOIN tb_video_info v ON r.video_id = v.id
+        LEFT JOIN tb_video_user_video uv ON (
+        uv.video_id = v.id
+        <!-- AND uv.user_id = #{userId}-->
+        AND uv.tenant_id = #{tenantId}
+        AND uv.source_type = 4
+        AND uv.is_deleted = 0
+        )
+        WHERE r.snapshot_id = #{queryBo.snapshotId}
+        AND r.is_deleted = 0
+        AND v.is_deleted = 0
+        <if test="queryBo.likeCount != null">
+            AND v.like_count >= #{queryBo.likeCount}
+        </if>
+        <if test="queryBo.commentCount != null">
+            AND v.comment_count >= #{queryBo.commentCount}
+        </if>
+        <if test="queryBo.shareCount != null">
+            AND v.share_count >= #{queryBo.shareCount}
+        </if>
+        <if test="queryBo.collectCount != null">
+            AND v.collect_count >= #{queryBo.collectCount}
+        </if>
+        <if test="queryBo.publishStartTime != null">
+            AND v.publish_time >= #{queryBo.publishStartTime}
+        </if>
+        <if test="queryBo.publishEndTime != null">
+            AND v.publish_time &lt;= #{queryBo.publishEndTime}
+        </if>
+        <if test="queryBo.durationStartNumber != null">
+            AND v.duration >= #{queryBo.durationStartNumber}
+        </if>
+        <if test="queryBo.durationEndNumber != null">
+            AND v.duration &lt;= #{queryBo.durationEndNumber}
+        </if>
+        <!-- 动态排序 -->
+        <choose>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 2">
+                <!-- 点赞数排序 -->
+                ORDER BY v.like_count
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 3">
+                <!-- 评论数排序 -->
+                ORDER BY v.comment_count
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 4">
+                <!-- 转发数排序 -->
+                ORDER BY v.share_count
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 5">
+                <!-- 收藏数排序 -->
+                ORDER BY v.collect_count
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <otherwise>
+                <!-- 默认排序：按照sort_order降序 -->
+                ORDER BY r.sort_order DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 查询爆款搜索记录（支持动态排序） -->
+    <select id="queryHotSearchRecord"
+            resultType="com.jiuyu.replay.video.project.vo.hotsearch.VideoHotSearchResultVo">
+        SELECT
+        v.id as videoId,
+        uv.id as extractId,
+        v.platform_type as platformType,
+        v.platform_video_id as platformVideoId,
+        v.title as videoTitle,
+        v.cover_url as videoCover,
+        v.video_url as videoUrl,
+        v.duration as duration,
+        v.publish_time as publishTime,
+        r.influencer_nickname as influencerNickname,
+        r.influencer_platform_user_id as influencerPlatformUserId,
+        r.influencer_avatar as influencerAvatar,
+        r.influencer_followers_count as followersCount,
+        v.like_count as likeCount,
+        v.comment_count as commentCount,
+        v.share_count as shareCount,
+        v.collect_count as collectCount,
+        COALESCE(uv.extract_status, 0) as extractStatus
+        FROM tb_video_hot_search_relation r
+        LEFT JOIN tb_video_info v ON r.video_id = v.id
+        LEFT JOIN tb_video_user_video uv ON (
+        uv.video_id = v.id
+        AND uv.tenant_id = #{tenantId}
+        AND uv.source_type = 4
+        AND uv.is_deleted = 0
+        )
+        WHERE r.snapshot_id = #{snapshotId}
+        AND r.is_deleted = 0
+        AND v.is_deleted = 0
+        <!-- 动态排序 -->
+        <choose>
+            <when test="sortCode != null and sortCode == 2">
+                <!-- 点赞数排序 -->
+                ORDER BY v.like_count
+                <if test="sortSequence != null and sortSequence == 1">ASC</if>
+                <if test="sortSequence == null or sortSequence == 0">DESC</if>
+            </when>
+            <when test="sortCode != null and sortCode == 3">
+                <!-- 评论数排序 -->
+                ORDER BY v.comment_count
+                <if test="sortSequence != null and sortSequence == 1">ASC</if>
+                <if test="sortSequence == null or sortSequence == 0">DESC</if>
+            </when>
+            <when test="sortCode != null and sortCode == 4">
+                <!-- 转发数排序 -->
+                ORDER BY v.share_count
+                <if test="sortSequence != null and sortSequence == 1">ASC</if>
+                <if test="sortSequence == null or sortSequence == 0">DESC</if>
+            </when>
+            <when test="sortCode != null and sortCode == 5">
+                <!-- 收藏数排序 -->
+                ORDER BY v.collect_count
+                <if test="sortSequence != null and sortSequence == 1">ASC</if>
+                <if test="sortSequence == null or sortSequence == 0">DESC</if>
+            </when>
+            <otherwise>
+                <!-- 默认排序：按照sort_order降序 -->
+                ORDER BY r.sort_order DESC
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>

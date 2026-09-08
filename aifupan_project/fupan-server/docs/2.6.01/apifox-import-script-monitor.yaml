@@ -1,0 +1,489 @@
+openapi: 3.0.3
+info:
+  title: 话术智能监控 API
+  description: |
+    话术智能监控 v2.0（基准代码 feature/2.6.01 commit a65052552）。
+
+    覆盖当前 Controller 已实现的 7 个 endpoint：
+    - 状态查询（reportStatus / batchReportStatus）
+    - 触发生成（triggerReport）
+    - 详情查询（qualityReportDetail / patrolReportDetail）
+    - 配置（anchorBasicConfig / setMonitorEnabled）
+
+    **重大改动（2026-06-08）**：
+    - B9: 删除 `POST /confirmRead` + 删 `canConfirm` / `confirmedRecords` 字段；新增 `isRead` / `confirmedAt`（巡检）来源主表
+    - B7: 互动巡检 summary / reportContent 改 Markdown（前端直接渲染、不再 JSON.parse）
+
+    导入 Apifox：项目 → 设置 → 数据管理 → 导入 → OpenAPI/Swagger → 选本文件。
+  version: 2.0.0
+  contact:
+    name: beta
+
+servers:
+  - url: http://localhost:6606
+    description: 本地开发
+  - url: http://{dev-host}:6606
+    description: 测试环境
+    variables:
+      dev-host:
+        default: dev.example.com
+
+tags:
+  - name: 话术智能监控
+    description: 质检 / 还原度 / 巡检 状态查询、触发、详情、已读自动写、配置开关
+
+paths:
+  /replay/script-monitor/reportStatus:
+    post:
+      tags: [话术智能监控]
+      summary: 查询单个资源的报告状态
+      description: |
+        返回该资源 3 类监控（质检/还原度/巡检）的状态、报告 ID、是否已读、监控开关、报告摘要。
+
+        `monitors[].summary`：质检/还原度 = JSON 字符串（前端 JSON.parse）；巡检 = Markdown 文本（B7 起，直接渲染）。
+      operationId: reportStatus
+      parameters:
+        - $ref: '#/components/parameters/AuthHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReportStatusBo' }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RScriptMonitorReportStatusVo' }
+
+  /replay/script-monitor/batchReportStatus:
+    post:
+      tags: [话术智能监控]
+      summary: 批量查询报告状态（最多 100 条）
+      description: 批量查询多个资源的三类监控状态。跳过无权限/不存在的资源。
+      operationId: batchReportStatus
+      parameters:
+        - $ref: '#/components/parameters/AuthHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BatchReportStatusBo' }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RListScriptMonitorReportStatusVo' }
+
+  /replay/script-monitor/triggerReport:
+    post:
+      tags: [话术智能监控]
+      summary: 手动触发报告生成
+      description: |
+        手动触发单个监控类型的报告生成。带 @NoRepeatSubmit 防重复（5 秒窗口）。
+
+        已是 GENERATING 状态时抛 70013；已是 GENERATED 状态会覆盖旧报告并重置 isRead=0 / confirmedAt=null。
+      operationId: triggerReport
+      parameters:
+        - $ref: '#/components/parameters/AuthHeader'
+        - name: Token
+          in: header
+          required: false
+          description: 用户身份 Token（防重复 key 区分用户）
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TriggerReportBo' }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RBoolean' }
+
+  /replay/script-monitor/qualityReportDetail:
+    get:
+      tags: [话术智能监控]
+      summary: 查询话术质检报告详情
+      description: |
+        查询质检报告详情。
+
+        **B9 行为**：录制人本人首次调用时，后端自动 UPDATE is_read=1 + confirmed_at=NOW()（独立事务 + fail-safe）；
+        同租户非录制人调用不写已读；跨租户抛 70011。
+      operationId: qualityReportDetail
+      parameters:
+        - $ref: '#/components/parameters/AuthHeader'
+        - name: reportId
+          in: query
+          required: true
+          description: 报告 ID（Snowflake 长 number，注意 JS 精度）
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RQualityReportDetailVo' }
+
+  /replay/script-monitor/patrolReportDetail:
+    get:
+      tags: [话术智能监控]
+      summary: 查询互动巡检报告详情
+      description: |
+        查询互动巡检报告详情。
+
+        **B9 + B7 行为**：录制人本人首次调用时自动写已读 + confirmedAt；
+        summaryJson / reportContent 为 Markdown 文本，前端直接渲染（不要 JSON.parse）。
+      operationId: patrolReportDetail
+      parameters:
+        - $ref: '#/components/parameters/AuthHeader'
+        - name: reportId
+          in: query
+          required: true
+          description: 报告 ID
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RInteractionPatrolReportDetailVo' }
+
+  /replay/script-monitor/anchorBasicConfig:
+    get:
+      tags: [话术智能监控]
+      summary: 查询直播间基础配置（含三类 AI 监控开关）
+      description: 按 (当前用户, secUid) 查 tb_anchor_url_user，返回完整配置含三类开关 + 标准稿 ID。
+      operationId: anchorBasicConfig
+      parameters:
+        - $ref: '#/components/parameters/AuthHeader'
+        - name: secUid
+          in: query
+          required: true
+          description: 主播唯一标识
+          schema: { type: string }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RAnchorUrlUserVo' }
+
+  /replay/script-monitor/setMonitorEnabled:
+    post:
+      tags: [话术智能监控]
+      summary: 切换单个 AI 监控能力开关
+      description: |
+        切换话术质检/话术还原度/互动巡检 三选一开关。带 @NoRepeatSubmit 防重复。
+
+        短路幂等：当前状态与目标相同直接返 true 不写库。
+        话术还原度暂禁开启（B5 前业务限制）。
+      operationId: setMonitorEnabled
+      parameters:
+        - $ref: '#/components/parameters/AuthHeader'
+        - name: Token
+          in: header
+          required: false
+          schema: { type: string }
+        - name: secUid
+          in: query
+          required: true
+          schema: { type: string }
+        - name: monitorType
+          in: query
+          required: true
+          description: 0=话术质检 / 1=话术还原度 / 2=互动巡检
+          schema: { type: integer, enum: [0, 1, 2] }
+        - name: enabled
+          in: query
+          required: true
+          description: 0=关闭 / 1=开启
+          schema: { type: integer, enum: [0, 1] }
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RBoolean' }
+
+components:
+  parameters:
+    AuthHeader:
+      name: Authorization
+      in: header
+      required: true
+      description: Bearer JWT，格式 `Bearer <token>`
+      schema: { type: string }
+
+  schemas:
+
+    # ----- 通用响应封装 -----
+
+    RBoolean:
+      type: object
+      properties:
+        code: { type: integer, description: '业务码 0=成功', example: 0 }
+        msg: { type: string, example: ok }
+        data: { type: boolean, example: true }
+
+    RScriptMonitorReportStatusVo:
+      type: object
+      properties:
+        code: { type: integer, example: 0 }
+        msg: { type: string, example: ok }
+        data: { $ref: '#/components/schemas/ScriptMonitorReportStatusVo' }
+
+    RListScriptMonitorReportStatusVo:
+      type: object
+      properties:
+        code: { type: integer, example: 0 }
+        msg: { type: string, example: ok }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/ScriptMonitorReportStatusVo' }
+
+    RQualityReportDetailVo:
+      type: object
+      properties:
+        code: { type: integer, example: 0 }
+        msg: { type: string, example: ok }
+        data: { $ref: '#/components/schemas/QualityReportDetailVo' }
+
+    RInteractionPatrolReportDetailVo:
+      type: object
+      properties:
+        code: { type: integer, example: 0 }
+        msg: { type: string, example: ok }
+        data: { $ref: '#/components/schemas/InteractionPatrolReportDetailVo' }
+
+    RAnchorUrlUserVo:
+      type: object
+      properties:
+        code: { type: integer, example: 0 }
+        msg: { type: string, example: ok }
+        data: { $ref: '#/components/schemas/AnchorUrlUserVo' }
+
+    # ----- 请求 BO -----
+
+    ReportStatusBo:
+      type: object
+      required: [sourceType, sceneType, sourceId]
+      properties:
+        sourceType:
+          type: integer
+          description: 资源类型 0=录制视频 1=上传文件
+          enum: [0, 1]
+        sceneType:
+          type: integer
+          description: 业务场景 0=复盘 1=视频分析 2=文案预审
+          enum: [0, 1, 2]
+        sourceId:
+          type: string
+          description: 资源 ID
+          example: v_12345
+        secUid:
+          type: string
+          description: 主播唯一标识（可选）；传入后 monitors[].monitorEnabled 返回开关状态
+          nullable: true
+
+    BatchReportStatusBo:
+      type: object
+      required: [sources]
+      properties:
+        sources:
+          type: array
+          description: 资源列表，最多 100 条
+          maxItems: 100
+          minItems: 1
+          items: { $ref: '#/components/schemas/SourceItemBo' }
+
+    SourceItemBo:
+      type: object
+      required: [sourceType, sceneType, sourceId]
+      properties:
+        sourceType:
+          type: integer
+          enum: [0, 1]
+        sceneType:
+          type: integer
+          enum: [0, 1, 2]
+        sourceId:
+          type: string
+        secUid:
+          type: string
+          nullable: true
+
+    TriggerReportBo:
+      type: object
+      required: [sourceType, sceneType, sourceId, monitorType]
+      properties:
+        sourceType: { type: integer, enum: [0, 1] }
+        sceneType: { type: integer, enum: [0, 1, 2] }
+        sourceId: { type: string }
+        monitorType:
+          type: integer
+          description: 监控类型 0=话术质检 1=话术还原度 2=互动巡检
+          enum: [0, 1, 2]
+
+    # ----- 响应 VO -----
+
+    ScriptMonitorReportStatusVo:
+      type: object
+      properties:
+        sourceType: { type: integer }
+        sceneType: { type: integer }
+        sourceId: { type: string }
+        monitors:
+          type: array
+          description: 三类监控状态列表（固定 3 项：质检/还原度/巡检）
+          items: { $ref: '#/components/schemas/MonitorTypeStatusVo' }
+
+    MonitorTypeStatusVo:
+      type: object
+      properties:
+        monitorType:
+          type: integer
+          enum: [0, 1, 2]
+          description: 0=质检 1=还原度 2=巡检
+        monitorTypeText:
+          type: string
+          example: 话术质检
+        status:
+          type: integer
+          enum: [0, 1, 2, 3, 4]
+          description: 0=未生成 1=生成中 2=已生成 3=失败 4=不可生成
+        statusText:
+          type: string
+          example: 已生成
+        reportId:
+          type: integer
+          format: int64
+          nullable: true
+          description: 报告 ID（Snowflake 19 位长 number，前端按字符串处理避免精度丢失）
+        summary:
+          type: string
+          nullable: true
+          description: |
+            报告摘要：
+            - 质检/还原度：JSON 字符串（前端 JSON.parse）
+            - 巡检：Markdown 文本片段（B7 起；前端直接渲染，不要 JSON.parse）
+            - 未生成 / 失败 / 不可生成 / 巡检无标签 → null
+            - 巡检空标签 → ""
+        isRead:
+          type: integer
+          enum: [0, 1]
+          description: 是否已读（B9 起来源主表 tb_script_monitor_report.is_read）
+        unavailableReason:
+          type: string
+          nullable: true
+          description: 不可生成原因（status=4 时有值）
+        monitorEnabled:
+          type: integer
+          enum: [0, 1]
+          nullable: true
+          description: 开关状态 0=关 1=开 null=不适用
+
+    QualityReportDetailVo:
+      type: object
+      properties:
+        reportId: { type: integer, format: int64 }
+        sourceType: { type: integer }
+        sceneType: { type: integer }
+        sourceId: { type: string }
+        status: { type: integer }
+        summaryJson:
+          type: string
+          nullable: true
+          description: 摘要 JSON 字符串（前端 JSON.parse；含 crashCount/slackCount/brandDamageCount/afterSalesCount 等字段）
+        reportContent:
+          type: string
+          nullable: true
+          description: 报告正文 Markdown 全文（来自 MongoDB；status=2 时有值）
+        anchorName: { type: string }
+        liveTitle: { type: string }
+        liveTime: { type: string, format: date-time }
+        isRead:
+          type: integer
+          enum: [0, 1]
+          description: B9 起来源主表；录制人首次查看后置 1
+        createDate: { type: string, format: date-time }
+
+    InteractionPatrolReportDetailVo:
+      type: object
+      properties:
+        reportId: { type: integer, format: int64 }
+        sourceType: { type: integer }
+        sceneType: { type: integer }
+        sourceId: { type: string }
+        status: { type: integer }
+        summaryJson:
+          type: string
+          nullable: true
+          description: |
+            摘要 Markdown 文本片段（**B7 起**：原 JSON 改 Markdown）。
+            前端直接渲染、不要 JSON.parse；来自 AI 合并报告 `<aifupan-data-block>` 标签内文本 trim 后；
+            未生成/无标签 → null；空标签 → ""。
+        reportContent:
+          type: string
+          nullable: true
+          description: 合并报告 Markdown 全文（来自 MongoDB，含弹幕明细 + 摘要段）；前端直接渲染
+        anchorName: { type: string }
+        liveTitle: { type: string }
+        liveTime: { type: string, format: date-time }
+        isRead:
+          type: integer
+          enum: [0, 1]
+          description: B9 新增；录制人首次查看后置 1
+        confirmedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: 录制人首次查看时间戳（B9：来源主表 confirmed_at）；未读时为 null；triggerReport 重新生成后重置 null
+        createDate: { type: string, format: date-time }
+
+    AnchorUrlUserVo:
+      type: object
+      description: |
+        直播间基础配置（节选话术智能监控相关字段）。
+        完整结构含 50+ 字段（录制配置 / 授权状态 / 诊断参数等），见源文件 AnchorUrlUserVo.java。
+      properties:
+        id: { type: integer, format: int64 }
+        userId: { type: integer, format: int64 }
+        tenantId: { type: integer, format: int64 }
+        anchorUrlSecUid: { type: string, description: 主播唯一标识 }
+        anchorInfo:
+          type: object
+          nullable: true
+          description: 主播信息（含 anchorName/anchorUrl 等子字段）
+        isScriptQualityInspection:
+          type: integer
+          enum: [0, 1]
+          description: 话术质检开关 0=关 1=开
+        isScriptFidelityMonitor:
+          type: integer
+          enum: [0, 1]
+          description: 话术还原度开关 0=关 1=开
+        isInteractionPatrol:
+          type: integer
+          enum: [0, 1]
+          description: 互动巡检开关 0=关 1=开
+        standardScriptId:
+          type: integer
+          format: int64
+          nullable: true
+          description: 当前已确认标准稿 ID（B3 阶段就绪，当前恒为 null）
+        isAutoRecord:
+          type: integer
+          enum: [0, 1]
+        isAutoAnalysis:
+          type: integer
+          enum: [0, 1]
+        isAutoDiagnosis:
+          type: integer
+          enum: [0, 1]
+        isDataDiagnosis:
+          type: integer
+          enum: [0, 1]

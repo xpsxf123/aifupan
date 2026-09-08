@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.SyncContrastDao">
+
+    <select id="pageList" resultType="com.jiuyu.replay.words.entity.AnchorUrlEntity">
+        select au.* from tb_anchor_url au
+        <where>
+            <if test="bo.platform != null">
+                and au.platform = #{bo.platform}
+            </if>
+            <if test="bo.anchorName != null and bo.anchorName != ''">
+                and au.anchor_name like CONCAT('%', #{bo.anchorName}, '%')
+            </if>
+            <if test="bo.isNon != null and bo.isNon == 0">
+                and EXISTS (SELECT 1 FROM tb_anchor_url_white auw where auw.sec_uid = au.sec_uid)
+            </if>
+            <if test="bo.isNon != null and bo.isNon == 1">
+                and not EXISTS (SELECT 1 FROM tb_anchor_url_white auw where auw.sec_uid = au.sec_uid)
+            </if>
+        </where>
+        order by au.id desc
+
+    </select>
+
+
+    <select id="pageSyncContrastNew" resultType="com.jiuyu.replay.words.vo.SyncContrastListVo">
+        SELECT
+        sc.*, u.nick_name as userNickName, ud.sale_id as salesId
+        FROM
+        tb_sync_contrast sc
+        LEFT JOIN tb_user u ON sc.user_id = u.id
+        left join tb_user_details ud on ud.user_id = sc.user_id
+        <where>
+            <if test="bo.userNickName != null and bo.userNickName != ''">
+                and (u.username like CONCAT('%', #{bo.userNickName}, '%') or u.nick_name like CONCAT('%',
+                #{bo.userNickName}, '%') or u.phone like CONCAT('%', #{bo.userNickName}, '%'))
+            </if>
+
+            <if test="bo.userSalesID != null">
+                and ud.sale_id = #{bo.userSalesID}
+            </if>
+
+            <if test="bo.startTime != null">
+                and sc.create_date &gt;= #{bo.startTime}
+            </if>
+
+            <if test="bo.endTime != null">
+                and sc.create_date &lt;= #{bo.endTime}
+            </if>
+        </where>
+        order by sc.id desc
+    </select>
+</mapper>

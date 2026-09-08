@@ -1,0 +1,467 @@
+### 视频看盘数据接口测试
+### 作者: jxy
+### 创建时间: 2026-03-27
+### 描述: 后台根据视频ID批量修改关联的混淆数据 API 测试用例
+
+### ========================================
+### 基础配置
+### ========================================
+
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### ========================================
+### 1. 根据视频ID批量修改混淆数据
+### ========================================
+
+### 1.1 正常修改 - 修改基础数据字段
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "totalWatchNum": 10000,
+  "averageOnlineNum": 500,
+  "averageResidenceTime": 180,
+  "incrementFollowerCount": 100
+}
+
+### 1.2 正常修改 - 修改销售数据字段
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "volumeStart": 50000,
+  "volumeEnd": 80000,
+  "purchaseCountStart": 100,
+  "purchaseCountEnd": 200,
+  "customerUnitPriceStart": 50.0,
+  "customerUnitPriceEnd": 100.0
+}
+
+### 1.3 正常修改 - 修改转化率相关字段
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "convertFanRate": 2.5,
+  "interactionPercent": 3.5,
+  "goodsConvertRateStart": 1.0,
+  "goodsConvertRateEnd": 2.0,
+  "gpmStart": 500.0,
+  "gpmEnd": 800.0,
+  "showWatchCntRatio": 15.0
+}
+
+### 1.4 正常修改 - 修改全部字段
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "totalWatchNum": 15000,
+  "averageOnlineNum": 800,
+  "averageResidenceTime": 240,
+  "incrementFollowerCount": 150,
+  "convertFanRate": 3.0,
+  "interactionPercent": 4.5,
+  "volumeStart": 80000,
+  "volumeEnd": 120000,
+  "purchaseCountStart": 200,
+  "purchaseCountEnd": 300,
+  "customerUnitPriceStart": 80.0,
+  "customerUnitPriceEnd": 150.0,
+  "uvValueStart": 5.0,
+  "uvValueEnd": 8.0,
+  "goodsConvertRateStart": 1.5,
+  "goodsConvertRateEnd": 2.5,
+  "gpmStart": 600.0,
+  "gpmEnd": 900.0,
+  "showWatchCntRatio": 18.0
+}
+
+### ========================================
+### 2. 数据校验验证
+### ========================================
+
+### 2.1 缺少videoId参数（必填字段校验）
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "totalWatchNum": 10000
+}
+
+### 2.2 videoId为空字符串
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "",
+  "totalWatchNum": 10000
+}
+
+### 2.3 videoId为null
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": null,
+  "totalWatchNum": 10000
+}
+
+### 2.4 请求体为空
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{}
+
+### ========================================
+### 3. 错误场景
+### ========================================
+
+### 3.1 不存在的videoId
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "not_exist_video_id_99999",
+  "totalWatchNum": 10000
+}
+
+### 3.2 负数值测试（业务上可能不合理，但接口允许）
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "totalWatchNum": -100
+}
+
+### ========================================
+### 4. 边界值测试
+### ========================================
+
+### 4.1 只传videoId，不传任何修改字段
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001"
+}
+
+### 4.2 大数值测试
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "totalWatchNum": 999999999,
+  "volumeStart": 999999999,
+  "volumeEnd": 999999999
+}
+
+### 4.3 小数精度测试
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "convertFanRate": 0.001,
+  "interactionPercent": 0.01,
+  "customerUnitPriceStart": 1.55,
+  "customerUnitPriceEnd": 2.55
+}
+
+### ========================================
+### 5. 完整业务流程测试
+### ========================================
+
+### 5.1 步骤1: 修改基础数据
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "totalWatchNum": 20000,
+  "averageOnlineNum": 1000
+}
+
+### 5.2 步骤2: 再次修改验证（覆盖之前的值）
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "totalWatchNum": 25000,
+  "averageOnlineNum": 1200
+}
+
+### 5.3 步骤3: 只修改部分字段（其他字段保持不变）
+POST {{baseUrl}}/replay/words/videoDataViewing/updateByVideoId
+Content-Type: {{contentType}}
+
+{
+  "videoId": "test_video_id_001",
+  "interactionPercent": 5.5
+}
+
+### ========================================
+### 测试数据准备 SQL
+### ========================================
+
+# 插入测试数据到 tb_video_data_viewing_confuse 表
+# 注意：执行测试前请确保测试数据已准备好
+
+# -- 查询现有混淆数据
+# SELECT id, video_id, video_data_viewing_id, total_watch_num, average_online_num, 
+#        average_residence_time, data_status, update_date
+# FROM tb_video_data_viewing_confuse 
+# WHERE video_id = 'test_video_id_001';
+
+# -- 插入测试混淆数据（如果不存在）
+# INSERT INTO tb_video_data_viewing_confuse (
+#     id, video_id, user_id, tenant_id, video_data_viewing_id, 
+#     data_status, create_date, update_date, is_deleted
+# ) VALUES (
+#     1234567890123456789, 'test_video_id_001', 1, 1, 1001,
+#     1, NOW(), NOW(), 0
+# );
+
+# -- 插入关联的混淆数据（模拟同一场直播的多段视频）
+# INSERT INTO tb_video_data_viewing_confuse (
+#     id, video_id, user_id, tenant_id, video_data_viewing_id, 
+#     data_status, create_date, update_date, is_deleted
+# ) VALUES (
+#     1234567890123456790, 'test_video_id_002', 1, 1, 1001,
+#     1, NOW(), NOW(), 0
+# );
+
+# -- 验证修改结果（检查更新后的数据）
+# SELECT id, video_id, video_data_viewing_id, total_watch_num, 
+#        average_online_num, update_date
+# FROM tb_video_data_viewing_confuse 
+# WHERE video_data_viewing_id = 1001;
+
+# -- 清理测试数据
+# DELETE FROM tb_video_data_viewing_confuse WHERE video_id LIKE 'test_video_id_%';
+
+### ========================================
+### 期望响应格式
+### ========================================
+
+# 成功响应示例:
+# {
+#   "code": 0,
+#   "msg": "修改成功，共更新2条记录",
+#   "data": null
+# }
+
+# 失败响应示例（数据不存在）:
+# {
+#   "code": 500,
+#   "msg": "未找到视频对应的混淆数据",
+#   "data": null
+# }
+
+# 失败响应示例（参数校验失败）:
+# {
+#   "code": 400,
+#   "msg": "视频id不能为空",
+#   "data": null
+# }
+
+### ========================================
+### 6. 根据视频ID获取数据看盘数据（优先本段数据）
+### ========================================
+
+### 6.1 正常查询 - 有本段数据返回本段数据
+GET {{baseUrl}}/replay/words/videoDataViewing/dataViewingByVideoId?videoId=test_video_id_001
+Content-Type: {{contentType}}
+
+### 6.2 正常查询 - 本段数据无效返回混淆数据
+GET {{baseUrl}}/replay/words/videoDataViewing/dataViewingByVideoId?videoId=test_video_id_002
+Content-Type: {{contentType}}
+
+### 6.3 正常查询 - 无本段数据返回混淆数据
+GET {{baseUrl}}/replay/words/videoDataViewing/dataViewingByVideoId?videoId=test_video_id_003
+Content-Type: {{contentType}}
+
+### 6.4 查询不存在的视频ID
+GET {{baseUrl}}/replay/words/videoDataViewing/dataViewingByVideoId?videoId=not_exist_video_id_99999
+Content-Type: {{contentType}}
+# 期望返回 data 为 null
+
+### 6.5 缺少videoId参数
+GET {{baseUrl}}/replay/words/videoDataViewing/dataViewingByVideoId
+Content-Type: {{contentType}}
+# 期望返回参数错误
+
+### ========================================
+### 测试数据准备 SQL（本段数据）
+### ========================================
+
+# -- 插入本段数据测试数据（data_status = 1 表示有效）
+# INSERT INTO tb_video_data_viewing_paragraph (
+#     id, video_id, user_id, tenant_id, data_viewing_confuse_id,
+#     data_status, total_watch_num, create_date, update_date, is_deleted
+# ) VALUES (
+#     1234567890123456801, 'test_video_id_001', 1, 1, 1001,
+#     1, 10000, NOW(), NOW(), 0
+# );
+
+# -- 插入无效本段数据（data_status = 2 表示拉取失败）
+# INSERT INTO tb_video_data_viewing_paragraph (
+#     id, video_id, user_id, tenant_id, data_viewing_confuse_id,
+#     data_status, total_watch_num, create_date, update_date, is_deleted
+# ) VALUES (
+#     1234567890123456802, 'test_video_id_002', 1, 1, 1002,
+#     2, 0, NOW(), NOW(), 0
+# );
+
+# -- 查询本段数据
+# SELECT id, video_id, data_status, total_watch_num
+# FROM tb_video_data_viewing_paragraph
+# WHERE video_id IN ('test_video_id_001', 'test_video_id_002');
+
+# -- 清理测试数据
+# DELETE FROM tb_video_data_viewing_paragraph WHERE video_id LIKE 'test_video_id_%';
+
+### ========================================
+### 期望响应格式（获取数据看盘）
+### ========================================
+
+# 成功响应示例（返回本段数据）:
+# {
+#   "code": 0,
+#   "msg": "成功",
+#   "data": {
+#     "id": 1234567890123456801,
+#     "videoId": "test_video_id_001",
+#     "dataStatus": 1,
+#     "totalWatchNum": 10000,
+#     "dataSourceType": 1,
+#     ...
+#   }
+# }
+
+# 成功响应示例（返回混淆数据）:
+# {
+#   "code": 0,
+#   "msg": "成功",
+#   "data": {
+#     "id": 1234567890123456789,
+#     "videoId": "test_video_id_002",
+#     "dataStatus": 1,
+#     "totalWatchNum": 5000,
+#     ...
+#   }
+# }
+
+# 成功响应示例（无数据）:
+# {
+#   "code": 0,
+#   "msg": "成功",
+#   "data": null
+# }
+
+### ========================================
+### 7. 生成视频场次的看盘数据
+### ========================================
+
+### 7.1 正常生成 - 视频开始录制时间在72小时内
+GET {{baseUrl}}/replay/videodataviewing/createDataViewing?videoId=test_video_id_within_72h
+Content-Type: {{contentType}}
+# 期望返回：操作成功
+
+### 7.2 时效校验失败 - 视频开始录制时间超过72小时
+GET {{baseUrl}}/replay/videodataviewing/createDataViewing?videoId=test_video_id_over_72h
+Content-Type: {{contentType}}
+# 期望返回：视频开始录制时间已超过72小时，无法生成看盘数据
+
+### 7.3 视频信息不存在
+GET {{baseUrl}}/replay/videodataviewing/createDataViewing?videoId=not_exist_video_id_99999
+Content-Type: {{contentType}}
+# 期望返回：视频信息不存在
+
+### 7.4 缺少videoId参数
+GET {{baseUrl}}/replay/videodataviewing/createDataViewing
+Content-Type: {{contentType}}
+# 期望返回：参数错误
+
+### 7.5 自动生成模式 - 主播未下播
+GET {{baseUrl}}/replay/videodataviewing/createDataViewing?videoId=test_video_id_001&isAuto=1&anchorOnlineStatus=0
+Content-Type: {{contentType}}
+# 期望返回：主播未下播
+
+### 7.6 自动生成模式 - 视频时长不足50分钟
+GET {{baseUrl}}/replay/videodataviewing/createDataViewing?videoId=test_video_short_duration&isAuto=1&anchorOnlineStatus=1
+Content-Type: {{contentType}}
+# 期望返回：视频时长不足50分钟
+
+### 7.7 手动生成模式（非自动）
+GET {{baseUrl}}/replay/videodataviewing/createDataViewing?videoId=test_video_id_001&isAuto=0
+Content-Type: {{contentType}}
+# 期望返回：操作成功或其他业务提示
+
+### ========================================
+### 测试数据准备 SQL（生成看盘数据）
+### ========================================
+
+# -- 查询视频信息（确认开始录制时间）
+# SELECT video_id, video_name, start_time, end_time, duration, batch_number
+# FROM tb_anchor_video 
+# WHERE video_id IN ('test_video_id_within_72h', 'test_video_id_over_72h');
+
+# -- 模拟72小时内开始的视频（设置 start_time 为当前时间）
+# UPDATE tb_anchor_video 
+# SET start_time = NOW() - INTERVAL 24 HOUR
+# WHERE video_id = 'test_video_id_within_72h';
+
+# -- 模拟超过72小时的视频（设置 start_time 为4天前）
+# UPDATE tb_anchor_video 
+# SET start_time = NOW() - INTERVAL 96 HOUR
+# WHERE video_id = 'test_video_id_over_72h';
+
+# -- 查看数据看盘混淆记录
+# SELECT id, video_id, user_id, tenant_id, data_status, request_id, batch_number, create_date
+# FROM tb_video_data_viewing_confuse
+# WHERE video_id IN ('test_video_id_within_72h', 'test_video_id_over_72h')
+# ORDER BY create_date DESC;
+
+# -- 清理测试数据
+# DELETE FROM tb_video_data_viewing_confuse WHERE video_id LIKE 'test_video_id_%';
+
+### ========================================
+### 期望响应格式（生成看盘数据）
+### ========================================
+
+# 成功响应示例:
+# {
+#   "code": 0,
+#   "msg": "操作成功",
+#   "data": null
+# }
+
+# 时效校验失败响应示例:
+# {
+#   "code": 500,
+#   "msg": "视频开始录制时间已超过72小时，无法生成看盘数据",
+#   "data": null
+# }
+
+# 视频不存在响应示例:
+# {
+#   "code": 500,
+#   "msg": "视频信息不存在",
+#   "data": null
+# }
+
+# 权限不足响应示例:
+# {
+#   "code": 500,
+#   "msg": "没有操作权限",
+#   "data": null
+# }

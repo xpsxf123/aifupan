@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.rbac.mapper.UserRoleMapper">
+  <resultMap id="BaseResultMap" type="com.jiuyu.governance.business.rbac.pojo.entity.UserRole">
+    <!--@mbg.generated-->
+    <!--@Table user_role-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="role_id" jdbcType="BIGINT" property="roleId" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="is_deleted" jdbcType="BOOLEAN" property="isDeleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, user_id, role_id, create_date, update_date, is_deleted
+  </sql>
+  
+  <insert id="insertBatch" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+    insert into user_role (id, user_id, role_id, create_date, update_date, is_deleted) values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id}, #{item.userId}, #{item.roleId}, #{item.createDate}, #{item.updateDate}, #{item.isDeleted})
+    </foreach>
+  </insert>
+  
+  <select id="selectRoleUserCount" resultType="com.jiuyu.governance.common.pojo.bo.CountData">
+    select role_id as id, count(*) as `count` from user_role where role_id in
+    <foreach collection="roleIds" open="(" close=")" item="i" separator=",">
+      #{i}
+    </foreach>
+    and is_deleted = 0
+    group by role_id
+    </select>
+</mapper>

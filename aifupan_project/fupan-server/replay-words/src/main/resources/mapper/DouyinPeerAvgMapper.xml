@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.DouyinPeerAvgDao">
+
+    <select id="selectRawDataByDay" resultType="com.jiuyu.replay.words.vo.peer.DouyinPeerAvgRawVo">
+        SELECT IFNULL(u.system_trade_id, u.ai_correct_trade_id) AS trade_id,
+               u.sec_uid,
+               DATE(d.live_start_date)                        AS stat_date,
+               d.total_watch_num_confuse                      AS total_watch_num,
+               d.average_online_num_confuse                   AS average_online_num,
+               d.average_residence_time_confuse               AS average_residence_time,
+               d.increment_follower_count_confuse             AS increment_follower_count,
+               d.convert_fan_rate_confuse                     AS convert_fan_rate,
+               d.interaction_percent_confuse                  AS interaction_percent,
+               d.volume_start_confuse                         AS volume_start,
+               d.volume_end_confuse                           AS volume_end,
+               d.purchase_count_start_confuse                 AS purchase_count_start,
+               d.purchase_count_end_confuse                   AS purchase_count_end,
+               d.customer_unit_price_start_confuse            AS customer_unit_price_start,
+               d.customer_unit_price_end_confuse              AS customer_unit_price_end,
+               d.uv_value_start_confuse                       AS uv_value_start,
+               d.uv_value_end_confuse                         AS uv_value_end,
+               d.goods_convert_rate_start_confuse             AS goods_convert_rate_start,
+               d.goods_convert_rate_end_confuse               AS goods_convert_rate_end,
+               d.volume_start_confuse / d.total_watch_num_confuse * 1000 AS gpm_start,
+               d.volume_end_confuse   / d.total_watch_num_confuse * 1000 AS gpm_end
+        FROM tb_video_data_viewing d
+                 INNER JOIN tb_anchor_url u ON d.anchor_number = u.anchor_number
+        WHERE d.live_start_date >= #{dayStart}
+          AND d.live_start_date &lt; #{dayEnd}
+          AND TIMESTAMPDIFF(SECOND, d.live_start_date, d.live_end_date) > 3000
+          AND d.is_deleted = 0
+    </select>
+
+</mapper>

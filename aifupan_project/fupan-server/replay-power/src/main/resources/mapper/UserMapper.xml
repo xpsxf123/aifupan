@@ -1,0 +1,1137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.power.repository.dao.UserDao">
+
+    <select id="pageListNew" resultType="com.jiuyu.replay.power.vo.ServerUserListVo">
+        SELECT
+        u.*,
+        ud.user_id,
+        ud.trade_id,
+        ud.company_id,
+        ud.anchor_type,
+        ud.position,
+        ud.email,
+        ud.id_card,
+        ud.real_name,
+        ud.sex,
+        ud.birthday,
+        ud.address,
+        ud.channel_id,
+        ud.sale_id as sales_id,
+        ud.wx_name,
+        ud.agent_sale_id,
+        ud.is_show,
+        ud.video_meet_path,
+        ud.user_ambition,
+        ud.user_belong_type,
+        ud.is_logged_in,
+        ud.agent_id,
+        ud.is_submit_appointment,
+        tar.user_id AS analysis_user_id,
+        tar.analysis_sum AS sum_analysis,
+        tar.day_average_analysis AS day_analysis,
+        tar.last_analysis as last_analysis,
+        DATEDIFF(NOW(), tar.last_analysis) as long_not_analysis,
+        tar.contrast_analysis AS contrast_analysis,
+        tar.own_count AS own_count,
+        o.package_id,
+        o.end_date AS expiration_date,
+        ub.client_version AS clientVersion,
+        o.trial_order as trial_order,
+        upr.user_power_consume AS user_power_consume,
+        tpr.tenant_power_consume AS tenant_power_consume
+        FROM
+        tb_user u
+        LEFT JOIN tb_user_details ud ON u.id = ud.user_id AND ud.is_deleted = 0
+        LEFT JOIN tb_user_analysis_rollup tar ON u.id = tar.user_id AND tar.is_deleted = 0
+        LEFT JOIN tb_user_business ub ON u.id = ub.user_id
+        <!-- 用户累计算力消耗：按 (user_id, 当前租户 active_tenant_id) 命中唯一键 uk_user_tenant，
+             锁定到用户当前租户那一行，1:1 不放大（防同一 user_id 多租户行导致列表重复） -->
+        LEFT JOIN tb_user_power_rollup upr ON upr.user_id = u.id AND upr.tenant_id = u.active_tenant_id AND upr.is_deleted = 0
+        <!-- 租户累计算力消耗：直接按用户当前租户 active_tenant_id 命中 uk_tenant，1:1；
+             不再经 tb_tenant 中转（那会因一个主账号多租户而放大行数） -->
+        LEFT JOIN tb_tenant_power_rollup tpr ON tpr.tenant_id = u.active_tenant_id AND tpr.is_deleted = 0
+        LEFT JOIN (
+        SELECT
+        user_id, commodity_id AS package_id, MIN(trial_order) as trial_order, if(max(level) >= 0, MAX(end_date), null)
+        AS end_date
+        FROM tb_order
+        WHERE is_deleted = 0
+        AND commodity_type = 1
+        AND `status` IN (1, 2)
+        GROUP BY user_id
+        ) o ON if(u.parent_id > 0, u.parent_id, u.id) = o.user_id
+        <!-- 销售归属 -->
+        <if test="bo.salesType != null or bo.employeeStatus != null">
+            INNER JOIN tb_sales s on ud.sale_id = s.id
+        </if>
+        <!-- 渠道明细 -->
+        <if test="bo.promotionName != null and bo.promotionName != ''">
+            INNER JOIN tb_invite_url_code iuc ON u.invite_url_code = iuc.url_code AND iuc.is_deleted = 0
+            INNER JOIN tb_agent_promotion ap ON iuc.promotion_id = ap.id
+        </if>
+        WHERE
+        u.is_deleted = 0
+        AND u.user_type in (0, 2)
+
+        <!-- userIds -->
+        <if test="bo.userIds != null and bo.userIds.size() > 0">
+            AND u.id IN
+            <foreach collection="bo.userIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+
+        <!-- companyIds -->
+        <if test="bo.companyIds != null and bo.companyIds.size() > 0">
+            AND ud.company_id IN
+            <foreach collection="bo.companyIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+
+        <!-- 用户搜索 -->
+        <if test="bo.keyword != null and bo.keyword != ''">
+            AND (
+            u.phone LIKE CONCAT('%', #{bo.keyword}, '%')
+            OR u.nick_name LIKE CONCAT('%', #{bo.keyword}, '%')
+            OR u.username LIKE CONCAT('%', #{bo.keyword}, '%')
+            )
+        </if>
+
+        <!-- 昵称 -->
+        <if test="bo.nickName != null and bo.nickName != ''">
+            AND u.nick_name LIKE CONCAT('%', #{bo.nickName}, '%')
+        </if>
+
+        <!-- 手机号 -->
+        <if test="bo.phone != null and bo.phone != ''">
+            AND u.phone LIKE CONCAT('%', #{bo.phone}, '%')
+        </if>
+
+        <!-- 行业ID -->
+        <if test="bo.id != null">
+            AND u.id = #{bo.id}
+        </if>
+
+        <!-- 父用户id -->
+        <if test="bo.parentId != null">
+            AND u.parent_id = #{bo.parentId}
+        </if>
+
+        <!-- 微信名称 -->
+        <if test="bo.userWxName != null and bo.userWxName != ''">
+            AND ud.wx_name LIKE CONCAT('%', #{bo.userWxName}, '%')
+        </if>
+
+        <!-- 行业ID -->
+        <if test="bo.tradeId != null">
+            AND ud.trade_id = #{bo.tradeId}
+        </if>
+
+        <!-- 是否登录过 -->
+        <if test="bo.isLoggedIn != null">
+            AND ud.is_logged_in = #{bo.isLoggedIn}
+        </if>
+
+        <!-- 是否提交预约 -->
+        <if test="bo.isSubmitAppointment != null">
+            AND ud.is_submit_appointment = #{bo.isSubmitAppointment}
+        </if>
+
+        <!-- 销售ID -->
+        <if test="bo.salesId != null">
+            AND ud.sale_id = #{bo.salesId}
+        </if>
+
+        <if test="bo.agentId != null">
+            AND ud.agent_id = #{bo.agentId}
+        </if>
+
+        <!-- 日平均分析范围 -->
+        <if test="bo.startDayAnalysis != null">
+            AND tar.day_average_analysis &gt;= #{bo.startDayAnalysis}
+        </if>
+        <if test="bo.endDayAnalysis != null">
+            AND tar.day_average_analysis &lt;= #{bo.endDayAnalysis}
+        </if>
+
+        <!-- 多久未分析 -->
+        <if test="bo.startLongNotAnalysis != null">
+            AND DATEDIFF(NOW(), tar.last_analysis) &gt;= #{bo.startLongNotAnalysis}
+        </if>
+        <if test="bo.endLongNotAnalysis != null">
+            AND DATEDIFF(NOW(), tar.last_analysis) &lt;= #{bo.endLongNotAnalysis}
+        </if>
+
+        <!-- 注册时间范围 -->
+        <if test="bo.startTime != null">
+            AND u.create_date &gt;= #{bo.startTime}
+        </if>
+        <if test="bo.endTime != null">
+            AND u.create_date &lt;= #{bo.endTime}
+        </if>
+
+        <!-- 渠道ID -->
+        <if test="bo.channelId != null">
+            AND ud.channel_id = #{bo.channelId}
+        </if>
+
+        <!-- 客户类型 -->
+        <if test="bo.userBelongType != null">
+            AND ud.user_belong_type = #{bo.userBelongType}
+        </if>
+
+        <!-- 客户意向 -->
+        <if test="bo.userAmbition != null and bo.userAmbition != ''">
+            AND ud.user_ambition = #{bo.userAmbition}
+        </if>
+
+        <!-- 自用抖音号数量 ≥ -->
+        <if test="bo.ownCount != null">
+            AND tar.own_count &gt;= #{bo.ownCount}
+        </if>
+
+        <!-- 是否为子账号 -->
+        <if test="bo.userType != null">
+            AND u.user_type = #{bo.userType}
+        </if>
+
+        <!-- 套餐ID搜索 -->
+        <if test="bo.packageId != null">
+            AND o.package_id = #{bo.packageId}
+        </if>
+
+        <!-- 是否为付费用户 -->
+        <if test="bo.trialOrder != null">
+            AND o.trial_order = #{bo.trialOrder}
+        </if>
+
+        <!-- 到期时间 -->
+        <if test="bo.expireTime != null">
+            AND DATEDIFF(o.end_date, NOW()) &lt;= #{bo.expireTime}
+        </if>
+
+        <!-- 销售归属 -->
+        <if test="bo.salesType != null">
+            AND s.sales_type = #{bo.salesType}
+        </if>
+
+        <!-- 渠道明细 -->
+        <if test="bo.promotionName != null and bo.promotionName != ''">
+            AND ap.promotion_name LIKE CONCAT('%', #{bo.promotionName}, '%')
+        </if>
+
+        <!-- 工作状态 -->
+        <if test="bo.employeeStatus != null">
+            AND s.employee_status = #{bo.employeeStatus}
+        </if>
+
+        <!-- 客户端版本 -->
+        <if test="bo.clientVersion != null and bo.clientVersion != ''">
+            AND ub.client_version = #{bo.clientVersion}
+        </if>
+
+        <!-- ========== 动态排序 ========== -->
+        ORDER BY
+        <choose>
+            <when test="bo.sortField == 'ownCount' and bo.sortOrder != null">
+                tar.own_count ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'packageEndDate' and bo.sortOrder != null">
+                o.end_date ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'sumAnalysis' and bo.sortOrder != null">
+                tar.analysis_sum ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'dayAnalysis' and bo.sortOrder != null">
+                tar.day_average_analysis ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'contrastAnalysis' and bo.sortOrder != null">
+                tar.contrast_analysis ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'lastAnalysis' and bo.sortOrder != null">
+                DATEDIFF(NOW(), tar.last_analysis) ${bo.sortOrder}
+            </when>
+            <otherwise>
+                u.create_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="pageDashboardList" resultType="com.jiuyu.replay.power.vo.DashboardListVo">
+        SELECT
+        u.id,
+        ud.wx_name,
+        u.phone,
+        ud.channel_id,
+        ud.sale_id as sales_id,
+        ud.user_ambition as user_ambition,
+        ud.user_belong_type as user_belong_type,
+        o1.end_date AS expiration_one_date,
+        o2.end_date AS expiration_two_date,
+        o1.trial_order as trial_order,
+        o1.level as `level`,
+        o2.level as `level_two`
+        FROM
+        tb_user u
+        LEFT JOIN tb_user_details ud ON u.id = ud.user_id
+        LEFT JOIN (
+        SELECT
+        user_id,
+        max(level) as `level`,
+        MIN(trial_order) AS trial_order,
+        MAX(end_date) AS end_date
+        FROM tb_order
+        WHERE is_deleted = 0
+        AND commodity_type = 1
+        AND `status` IN (1, 2)
+        GROUP BY user_id) o1 ON IF(u.parent_id > 0, u.parent_id, u.id) = o1.user_id
+
+        LEFT JOIN (
+        SELECT
+        user_id,
+        SUBSTRING_INDEX(MAX(CONCAT(real_end_date, '-', trial_order)), '-', -1) AS trial_order,
+        SUBSTRING_INDEX(MAX(CONCAT(real_end_date, '-', `level`)), '-', -1) AS `level`,
+        MAX(real_end_date) AS end_date
+        FROM
+        tb_order
+        WHERE
+        is_deleted = 0
+        AND commodity_type = 1
+        AND `status` IN (3, 4, 5, 8)
+        AND `level` > 0
+        GROUP BY user_id) o2 ON IF(u.parent_id > 0, u.parent_id, u.id) = o2.user_id
+        <where>
+            u.is_deleted = 0
+            AND u.user_type = 0
+            AND o1.user_id IS NOT NULL
+            <!-- 客户意向 -->
+            <if test="bo.userAmbition != null and bo.userAmbition != ''">
+                AND ud.user_ambition = #{bo.userAmbition}
+            </if>
+            <!-- 客户类型 -->
+            <if test="bo.userBelongType != null">
+                AND ud.user_belong_type = #{bo.userBelongType}
+            </if>
+            <!-- 渠道ID -->
+            <if test="bo.channelId != null">
+                AND ud.channel_id = #{bo.channelId}
+            </if>
+            <!-- 销售ID -->
+            <if test="bo.salesId != null">
+                AND ud.sale_id = #{bo.salesId}
+            </if>
+            <!-- 用户搜索 -->
+            <if test="bo.keyword != null and bo.keyword != ''">
+                AND (
+                u.phone LIKE CONCAT('%', #{bo.keyword}, '%')
+                OR ud.wx_name LIKE CONCAT('%', #{bo.keyword}, '%')
+                )
+            </if>
+
+            <!-- 是否为付费用户 即将到期 -->
+            <if test="bo.trialOrder != null and ((bo.dimension == 1 or bo.dimension == 2 or bo.dimension == 6 or bo.dimension == 7 or bo.dimension == 8 or bo.dimension == 9) or bo.dimension == null)">
+                AND o1.trial_order = #{bo.trialOrder}
+            </if>
+
+            <!-- 是否为付费用户 已经过期 -->
+            <if test="bo.trialOrder != null and (bo.dimension == 3 or bo.dimension == 4 or bo.dimension == 5 or bo.dimension == 10 or bo.dimension == 11 or bo.dimension == 12 or bo.dimension == 13)">
+                AND o2.trial_order = #{bo.trialOrder}
+            </if>
+
+            <if test="bo.dimension == null and bo.level != null">
+                AND o1.level = #{bo.level}
+            </if>
+            <if test="bo.dimension != null and (bo.dimension == 1 or bo.dimension == 2 or bo.dimension == 6 or bo.dimension == 7 or bo.dimension == 8 or bo.dimension == 9) and bo.level != null">
+                AND o1.level = #{bo.level}
+            </if>
+            <if test="bo.dimension != null and (bo.dimension == 3 or bo.dimension == 4 or bo.dimension == 5 or bo.dimension == 10 or bo.dimension == 11 or bo.dimension == 12 or bo.dimension == 13) and bo.level != null">
+                AND o2.level = #{bo.level}
+            </if>
+
+            <!-- 到期维度 1：3日内到期，2:7日内到期，3：已过期3日内，4：已过期7日内，5：已过期超过7日 -->
+            <!-- 6：15天内到期，7:30天内到期，8:60天内到期，9:90天内到期，10：已过期7天，11：已过期15天，12：已过期30天，13：已过期60天 -->
+            <if test="bo.dimension != null">
+                <choose>
+                    <when test="bo.dimension == 1">
+                        and o1.level &gt; 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) &lt;= 3 * 24
+                    </when>
+                    <when test="bo.dimension == 2">
+                        and o1.level &gt; 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) &lt;= 7 * 24
+                    </when>
+                    <when test="bo.dimension == 3">
+                        and o1.level &lt;= 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -3 * 24
+                    </when>
+                    <when test="bo.dimension == 4">
+                        and o1.level &lt;= 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -7 * 24
+                    </when>
+                    <when test="bo.dimension == 5">
+                        and o1.level &lt;= 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &lt; -7 * 24
+                    </when>
+                    <when test="bo.dimension == 6">
+                        and o1.level &gt; 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) &lt;= 15 * 24
+                    </when>
+                    <when test="bo.dimension == 7">
+                        and o1.level &gt; 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) &lt;= 30 * 24
+                    </when>
+                    <when test="bo.dimension == 8">
+                        and o1.level &gt; 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) &lt;= 60 * 24
+                    </when>
+                    <when test="bo.dimension == 9">
+                        and o1.level &gt; 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) &lt;= 90 * 24
+                    </when>
+                    <when test="bo.dimension == 10">
+                        and o1.level &lt;= 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -7 * 24
+                    </when>
+                    <when test="bo.dimension == 11">
+                        and o1.level &lt;= 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -15 * 24
+                    </when>
+                    <when test="bo.dimension == 12">
+                        and o1.level &lt;= 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -30 * 24
+                    </when>
+                    <when test="bo.dimension == 13">
+                        and o1.level &lt;= 0
+                        AND TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -60 * 24
+                    </when>
+                </choose>
+            </if>
+        </where>
+        order by u.id desc
+    </select>
+
+    <select id="prepareExpiredUserCount" resultType="com.jiuyu.replay.power.vo.DashboardStatisticsVo">
+        select
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o.end_date) &lt;= 72, 1, null)) as within3Days,
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o.end_date) &lt;= 168, 1, null)) as within7Days
+        from
+        tb_user u
+        inner JOIN (
+        SELECT
+        user_id, MIN(trial_order) AS trial_order, max(level) as `level`, if(max(level) >= 0, MAX(end_date), null) AS
+        end_date
+        FROM tb_order
+        WHERE is_deleted = 0
+        AND commodity_type = 1
+        AND `status` IN (1, 2)
+        GROUP BY user_id
+        ) o ON if(u.parent_id > 0, u.parent_id, u.id) = o.user_id
+        <where>
+            u.is_deleted = 0
+            AND u.user_type = 0
+            and o.level &gt; 0
+            AND TIMESTAMPDIFF(HOUR, NOW(), o.end_date) &lt;= 7 * 24
+            <!-- 是否为付费用户 -->
+            <if test="trialOrder != null">
+                AND o.trial_order = #{trialOrder}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="alreadyExpiredUserCount" resultType="com.jiuyu.replay.power.vo.DashboardStatisticsVo">
+        select
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -72, 1, null)) as expired3Days,
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -168, 1, null)) as expired7Days,
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &lt; -168, 1, null)) as outside7Days
+        from
+        tb_user u
+        inner JOIN (
+        SELECT
+        user_id,
+        max(level) AS level
+        FROM
+        tb_order
+        WHERE
+        is_deleted = 0
+        AND commodity_type = 1
+        AND `status` = 2
+        GROUP BY
+        user_id
+        ) o1 ON if(u.parent_id > 0, u.parent_id, u.id) = o1.user_id
+        inner JOIN (
+        SELECT
+        user_id,
+        SUBSTRING_INDEX(MAX(CONCAT(real_end_date, '-', trial_order)), '-', -1) AS trial_order,
+        MAX(real_end_date) AS end_date
+        FROM
+        tb_order
+        WHERE
+        is_deleted = 0
+        AND commodity_type = 1
+        AND `status` IN (3, 4, 5, 8)
+        and `level` > 0
+        GROUP BY
+        user_id
+        ) o2 ON if(u.parent_id > 0, u.parent_id, u.id) = o2.user_id
+        <where>
+            u.is_deleted = 0
+            AND u.user_type = 0
+            and o1.level &lt;= 0
+            <!-- 是否为付费用户 -->
+            <if test="trialOrder != null">
+                AND o2.trial_order = #{trialOrder}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="listManage" resultType="com.jiuyu.replay.power.entity.UserEntity">
+        SELECT
+        u.*
+        FROM tb_user u left join tb_user_details ud on u.id = ud.user_id
+        <where>
+            and u.is_deleted = 0
+            and u.id > 1
+            <if test="bo.keyword != null and bo.keyword != ''">
+                AND (u.username LIKE CONCAT('%', #{bo.keyword}, '%')
+                OR u.nick_name LIKE CONCAT('%', #{bo.keyword}, '%')
+                OR phone LIKE CONCAT('%', #{bo.keyword}, '%'))
+            </if>
+            <if test="bo.parentId != null">
+                AND u.parent_id = #{bo.parentId}
+            </if>
+            <if test="bo.userType != null">
+                AND u.user_type = #{bo.userType}
+            </if>
+            <if test="bo.status != null">
+                AND u.status = #{bo.status}
+            </if>
+            <if test="bo.userName != null and bo.userName != ''">
+                AND u.username LIKE CONCAT('%', #{bo.userName}, '%')
+            </if>
+            <if test="bo.nickName != null and bo.nickName != ''">
+                AND u.nick_name LIKE CONCAT('%', #{bo.nickName}, '%')
+            </if>
+            <if test="bo.phone != null and bo.phone != ''">
+                AND u.phone LIKE CONCAT('%', #{bo.phone}, '%')
+            </if>
+            <if test="bo.userIds != null and !bo.userIds.isEmpty()">
+                AND u.id IN
+                <foreach item="id" collection="bo.userIds" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="bo.startTime != null">
+                AND u.create_date &gt;= #{bo.startTime}
+            </if>
+            <if test="bo.endTime != null">
+                AND u.create_date &lt;= #{bo.endTime}
+            </if>
+            <if test="bo.employeeStatus != null">
+                AND ud.employee_status = #{bo.employeeStatus}
+            </if>
+        </where>
+        order by u.id desc
+    </select>
+    <select id="statisticsRegister" resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesCardStatisticsDataVo">
+        SELECT count(1)                                                                    AS totalRegisterNum,
+               count(if(u.create_date BETWEEN #{bo.startDate} AND #{bo.endDate}, 1, NULL)) AS registerNum
+        FROM tb_user u
+                 LEFT JOIN tb_user_details ud ON u.id = ud.user_id
+        WHERE u.is_deleted = 0
+          AND u.user_type = 0
+          AND ud.is_deleted = 0
+          AND ud.sale_id = #{bo.salesId}
+    </select>
+    <select id="statisticsRegisterTeam"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesCardStatisticsDataVo">
+
+        <include refid="dept_user"/>
+
+        SELECT count(1) AS totalRegisterNum
+        FROM dept_user du
+        inner join tb_sales s on s.user_id = du.user_id
+        INNER join tb_user_details ud on ud.sale_id = s.id
+        inner JOIN tb_user u ON ud.user_id = u.id
+        WHERE u.is_deleted = 0
+        AND u.user_type = 0
+    </select>
+    <select id="statisticsTrial" resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesCardStatisticsDataVo">
+        select count(DISTINCT u.id)                                        as trialUserNum,
+               count(DISTINCT CASE WHEN ud.is_logged_in = 1 THEN u.id END) as trialLogoUserNum
+        from tb_order as o
+                 inner join tb_user u on o.user_id = u.id
+                 inner join tb_user_details ud on ud.user_id = u.id
+        WHERE u.is_deleted = 0
+          AND u.user_type = 0
+          and o.is_deleted = 0
+          and o.level > 0
+          and o.trial_order = 1
+          AND ud.sale_id = #{bo.salesId}
+          AND o.create_date BETWEEN #{bo.startDate} AND #{bo.endDate}
+    </select>
+
+    <sql id="dept_user">
+        WITH RECURSIVE
+            dept_tree AS (
+                SELECT id, parent_id
+                FROM tb_dept
+                WHERE id = #{bo.deptId}
+                  AND is_deleted = 0
+
+                UNION ALL
+
+                SELECT d.id, d.parent_id
+                FROM tb_dept d
+                         INNER JOIN dept_tree dt ON d.parent_id = dt.id
+                WHERE d.is_deleted = 0),
+            dept_user AS (SELECT DISTINCT du.user_id
+                          FROM dept_tree dt
+                                   INNER JOIN tb_dept_user du ON dt.id = du.dept_id
+                          WHERE du.is_deleted = 0)
+    </sql>
+
+    <select id="statisticsTrialTeam"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesCardStatisticsDataVo">
+
+        <include refid="dept_user"/>
+
+        select
+        count(DISTINCT u.id) as trialUserNum,
+        count(DISTINCT CASE WHEN ud.is_logged_in = 1 THEN u.id END) as trialLogoUserNum
+        from tb_order as o
+        inner join tb_user u on o.user_id = u.id
+        inner join tb_user_details ud on ud.user_id = u.id
+        inner join tb_sales s on ud.sale_id = s.id
+        inner join dept_user du on du.user_id = s.user_id
+        WHERE u.is_deleted = 0
+        AND u.user_type = 0
+        and o.is_deleted = 0
+        and o.level > 0
+        and o.trial_order = 1
+        AND o.create_date BETWEEN #{bo.startDate} AND #{bo.endDate}
+    </select>
+    <select id="statisticsRenewalExpires"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesCardStatisticsDataVo">
+        SELECT count(1) as renewalExpiresNum
+        FROM tb_user u
+                 inner join tb_user_details ud on ud.user_id = u.id
+                 inner JOIN (SELECT user_id,
+                                   MAX(real_end_date) AS end_date
+                            FROM tb_order
+                            WHERE is_deleted = 0
+                              AND commodity_type = 1
+                              AND trial_order = 0
+                              AND `status` IN (1, 2)
+                              AND `level` > 0
+                            GROUP BY user_id) o ON u.id = o.user_id
+        WHERE u.is_deleted = 0
+          AND u.user_type = 0
+          AND ud.sale_id = #{bo.salesId}
+          AND o.end_date &lt;= DATE_ADD(NOW(), INTERVAL 30 DAY)
+    </select>
+
+
+    <select id="statisticsRenewalExpiresTeam"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesCardStatisticsDataVo">
+
+        <include refid="dept_user"/>
+
+        SELECT count(1) as renewalExpiresNum
+        FROM dept_user du
+        inner join tb_sales s on s.user_id = du.user_id
+        inner join tb_user_details ud on ud.sale_id = s.id
+        inner JOIN tb_user u ON ud.user_id = u.id
+        inner JOIN (SELECT user_id,
+        MAX(real_end_date) AS end_date
+                            FROM tb_order
+                            WHERE is_deleted = 0
+        AND commodity_type = 1
+        AND trial_order = 0
+        AND `status` IN (1, 2, 3, 4, 5, 8)
+        AND `level` > 0
+                            GROUP BY user_id) o ON u.id = o.user_id
+        WHERE u.is_deleted = 0
+          AND u.user_type = 0
+        AND o.end_date &lt;= #{bo.endDate}
+    </select>
+
+    <select id="statisticsDealCustomers"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesCardStatisticsDataVo">
+        SELECT count(DISTINCT u.id) AS dealCustomersNum
+        FROM tb_order o
+                 LEFT JOIN tb_user u ON o.user_id = u.id
+                 LEFT JOIN tb_user_details ud ON u.id = ud.user_id
+        WHERE o.is_deleted = 0
+          AND u.is_deleted = 0
+          AND ud.is_deleted = 0
+          AND o.trial_order = 0
+          AND o.commodity_type = 1
+          AND ud.sale_id = #{bo.salesId}
+          AND o.`status` IN (1, 2, 3, 4, 5, 8)
+          AND o.`level` > 0
+          AND o.create_date BETWEEN #{bo.startDate} AND #{bo.endDate}
+    </select>
+
+    <select id="statisticsDealCustomersTeam"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesCardStatisticsDataVo">
+
+        <include refid="dept_user"/>
+
+        SELECT count(DISTINCT u.id) AS dealCustomersNum
+        FROM tb_order o
+        inner JOIN tb_user u ON o.user_id = u.id
+        inner JOIN tb_user_details ud ON u.id = ud.user_id
+        inner JOIN tb_sales s ON s.id = ud.sale_id
+        inner join dept_user du on du.user_id = s.user_id
+        WHERE o.is_deleted = 0
+        AND u.is_deleted = 0
+        AND ud.is_deleted = 0
+        AND o.trial_order = 0
+        AND o.commodity_type = 1
+        AND o.`status` IN (1, 2, 3, 4, 5, 8)
+        AND o.`level` > 0
+        AND o.create_date BETWEEN #{bo.startDate} AND #{bo.endDate}
+    </select>
+
+    <select id="salesEchartsStatisticsData"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.UserAmbitionStatisticsVo">
+        SELECT ud.user_ambition,
+               count(1) as num
+        FROM tb_user u
+                 INNER JOIN tb_user_details ud on ud.user_id = u.id
+        WHERE u.is_deleted = 0
+          AND u.user_type = 0
+          and ud.user_ambition is not null
+          AND ud.sale_id = #{bo.salesId}
+          AND u.create_date BETWEEN #{bo.startDate} AND #{bo.endDate}
+        GROUP BY ud.user_ambition
+    </select>
+
+    <select id="teamEchartsStatisticsData" resultType="java.util.Map">
+
+        <include refid="dept_user"/>
+
+        SELECT
+        du.user_id,
+        ud.user_ambition,
+        count(1) as num
+        FROM dept_user du
+        INNER JOIN tb_sales s ON s.user_id = du.user_id
+        INNER JOIN tb_user_details ud ON ud.sale_id = s.id
+        INNER JOIN tb_user u ON ud.user_id = u.id
+        WHERE u.is_deleted = 0
+        AND u.user_type = 0
+        and ud.user_ambition is not null
+        AND u.create_date BETWEEN #{bo.startDate} AND #{bo.endDate}
+        GROUP BY du.user_id, ud.user_ambition
+
+    </select>
+
+    <select id="salesTrialAboutTo3DayExpires"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesStatisticsList">
+        SELECT
+        u.id as user_id, ud.wx_name, u.phone, u.create_date as register_date, o1.commodity_name as packageName,
+        o1.level as packageLevel, ud.user_ambition, TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) as packageExpires,
+        o1.end_date as packageExpiresTime, ub.according_status, ub.according_content, ub.according_date,
+        ub.next_fol_time
+        FROM tb_user u
+        inner join tb_user_details ud on ud.user_id = u.id
+        inner join (
+        select user_id, max(real_end_date) AS end_date, max(tb_order.level) as level, max(commodity_name) as
+        commodity_name
+        from tb_order
+        where is_deleted = 0 AND commodity_type = 1 AND trial_order = 1 AND status in (1, 2) and level > 0 group by
+        user_id ) o1 ON u.id = o1.user_id
+        left join tb_user_business ub on u.id = ub.user_id
+        WHERE
+        u.is_deleted = 0
+        AND u.user_type = 0
+        AND TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) &lt;= 3 * 24
+        <!--        <if test="bo.selectType != null and bo.selectType == 0">-->
+        <!--            AND TIMESTAMPDIFF(HOUR, NOW(), ub.next_fol_time) &lt;= 3 * 24-->
+        <!--        </if>-->
+        <!--        <if test="bo.selectType != null and bo.selectType == 1">-->
+        <!--            AND TIMESTAMPDIFF(HOUR, NOW(), ub.next_fol_time) &gt;= 3 * 24-->
+        <!--        </if>-->
+        <if test="bo.salesId != null">
+            AND ud.sale_id = #{bo.salesId}
+        </if>
+        <!-- ========== 动态排序 ========== -->
+        ORDER BY
+        <choose>
+            <when test="bo.sortField == 'userAmbition' and bo.sortOrder != null">
+                CASE ud.user_ambition
+                WHEN 'S' THEN 5
+                WHEN 'A' THEN 4
+                WHEN 'B' THEN 3
+                WHEN 'C' THEN 2
+                WHEN 'D' THEN 1
+                ELSE 6
+                END ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'expiryDay' and bo.sortOrder != null">
+                o1.end_date ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'accordingStatus' and bo.sortOrder != null">
+                ub.according_status ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'level' and bo.sortOrder != null">
+                o1.level ${bo.sortOrder}
+            </when>
+            <otherwise>
+                CASE ud.user_ambition
+                WHEN 'S' THEN 5
+                WHEN 'A' THEN 4
+                WHEN 'B' THEN 3
+                WHEN 'C' THEN 2
+                WHEN 'D' THEN 1
+                ELSE 6
+                END ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="salesAboutTo3Day" resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesStatisticsList">
+        SELECT
+        u.id as user_id, ud.wx_name, u.phone, u.create_date as register_date, o1.commodity_name as packageName,
+        o1.level as packageLevel, ud.user_ambition, TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) as packageExpires,
+        o1.end_date as packageExpiresTime, ub.according_status, ub.according_content, ub.according_date,
+        ub.next_fol_time
+        FROM tb_user u
+        inner join tb_user_details ud on ud.user_id = u.id
+        inner join tb_user_business ub on u.id = ub.user_id
+        left join (select user_id, max(real_end_date) AS end_date, max(tb_order.level) as level, max(commodity_name) as
+        commodity_name
+        from tb_order
+        where is_deleted = 0 AND commodity_type = 1 AND status in (1, 2) GROUP BY user_id) o1 ON u.id = o1.user_id
+        # left JOIN (SELECT user_id
+        # FROM tb_order
+        # WHERE is_deleted = 0
+        # AND commodity_type = 1
+        # AND trial_order = 0
+        # AND `status` IN (1, 2, 3, 4, 5, 8)
+        # AND `level` > 0
+        # GROUP BY user_id) o2 ON u.id = o2.user_id
+        WHERE
+        u.is_deleted = 0
+        AND u.user_type = 0
+        # AND o2.user_id is null
+        <if test="bo.selectType != null and bo.selectType == 0">
+            AND DATEDIFF(ub.next_fol_time, NOW()) BETWEEN 0 AND 3
+        </if>
+        <if test="bo.selectType != null and bo.selectType == 1">
+            AND DATEDIFF(ub.next_fol_time, NOW()) BETWEEN -3 AND -1
+        </if>
+        <if test="bo.salesId != null">
+            AND ud.sale_id = #{bo.salesId}
+        </if>
+        <!-- ========== 动态排序 ========== -->
+        ORDER BY
+        <choose>
+            <when test="bo.sortField == 'userAmbition' and bo.sortOrder != null">
+                CASE ud.user_ambition
+                WHEN 'S' THEN 5
+                WHEN 'A' THEN 4
+                WHEN 'B' THEN 3
+                WHEN 'C' THEN 2
+                WHEN 'D' THEN 1
+                ELSE 6
+                END ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'expiryDay' and bo.sortOrder != null">
+                o1.end_date ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'accordingStatus' and bo.sortOrder != null">
+                ub.according_status ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'level' and bo.sortOrder != null">
+                o1.level ${bo.sortOrder}
+            </when>
+            <otherwise>
+                CASE ud.user_ambition
+                WHEN 'S' THEN 5
+                WHEN 'A' THEN 4
+                WHEN 'B' THEN 3
+                WHEN 'C' THEN 2
+                WHEN 'D' THEN 1
+                ELSE 6
+                END ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="salesTrialAboutTo15DayRenewal"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesStatisticsList">
+        SELECT
+        u.id as user_id, ud.wx_name, u.phone, u.create_date as register_date, o1.commodity_name as packageName,
+        o1.level as packageLevel, ud.user_ambition, TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) as packageExpires,
+        o1.end_date as packageExpiresTime, ub.according_status, ub.according_content, ub.according_date,
+        ub.next_fol_time
+        FROM tb_user u
+        inner join tb_user_details ud on ud.user_id = u.id
+        inner join (select user_id, max(real_end_date) AS end_date, max(tb_order.level) as level, max(commodity_name) as
+        commodity_name
+        from tb_order where is_deleted = 0 AND commodity_type = 1 AND trial_order = 0 AND status in (1, 2) AND level > 0
+        group by user_id) o1 ON u.id = o1.user_id
+        left join tb_user_business ub on u.id = ub.user_id
+        WHERE
+        u.is_deleted = 0
+        AND u.user_type = 0
+        AND TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) &lt;= 15 * 24
+        <if test="bo.salesId != null">
+            AND ud.sale_id = #{bo.salesId}
+        </if>
+        <!-- ========== 动态排序 ========== -->
+        ORDER BY
+        <choose>
+            <when test="bo.sortField == 'level' and bo.sortOrder != null">
+                o1.level ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'expiryDay' and bo.sortOrder != null">
+                o1.end_date ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'accordingStatus' and bo.sortOrder != null">
+                ub.according_status ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'level' and bo.sortOrder != null">
+                o1.level ${bo.sortOrder}
+            </when>
+            <otherwise>
+                o1.level ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="teamTrialAboutTo3DayExpiresStatistics" resultType="java.util.Map">
+        <include refid="dept_user"/>
+        SELECT
+        ud.user_ambition as user_ambition, count(1) as user_count
+        FROM dept_user du
+        INNER JOIN tb_sales s ON s.user_id = du.user_id
+        INNER JOIN tb_user_details ud ON ud.sale_id = s.id
+        INNER JOIN tb_user u ON ud.user_id = u.id
+        INNER join (
+        select
+        user_id, max(real_end_date) AS end_date
+        from tb_order
+        where is_deleted = 0
+        AND commodity_type = 1
+        AND trial_order = 1
+        AND status in (1, 2)
+        and level > 0
+        GROUP BY user_id
+        ) o1 ON u.id = o1.user_id
+        WHERE
+        u.is_deleted = 0
+        AND u.user_type = 0
+        <if test="bo.endDate != null and bo.endDate != ''">
+            AND o1.end_date &lt;= #{bo.endDate}
+        </if>
+        group by ud.user_ambition
+
+
+    </select>
+
+    <select id="teamTrialAboutTo3DayExpires"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.SalesStatisticsList">
+
+        <include refid="dept_user"/>
+
+        SELECT
+        u.id as user_id, ud.wx_name, u.phone, u.create_date as register_date, o1.commodity_name as packageName,
+        o1.level as packageLevel, ud.user_ambition, TIMESTAMPDIFF(HOUR, NOW(), o1.end_date) as packageExpires,
+        o1.end_date as packageExpiresTime, ub.according_status, ub.according_content, ub.according_date,
+        ub.next_fol_time, s.sales_name as sales_name, s.id as sales_id
+        FROM dept_user du
+        INNER JOIN tb_sales s ON s.user_id = du.user_id
+        INNER JOIN tb_user_details ud ON ud.sale_id = s.id
+        INNER JOIN tb_user u ON ud.user_id = u.id
+        INNER join (
+        select
+        user_id, max(real_end_date) AS end_date, max(tb_order.level) as level, max(commodity_name) as commodity_name
+        from tb_order
+        where is_deleted = 0
+        AND commodity_type = 1
+        AND trial_order = 1
+        AND status in (1, 2)
+        and level > 0
+        GROUP BY user_id
+        ) o1 ON u.id = o1.user_id
+        left join tb_user_business ub on u.id = ub.user_id
+        WHERE
+        u.is_deleted = 0
+        AND u.user_type = 0
+        <if test="bo.userAmbition != null and bo.userAmbition != ''">
+            AND ud.user_ambition = #{bo.userAmbition}
+        </if>
+        <if test="bo.endDate != null and bo.endDate != ''">
+            AND o1.end_date &lt;= #{bo.endDate}
+        </if>
+        <!-- ========== 动态排序 ========== -->
+        ORDER BY
+        <choose>
+            <when test="bo.sortField == 'userAmbition' and bo.sortOrder != null">
+                CASE ud.user_ambition
+                WHEN 'S' THEN 5
+                WHEN 'A' THEN 4
+                WHEN 'B' THEN 3
+                WHEN 'C' THEN 2
+                WHEN 'D' THEN 1
+                ELSE 6
+                END ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'expiryDay' and bo.sortOrder != null">
+                o1.end_date ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'accordingStatus' and bo.sortOrder != null">
+                ub.according_status ${bo.sortOrder}
+            </when>
+            <when test="bo.sortField == 'level' and bo.sortOrder != null">
+                o1.level ${bo.sortOrder}
+            </when>
+            <otherwise>
+                CASE ud.user_ambition
+                WHEN 'S' THEN 5
+                WHEN 'A' THEN 4
+                WHEN 'B' THEN 3
+                WHEN 'C' THEN 2
+                WHEN 'D' THEN 1
+                ELSE 6
+                END ASC
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="teamSalesFollowSalesList"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.EachSalesFollowStatisticsVo">
+        <include refid="dept_user"/>
+
+        SELECT s.id as salesId, s.sales_name as salesName
+        FROM dept_user du
+        INNER JOIN tb_sales s ON s.user_id = du.user_id
+        WHERE s.is_deleted = 0
+    </select>
+
+    <select id="teamSalesFollowRegisterStats"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.EachSalesFollowStatisticsVo">
+        SELECT
+        s.id as salesId,
+        count(1) AS registerUserNum,
+        count(IF(ud.is_logged_in = 1, 1, NULL)) AS loginUserNum,
+        count(IF(ud.is_show = 1, 1, NULL)) AS demoNum
+        FROM tb_sales s
+        INNER JOIN tb_user_details ud ON ud.sale_id = s.id
+        INNER JOIN tb_user u ON ud.user_id = u.id
+        WHERE s.id IN
+        <foreach collection="salesIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND u.is_deleted = 0
+        AND u.user_type = 0
+        AND u.create_date BETWEEN #{bo.startDate} AND #{bo.endDate}
+        GROUP BY s.id
+    </select>
+
+    <select id="teamSalesFollowOrderStats"
+            resultType="com.jiuyu.replay.generic.vo.power.statistics.EachSalesFollowStatisticsVo">
+        SELECT
+        s.id as salesId,
+        COUNT(DISTINCT CASE WHEN o.trial_order = 1 AND o.commodity_type = 1 AND o.level > 0 THEN o.user_id END) AS
+        trialUserNum,
+        COUNT(DISTINCT CASE WHEN o.trial_order = 1 AND o.commodity_type = 1 AND o.level > 0 and ud.is_logged_in = 1 THEN
+        o.user_id END) AS trialLoginUserNum,
+        COUNT(DISTINCT CASE WHEN o.trial_order = 0 THEN o.user_id END) AS customerNum,
+        IFNULL(SUM(CASE WHEN o.trial_order = 0 THEN o.total_price ELSE 0 END), 0) AS customerAmount
+        FROM tb_order AS o
+        INNER JOIN tb_user u ON o.user_id = u.id
+        INNER JOIN tb_user_details ud ON ud.user_id = u.id
+        INNER JOIN tb_sales s ON ud.sale_id = s.id
+        WHERE s.id IN
+        <foreach collection="salesIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND u.is_deleted = 0
+        AND u.user_type = 0
+        AND o.is_deleted = 0
+        AND u.create_date BETWEEN #{bo.startDate} AND #{bo.endDate}
+        GROUP BY s.id
+    </select>
+
+    <select id="prepareExpiredPaidUserCount" resultType="com.jiuyu.replay.power.vo.PaidDashboardStatisticsVo">
+        select
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o.end_date) &lt;= 360, 1, null)) as within15Days,
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o.end_date) &lt;= 720, 1, null)) as within30Days,
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o.end_date) &lt;= 1440, 1, null)) as within60Days,
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o.end_date) &lt;= 2160, 1, null)) as within90Days
+        from
+        tb_user u
+        inner JOIN (
+        SELECT
+        user_id, MIN(trial_order) AS trial_order, max(level) as `level`, if(max(level) >= 0, MAX(end_date), null) AS
+        end_date
+        FROM tb_order
+        WHERE is_deleted = 0
+        AND commodity_type = 1
+        AND `status` IN (1, 2)
+        AND trial_order = 0
+        GROUP BY user_id
+        ) o ON if(u.parent_id > 0, u.parent_id, u.id) = o.user_id
+        <where>
+            u.is_deleted = 0
+            AND u.user_type = 0
+            and o.level &gt; 0
+            AND TIMESTAMPDIFF(HOUR, NOW(), o.end_date) &lt;= 90 * 24
+        </where>
+
+    </select>
+
+    <select id="alreadyExpiredPaidUserCount" resultType="com.jiuyu.replay.power.vo.PaidDashboardStatisticsVo">
+        select
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -168, 1, null)) as expired7Days,
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -360, 1, null)) as expired15Days,
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -720, 1, null)) as expired30Days,
+        count(if(TIMESTAMPDIFF(HOUR, NOW(), o2.end_date) &gt;= -1440, 1, null)) as expired60Days
+        from
+        tb_user u
+        inner JOIN (
+        SELECT
+        user_id,
+        max(level) AS level
+        FROM
+        tb_order
+        WHERE
+        is_deleted = 0
+        AND commodity_type = 1
+        AND `status` IN (1, 2)
+        GROUP BY
+        user_id
+        ) o1 ON if(u.parent_id > 0, u.parent_id, u.id) = o1.user_id
+        inner JOIN (
+        SELECT
+        user_id,
+        SUBSTRING_INDEX(MAX(CONCAT(real_end_date, '-', trial_order)), '-', -1) AS trial_order,
+        MAX(real_end_date) AS end_date
+        FROM
+        tb_order
+        WHERE
+        is_deleted = 0
+        AND commodity_type = 1
+        AND `status` IN (3, 4, 5, 8)
+        and `level` > 0
+        GROUP BY
+        user_id
+        ) o2 ON if(u.parent_id > 0, u.parent_id, u.id) = o2.user_id
+        <where>
+            u.is_deleted = 0
+            AND u.user_type = 0
+            and o1.level &lt;= 0
+            AND o2.trial_order = 0
+        </where>
+
+    </select>
+</mapper>

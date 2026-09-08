@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.room.mapper.WorkScheduleMapper">
+  <resultMap id="BaseResultMap" type="com.jiuyu.governance.business.room.pojo.entity.WorkSchedule">
+    <!--@mbg.generated-->
+    <!--@Table work_schedule-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="is_deleted" jdbcType="BOOLEAN" property="isDeleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+    <result column="work_day" jdbcType="DATE" property="workDay" />
+    <result column="start_work" jdbcType="INTEGER" property="startWork" />
+    <result column="end_work" jdbcType="INTEGER" property="endWork" />
+    <result column="live_room_id" jdbcType="BIGINT" property="liveRoomId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="schedule_duration" jdbcType="INTEGER" property="scheduleDuration" />
+    <result column="rest_duration" jdbcType="INTEGER" property="restDuration" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, create_date, update_date, create_by, update_by, is_deleted, tenant_id, work_day,
+    start_work, end_work, live_room_id, remark, schedule_duration, rest_duration
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update work_schedule
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="create_date = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createDate,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="update_date = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.updateDate,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="create_by = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createBy,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="update_by = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.updateBy,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="is_deleted = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.isDeleted,jdbcType=BOOLEAN}
+        </foreach>
+      </trim>
+      <trim prefix="tenant_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.tenantId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="work_day = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.workDay,jdbcType=DATE}
+        </foreach>
+      </trim>
+      <trim prefix="start_work = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.startWork,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="end_work = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.endWork,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="live_room_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.liveRoomId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="schedule_duration = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.scheduleDuration,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="rest_duration = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.restDuration,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update work_schedule
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="create_date = case" suffix="else create_date end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createDate != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.createDate,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="update_date = case" suffix="else update_date end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.updateDate != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.updateDate,jdbcType=TIMESTAMP}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="create_by = case" suffix="else create_by end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createBy != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.createBy,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="update_by = case" suffix="else update_by end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.updateBy != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.updateBy,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="is_deleted = case" suffix="else is_deleted end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.isDeleted != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.isDeleted,jdbcType=BOOLEAN}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="tenant_id = case" suffix="else tenant_id end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.tenantId != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.tenantId,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="work_day = case" suffix="else work_day end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.workDay != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.workDay,jdbcType=DATE}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="start_work = case" suffix="else start_work end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.startWork != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.startWork,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="end_work = case" suffix="else end_work end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.endWork != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.endWork,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="live_room_id = case" suffix="else live_room_id end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.liveRoomId != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.liveRoomId,jdbcType=BIGINT}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="else remark end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.remark != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.remark,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="schedule_duration = case" suffix="else schedule_duration end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.scheduleDuration != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.scheduleDuration,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="rest_duration = case" suffix="else rest_duration end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.restDuration != null">
+            when id = #{item.id,jdbcType=BIGINT} then #{item.restDuration,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into work_schedule
+    (id, create_date, update_date, create_by, update_by, is_deleted, tenant_id, work_day,
+      start_work, end_work, live_room_id, remark, schedule_duration, rest_duration)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.createDate,jdbcType=TIMESTAMP}, #{item.updateDate,jdbcType=TIMESTAMP},
+        #{item.createBy,jdbcType=BIGINT}, #{item.updateBy,jdbcType=BIGINT}, #{item.isDeleted,jdbcType=BOOLEAN},
+        #{item.tenantId,jdbcType=BIGINT}, #{item.workDay,jdbcType=DATE}, #{item.startWork,jdbcType=INTEGER},
+        #{item.endWork,jdbcType=INTEGER}, #{item.liveRoomId,jdbcType=BIGINT}, #{item.remark,jdbcType=VARCHAR},
+        #{item.scheduleDuration,jdbcType=INTEGER}, #{item.restDuration,jdbcType=INTEGER}
+        )
+    </foreach>
+  </insert>
+
+  <select id="selectRawLiveSchedule" resultType="com.jiuyu.governance.business.room.pojo.bo.LiveScheduleRawDto">
+      SELECT ws.id                as scheduleId,
+             ws.live_room_id      as liveRoomId,
+             lr.anchor_number     as secUid,
+             lr.platform          as platformType,
+             ws.work_day          as workDay,
+             ws.start_work        as startWork,
+             ws.end_work          as endWork,
+             ws.schedule_duration as scheduleDuration,
+             ws.rest_duration     as restDuration,
+             se.employee_id       as employeeId,
+             e.name               as employeeName,
+             se.position_id       as positionId,
+             se.id                as scheduleEmployeeId
+      FROM work_schedule ws
+               JOIN live_room lr ON ws.live_room_id = lr.id AND lr.is_deleted = 0
+               JOIN schedule_employee se ON ws.id = se.schedule_id AND se.is_deleted = 0
+               LEFT JOIN employee e ON se.employee_id = e.id AND e.is_deleted = 0
+      WHERE ws.tenant_id = #{tenantId}
+        AND ws.is_deleted = 0
+      <if test="idx != null">
+          and se.id &lt; #{idx}
+      </if>
+      <if test="platformType != null">
+          AND lr.platform = #{platformType}
+      </if>
+      <if test="secUidList != null and secUidList.size() > 0">
+          AND lr.sec_uid IN
+          <foreach collection="secUidList" item="secUid" open="(" separator="," close=")">
+              #{secUid}
+          </foreach>
+      </if>
+      <if test="minDate != null">
+          AND ws.work_day &gt; #{minDate}
+      </if>
+      <if test="maxDate != null">
+          AND ws.work_day &lt; #{maxDate}
+      </if>
+      <if test="positionIds != null and positionIds.size() > 0">
+          AND se.position_id IN
+          <foreach collection="positionIds" item="posId" open="(" separator="," close=")">
+              #{posId}
+          </foreach>
+      </if>
+      order by se.id desc limit #{limit}
+  </select>
+
+  <select id="selectClientSchedules" resultType="com.jiuyu.governance.business.room.pojo.response.schedule.RoomWorkScheduleDto">
+      SELECT
+          ws.id,
+          lr.platform as platformType,
+          lr.anchor_number as secUid,
+          ws.live_room_id,
+          ws.work_day as workDay,
+          ws.start_work,
+          ws.end_work,
+          ws.schedule_duration
+      FROM live_room lr
+      JOIN work_schedule ws ON ws.live_room_id = lr.id AND lr.is_deleted = 0
+      WHERE ws.tenant_id = #{tenantId}
+        <if test="idx != null">
+          and ws.id &lt; #{idx}
+        </if>
+        AND ws.is_deleted = 0
+        AND ws.work_day = #{day}
+        AND EXISTS (
+          SELECT 1
+          FROM schedule_employee se
+          WHERE se.is_deleted = 0
+            AND se.schedule_id = ws.id
+            AND se.position_id = #{anchorPositionId}
+        )
+      order by ws.id desc limit #{limit}
+  </select>
+    
+    <select id="getLiveRoomFuturePlanSchedules"
+            resultType="com.jiuyu.governance.business.room.pojo.response.schedule.RoomWorkScheduleDto">
+        SELECT
+        ws.id,
+        lr.platform as platformType,
+        lr.sec_uid as secUid,
+        ws.live_room_id,
+        ws.work_day as workDay,
+        ws.start_work,
+        ws.end_work,
+        ws.schedule_duration
+        FROM live_room lr
+        JOIN work_schedule ws ON ws.live_room_id = lr.id AND lr.is_deleted = 0
+        WHERE ws.tenant_id = #{tenantId}
+        <if test="idx != null">
+            and ws.id &lt; #{idx}
+        </if>
+        AND ws.is_deleted = 0
+        AND ws.work_day &gt;= #{startTime} AND ws.work_day &lt; #{futureDay}
+        AND EXISTS (
+          SELECT 1
+          FROM schedule_employee se
+          WHERE se.is_deleted = 0
+            AND se.schedule_id = ws.id
+            AND se.position_id = #{anchorPositionId}
+        )
+        order by ws.id desc limit #{limit}
+    </select>
+  
+  <select id="selectEmployeeSchedule"
+            resultType="com.jiuyu.governance.business.room.pojo.bo.EmployeeLiveRoomScheduleRawDto">
+    select a.id, a.live_room_id, a.work_day, a.start_work, a.end_work, a.schedule_duration, a.rest_duration, a.remark,
+           b.employee_id, b.position_id, b.id as schedule_employee_id
+    from work_schedule as a
+            join schedule_employee as b on a.id = b.schedule_id
+    where a.tenant_id = #{tenantId} and a.is_deleted = 0
+    and b.is_deleted = 0 and b.employee_id = #{employeeId}
+    <if test="req.liveRoomId != null">
+      and a.live_room_id = #{req.liveRoomId}
+    </if>
+    <if test="req.startDate != null">
+      and (a.work_day >= #{req.startDate} or (a.end_work &lt;= a.start_work and DATE_ADD(a.work_day, INTERVAL 1 DAY) >= #{req.startDate}))
+    </if>
+    <if test="req.endDate != null">
+      and a.work_day &lt;= #{req.endDate}
+    </if>
+    <if test="idx != null">
+      and a.id &lt; #{idx}
+    </if>
+    order by a.id desc limit #{limit}
+  </select>
+    
+    <select id="loadEmployeeSchedule"
+            resultType="com.jiuyu.governance.business.room.pojo.bo.EmployeeLiveRoomScheduleRawDto">
+        select a.id, a.live_room_id, a.work_day, a.start_work, a.end_work, a.schedule_duration, a.rest_duration, a.remark,
+        b.employee_id, b.position_id, b.id as schedule_employee_id
+        from work_schedule as a
+        join schedule_employee as b on a.id = b.schedule_id
+        where a.is_deleted = 0 and b.is_deleted = 0 and b.employee_id in
+        <foreach collection="employeeIds" item="employeeId" separator="," open="(" close=")">
+            #{employeeId}
+        </foreach>
+        <if test="startDate != null">
+            and a.work_day >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            and a.work_day &lt;= #{endDate}
+        </if>
+        <if test="idx != null">
+            and a.id &lt; #{idx}
+        </if>
+        order by a.id desc limit #{limit}
+    </select>
+  
+  <select id="selectAnchorRoomSchedule"
+          resultType="com.jiuyu.governance.business.room.pojo.response.schedule.RoomWorkScheduleDto">
+      select id,
+             live_room_id,
+             work_day,
+             start_work,
+             end_work,
+             schedule_duration,
+             rest_duration,
+             remark
+      from work_schedule
+      where live_room_id = #{roomId}
+        and work_day &gt;= #{startDay}
+        and work_day &lt;= #{endDay}
+        and is_deleted = 0
+  </select>
+
+  <select id="selectBatchAnchorRoomSchedule"
+          resultType="com.jiuyu.governance.business.room.pojo.response.schedule.RoomWorkScheduleDto">
+      select id,
+             live_room_id,
+             work_day,
+             start_work,
+             end_work,
+             schedule_duration,
+             rest_duration,
+             remark
+      from work_schedule
+      where is_deleted = 0
+      <if test="queries != null and queries.size() > 0">
+          and (
+          <foreach collection="queries" item="q" separator=" OR ">
+              (live_room_id = #{q.roomId} and work_day &gt;= #{q.startDay} and work_day &lt;= #{q.endDay})
+          </foreach>
+          )
+      </if>
+      <if test="queries == null or queries.size() == 0">
+          and 1 = 0
+      </if>
+  </select>
+  
+
+</mapper>

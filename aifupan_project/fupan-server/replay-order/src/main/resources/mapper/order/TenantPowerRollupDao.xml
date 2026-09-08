@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuyu.replay.order.repository.dao.TenantPowerRollupDao">
+
+    <!--
+        批量累加（+= delta，非覆盖）；命中唯一键 uk_tenant，未命中的租户由调用方走 save 分支
+        增量来源为用户维度聚合结果的内存归并，本文件不含任何对明细表的聚合 SQL
+    -->
+    <update id="accumulateTenantPowerConsume">
+        UPDATE tb_tenant_power_rollup
+        SET tenant_power_consume = tenant_power_consume +
+        <foreach collection="deltaList" item="item" open="CASE tenant_id" close=" ELSE 0 END" separator=" ">
+            WHEN #{item.tenantId} THEN #{item.powerConsume}
+        </foreach>
+        , update_date = #{updateDate}
+        WHERE tenant_id IN
+        <foreach collection="deltaList" item="item" open="(" separator="," close=")">
+            #{item.tenantId}
+        </foreach>
+    </update>
+
+</mapper>

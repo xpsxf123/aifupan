@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.AnchorUrlUserDao">
+
+    <select id="selectTradeBySecUids" resultType="com.jiuyu.replay.words.vo.peer.AnchorUrlUserTradeVo">
+        SELECT u.sec_uid, uu.trade_id
+        FROM tb_anchor_url u
+                 JOIN tb_anchor_url_user uu ON u.sec_uid = uu.anchor_url_sec_uid
+        WHERE u.sec_uid IN
+        <foreach collection="secUids" item="sid" open="(" separator="," close=")">
+            #{sid}
+        </foreach>
+          AND uu.is_deleted = 0
+          AND uu.is_remove_record = 0
+          AND uu.trade_id IS NOT NULL
+    </select>
+
+</mapper>

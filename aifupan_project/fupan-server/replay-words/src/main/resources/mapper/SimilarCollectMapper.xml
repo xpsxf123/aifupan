@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.SimilarCollectDao">
+
+    <!--
+        统计各行业30天内更新的相似主播数量（使用连表查询优化性能）
+        作者: RayChou
+        日期: 2025-10-30
+        更新: 2025-11-18
+        说明:
+        1. 使用INNER JOIN连接tb_similar_collect、tb_similar_anchor和tb_trade表
+        2. 根据tb_similar_anchor表的update_date字段筛选30天内更新的数据（使用 SQL 函数 DATE_SUB）
+        3. 新增过滤条件：平均场观 >= 5000 并且 总销售额 >= 50000（使用 total_amount_numeric 字段）
+        4. 可选过滤条件：是否只统计行业热榜生效的行业（t.rank_enabled = 1），通过 checkRankEnabled 参数控制
+        5. 按行业ID分组统计数量
+        6. 索引使用：
+           - tb_similar_collect表：idx_trade_id（行业ID索引）
+           - tb_similar_anchor表：idx_update_date_live_avg_amount（复合索引）
+           - tb_trade表：PRIMARY KEY（主键索引）
+        7. 性能优势：
+           - 一次查询完成，避免两次数据库往返
+           - 不需要将大量ID加载到内存
+           - 避免IN子句过长的问题
+           - 数据库层面完成过滤和聚合，减少网络传输
+        8. 使用场景：
+           - checkRankEnabled = true：用户展示总数（countSimilarAnchors方法）
+           - checkRankEnabled = false：后台管理系统（listTree方法）、采集任务（querySimilarAnchorsForTrades方法）
+    -->
+    <select id="countByTradeIdsAndUpdateDate" resultType="java.util.Map">
+        SELECT
+        sc.trade_id AS tradeId,
+        COUNT(DISTINCT sc.similar_anchor_id) AS count
+        FROM tb_similar_collect sc
+        INNER JOIN tb_similar_anchor sa ON sc.similar_anchor_id = sa.id
+        INNER JOIN tb_trade t ON sc.trade_id = t.id
+        WHERE sc.trade_id IN
+        <foreach collection="tradeIds" item="tradeId" open="(" separator="," close=")">
+            #{tradeId}
+        </foreach>
+        AND sa.update_date &gt;= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        AND CAST(sa.live_average_user AS SIGNED) &gt;= 5000
+        AND sa.total_amount_numeric &gt;= 50000
+        <if test="checkRankEnabled != null and checkRankEnabled == true">
+        AND t.rank_enabled = 1
+        </if>
+        AND sc.is_deleted = 0
+        AND sa.is_deleted = 0
+        AND t.is_deleted = 0
+        GROUP BY sc.trade_id
+    </select>
+
+</mapper>
+

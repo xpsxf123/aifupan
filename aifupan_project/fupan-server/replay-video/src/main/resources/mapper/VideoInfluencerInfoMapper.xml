@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.video.project.dao.VideoInfluencerInfoDao">
+
+    <!-- 批量查询达人信息 -->
+    <select id="batchQueryByPlatformAndUserIds"
+            resultType="com.jiuyu.replay.video.project.entity.VideoInfluencerInfoEntity">
+        SELECT
+        *
+        FROM tb_video_influencer_info
+        WHERE is_deleted = 0
+        AND (
+        <foreach collection="influencerConditions" item="condition" separator=" OR ">
+            (platform_type = #{condition.platformType} AND platform_user_id = #{condition.platformUserId})
+        </foreach>
+        )
+    </select>
+
+    <!--
+      租户关联达人 id + 行业 id 分页（游标，出 id 两列）。
+      达人来源 = 租户「达人订阅」(sub)，只按 tenantId 过滤、不过滤用户。
+      同一达人被多个用户订阅时按 influencer_id 分组去重，industry_id 取 MAX（单表聚合，避免自连接）。
+      派生表 tid 只受该租户订阅量约束（小），排序/游标/过滤走 tid.influencer_id；
+      仅当带 platform/keyword/采集时间(inf.last_sync_time) 过滤时才 JOIN 大表 inf。达人软删除由下游 selectBatchIds 兜底。
+    -->
+    <select id="pageTenantInfluencerIds"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfluencerInfoDao$TenantInfluencerRow">
+        SELECT tid.influencer_id AS influencerId, tid.industry_id AS industryId, tid.account_type AS accountType
+        FROM (
+        SELECT sub.influencer_id AS influencer_id, MAX(sub.industry_id) AS industry_id, MIN(sub.account_type) AS account_type
+        FROM tb_video_user_influencer_subscription sub
+        WHERE sub.is_deleted = 0 AND sub.tenant_id = #{tenantId}
+        <if test="collectAccountId != null">
+            AND sub.user_id = #{collectAccountId}
+        </if>
+        <if test="industryId != null">
+            and sub.industry_id = #{industryId}
+        </if>
+        GROUP BY sub.influencer_id
+        ) tid
+        <if test="(platformTypes != null and platformTypes.size() != 0) or (keyword != null and keyword != '') or (collectStartTime != null and collectStartTime != '') or (collectEndTime != null and collectEndTime != '')">
+            INNER JOIN tb_video_influencer_info inf
+            ON inf.id = tid.influencer_id AND inf.is_deleted = 0
+        </if>
+        <where>
+            <if test="influencerIds != null and influencerIds.size() != 0">
+                AND tid.influencer_id IN
+                <foreach collection="influencerIds" item="infId" open="(" separator="," close=")">
+                    #{infId}
+                </foreach>
+            </if>
+            <if test="cursor != null">
+                AND tid.influencer_id &lt; #{cursor}
+            </if>
+            <if test="platformTypes != null and platformTypes.size() != 0">
+                AND inf.platform_type IN
+                <foreach collection="platformTypes" item="pt" open="(" separator="," close=")">
+                    #{pt}
+                </foreach>
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (inf.nickname LIKE CONCAT('%', #{keyword}, '%')
+                OR inf.platform_account LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="collectStartTime != null and collectStartTime != ''">
+                AND inf.last_sync_time &gt;= #{collectStartTime}
+            </if>
+            <if test="collectEndTime != null and collectEndTime != ''">
+                AND inf.last_sync_time &lt;= #{collectEndTime}
+            </if>
+        </where>
+        ORDER BY tid.influencer_id DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 本租户已订阅的达人 id（可选按采集账号 / 达人集合收窄）；订阅 = 该达人名下全部作品对本租户可见 -->
+    <select id="selectSubscribedInfluencerIds" resultType="java.lang.Long">
+        SELECT DISTINCT sub.influencer_id
+        FROM tb_video_user_influencer_subscription sub
+        WHERE sub.is_deleted = 0
+        AND sub.tenant_id = #{tenantId}
+        <if test="collectAccountId != null">
+            AND sub.user_id = #{collectAccountId}
+        </if>
+        <if test="influencerIds != null and influencerIds.size() != 0">
+            AND sub.influencer_id IN
+            <foreach collection="influencerIds" item="infId" open="(" separator="," close=")">
+                #{infId}
+            </foreach>
+        </if>
+    </select>
+
+    <!-- 按平台用户id(secUid)/平台账号(抖音号)集合反查达人主键 id（公共达人库，不做租户隔离）。两集合都给=AND 同时命中 -->
+    <select id="selectIdsByPlatform" resultType="java.lang.Long">
+        SELECT id
+        FROM tb_video_influencer_info
+        WHERE is_deleted = 0
+        <if test="platformUserIds != null and platformUserIds.size() != 0">
+            AND platform_user_id IN
+            <foreach collection="platformUserIds" item="pu" open="(" separator="," close=")">
+                #{pu}
+            </foreach>
+        </if>
+        <if test="platformAccounts != null and platformAccounts.size() != 0">
+            AND platform_account IN
+            <foreach collection="platformAccounts" item="pa" open="(" separator="," close=")">
+                #{pa}
+            </foreach>
+        </if>
+    </select>
+
+
+</mapper>

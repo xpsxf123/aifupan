@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.system.repository.dao.SeoSiteDao">
+
+    <!--
+        官网公开接口的查询集中在这里。
+
+        与后台 SeoArticleDao.xml 的关键差异，改动前务必先读：
+
+        1. 【状态条件是固定的，不是可选的】所有查询都写死 article_status = #{published}。
+           后台那边 articleStatus 是 <if> 可选条件，官网这边一旦漏掉，
+           下架文章就会出现在公网上——而且不报任何错。
+
+        2. 【计数口径与后台相反】后台的 countByCategoryIds / countArticlesByTagIds 是
+           「未删除、含已下架」，官网必须「只算已发布」。
+           官网用这个数字决定空分类页是否 404、标签页是否加 noindex，
+           用含下架的数会出现「数字是 5、列表却查出 0 篇」的 200 空壳页。
+           → 因此本文件另写计数 SQL，不复用那两个。
+
+        3. 【子查询的关联列必须带外层别名 a.】tb_seo_article_tag 自己也有 id 主键列，
+           子查询里的未限定列名 MySQL 优先在子查询自己的表里解析——
+           写裸 id 会变成 t.article_id = t.id，几乎永不成立，
+           筛选恒为空且不报任何错。这是上一迭代出过的真实事故。
+           外层表一律带别名 a，正是为了让这个限定无法被省略。
+    -->
+
+    <!--
+        官网文章列表分页。列表页 / 分类页 / 标签页共用。
+
+        直接 resultType 到 VO 而不是查 Entity 再拷：site VO 与 Entity 字段名有意不一致
+        （VO 无 id、有 categorySlug），而 BeanUtils.copyProperties 对不同名字段
+        拷不到且不报错，编译通过、mock 测试也发现不了，接口会返回一片 null。
+        在 SQL 里写 AS 一步到位，字段对不上时 MyBatis 会直接报错。
+    -->
+    <select id="selectSitePage" resultType="com.jiuyu.replay.system.vo.site.SeoSiteArticleListVo">
+        SELECT
+            a.title,
+            a.slug,
+            a.summary,
+            a.cover_url,
+            c.category_name,
+            c.slug AS category_slug
+        <!--
+            刻意不 SELECT content：正文可能很大，列表页用不到，带上会显著拖慢接口。
+            正文走 detail 接口。
+        -->
+        FROM tb_seo_article a
+        INNER JOIN tb_seo_category c ON c.id = a.category_id AND c.is_deleted = #{notDeleted}
+        WHERE a.is_deleted = #{notDeleted}
+          AND a.article_status = #{published}
+        <if test="bo.categorySlug != null and bo.categorySlug.trim() != ''">
+            AND c.slug = #{bo.categorySlug}
+        </if>
+        <if test="bo.tagSlug != null and bo.tagSlug.trim() != ''">
+            <!--
+                标签筛选走关联表的 EXISTS 半连接，按 slug 而不是 id——
+                官网 URL 里只有 slug，多一次 id 转换是白白多一次查询。
+
+                用 EXISTS 而非 JOIN：单标签场景两者等价（uk_article_tag 保证一篇文章
+                对一个标签只有一行），但 EXISTS 命中第一行即短路。
+
+                【t.article_id 必须写 a.id，不能写裸 id】理由见文件头注释 3。
+                标签本身也要求启用中：禁用标签的聚合页在官网不可访问，
+                其关联关系虽然保留，但不应再作为筛选入口。
+            -->
+            AND EXISTS (
+                SELECT 1
+                FROM tb_seo_article_tag t
+                INNER JOIN tb_seo_tag g ON g.id = t.tag_id
+                WHERE t.article_id = a.id
+                  AND g.slug = #{bo.tagSlug}
+                  AND g.tag_status = #{enabled}
+                  AND g.is_deleted = #{notDeleted}
+            )
+        </if>
+        <!--
+            按 publish_time 排序而不是 update_date：官网展示的是发布时间，
+            用 update_date 排会让运营改个错别字就把老文章顶到列表首位。
+
+            a.id 兜底必须保留——雪花 ID 单调递增，等价于按创建先后。
+            没有它时排序键相同的行在 MySQL 里顺序不确定，翻页会重复或漏行，
+            而批量导入正好会产生一批 publish_time 完全相同的文章，是必然踩到的场景。
+        -->
+        ORDER BY a.publish_time DESC, a.id DESC
+    </select>
+
+    <!--
+        官网文章详情，按 slug 查，含正文。
+
+        只返回已发布：下架文章必须 404，不能靠前端过滤。
+    -->
+    <select id="selectSiteDetail" resultType="com.jiuyu.replay.system.vo.site.SeoSiteArticleDetailVo">
+        SELECT
+            a.title,
+            a.slug,
+            a.summary,
+            a.cover_url,
+            a.content,
+            a.seo_title,
+            a.seo_description,
+            a.seo_keywords,
+            a.publish_time,
+            a.update_date,
+            c.category_name,
+            c.slug        AS category_slug,
+            c.description AS category_description
+        FROM tb_seo_article a
+        INNER JOIN tb_seo_category c ON c.id = a.category_id AND c.is_deleted = #{notDeleted}
+        WHERE a.is_deleted = #{notDeleted}
+          AND a.article_status = #{published}
+          AND a.slug = #{slug}
+    </select>
+
+    <!--
+        文章的启用中标签，供列表与详情填充。
+
+        只返回 tag_status = 1：官网不展示禁用标签（它们的聚合页不可访问，
+        展示出来就是一个必然 404 的链接）。这与后台刻意相反——
+        后台要把禁用标签置灰显示，编辑时也不能静默丢弃。
+
+        返回 article_id 供调用方按文章分组，避免 N+1。
+    -->
+    <select id="selectSiteTagsByArticleSlugs" resultType="java.util.Map">
+        SELECT
+            a.slug     AS articleSlug,
+            g.tag_name AS tagName,
+            g.slug     AS tagSlug
+        FROM tb_seo_article a
+        INNER JOIN tb_seo_article_tag t ON t.article_id = a.id
+        INNER JOIN tb_seo_tag g ON g.id = t.tag_id
+        WHERE g.tag_status = #{enabled}
+          AND g.is_deleted = #{notDeleted}
+          AND a.slug IN
+        <foreach collection="articleSlugs" item="articleSlug" open="(" separator="," close=")">
+            #{articleSlug}
+        </foreach>
+        ORDER BY t.id
+    </select>
+
+    <!--
+        分类列表，含【只算已发布】的文章数。
+
+        口径与后台 countByCategoryIds 相反，理由见文件头注释 2。
+        用 INNER JOIN + GROUP BY 而不是子查询计数：一次扫描即可，
+        且 INNER JOIN 天然过滤掉 0 篇的分类——官网要求空分类处处不出现（决策 9）。
+    -->
+    <select id="selectSiteCategories" resultType="com.jiuyu.replay.system.vo.site.SeoSiteCategoryVo">
+        SELECT
+            c.category_name,
+            c.slug,
+            c.description,
+            COUNT(a.id) AS article_count
+        FROM tb_seo_category c
+        INNER JOIN tb_seo_article a
+                ON a.category_id = c.id
+               AND a.is_deleted = #{notDeleted}
+               AND a.article_status = #{published}
+        WHERE c.is_deleted = #{notDeleted}
+        GROUP BY c.id, c.category_name, c.slug, c.description, c.sort
+        ORDER BY c.sort ASC, c.id ASC
+    </select>
+
+    <!--
+        单个分类，按 slug 查，含【只算已发布】的文章数。
+
+        供分类页渲染 h1 与 meta description。用 LEFT JOIN 而不是 INNER JOIN：
+        这里需要区分「分类不存在」（返回 null → 官网 404）和
+        「分类存在但 0 篇」（返回 articleCount=0 → 官网也 404，但走的是列表为空那条路径）。
+        INNER JOIN 会把这两种情况都变成 null，虽然结果一样，但排查问题时分不清。
+    -->
+    <select id="selectSiteCategoryBySlug" resultType="com.jiuyu.replay.system.vo.site.SeoSiteCategoryVo">
+        SELECT
+            c.category_name,
+            c.slug,
+            c.description,
+            COUNT(a.id) AS article_count
+        FROM tb_seo_category c
+        LEFT JOIN tb_seo_article a
+               ON a.category_id = c.id
+              AND a.is_deleted = #{notDeleted}
+              AND a.article_status = #{published}
+        WHERE c.is_deleted = #{notDeleted}
+          AND c.slug = #{slug}
+        GROUP BY c.id, c.category_name, c.slug, c.description
+    </select>
+
+    <!--
+        标签列表，含【只算已发布】的文章数，按热度降序供标签云使用。
+
+        只返回启用中且有已发布文章的标签。
+        这里【不做 >= SITE_TAG_INDEX_MIN_COUNT 的过滤】——标签云要展示全部有内容的标签，
+        薄内容的 noindex 由官网在标签页自行判断。只有 sitemap 才按阈值过滤。
+    -->
+    <select id="selectSiteTags" resultType="com.jiuyu.replay.system.vo.site.SeoSiteTagVo">
+        SELECT
+            g.tag_name,
+            g.slug,
+            COUNT(a.id) AS article_count
+        FROM tb_seo_tag g
+        INNER JOIN tb_seo_article_tag t ON t.tag_id = g.id
+        INNER JOIN tb_seo_article a
+                ON a.id = t.article_id
+               AND a.is_deleted = #{notDeleted}
+               AND a.article_status = #{published}
+        WHERE g.is_deleted = #{notDeleted}
+          AND g.tag_status = #{enabled}
+        GROUP BY g.id, g.tag_name, g.slug
+        ORDER BY article_count DESC, g.id ASC
+    </select>
+
+    <!-- 单个标签，按 slug 查，供标签页渲染 h1。只返回启用中的 -->
+    <select id="selectSiteTagBySlug" resultType="com.jiuyu.replay.system.vo.site.SeoSiteTagVo">
+        SELECT
+            g.tag_name,
+            g.slug,
+            COUNT(a.id) AS article_count
+        FROM tb_seo_tag g
+        LEFT JOIN tb_seo_article_tag t ON t.tag_id = g.id
+        LEFT JOIN tb_seo_article a
+               ON a.id = t.article_id
+              AND a.is_deleted = #{notDeleted}
+              AND a.article_status = #{published}
+        WHERE g.is_deleted = #{notDeleted}
+          AND g.tag_status = #{enabled}
+          AND g.slug = #{slug}
+        GROUP BY g.id, g.tag_name, g.slug
+    </select>
+
+    <!--
+        相关文章第一段：共享标签数降序（决策 5）。
+
+        全程按 slug 定位当前文章，不需要调用方先查出 id 和 tagIds。
+        这样做不只是少一次查询——它消灭了一个边界坑：
+        若由 Java 侧传 tagIds，无标签的文章会得到空集合，拼出 `tag_id IN ()` 这个语法错误，
+        必须在调用方额外判空。改用子查询后，当前文章没有标签时子查询返回空结果集，
+        `IN (空)` 求值为 false，本段自然返回 0 行、平滑落到第二段兜底，无需任何判空。
+
+        【t.article_id 必须写 a.id】理由见文件头注释 3。
+
+        GROUP BY 后 SELECT 非聚合列：a.id 是主键，MySQL 5.7+ 的 ONLY_FULL_GROUP_BY
+        认可主键的函数依赖；但 c.* 不由 a.id 决定，故一并列进 GROUP BY。
+    -->
+    <select id="selectRelatedByTags" resultType="com.jiuyu.replay.system.vo.site.SeoSiteArticleListVo">
+        SELECT
+            a.title,
+            a.slug,
+            a.summary,
+            a.cover_url,
+            a.publish_time,
+            c.category_name,
+            c.slug AS category_slug,
+            COUNT(t.tag_id) AS shared_count
+        FROM tb_seo_article a
+        INNER JOIN tb_seo_article_tag t ON t.article_id = a.id
+        INNER JOIN tb_seo_category c ON c.id = a.category_id AND c.is_deleted = #{notDeleted}
+        WHERE a.is_deleted = #{notDeleted}
+          AND a.article_status = #{published}
+          AND a.slug != #{currentSlug}
+          AND t.tag_id IN (
+              SELECT t2.tag_id
+              FROM tb_seo_article_tag t2
+              INNER JOIN tb_seo_article a2 ON a2.id = t2.article_id
+              INNER JOIN tb_seo_tag g2 ON g2.id = t2.tag_id
+              WHERE a2.slug = #{currentSlug}
+                AND g2.tag_status = #{enabled}
+                AND g2.is_deleted = #{notDeleted}
+          )
+        GROUP BY a.id, a.title, a.slug, a.summary, a.cover_url, a.publish_time,
+                 c.category_name, c.slug
+        ORDER BY shared_count DESC, a.publish_time DESC, a.id DESC
+        LIMIT #{limit}
+    </select>
+
+    <!--
+        相关文章第二段：同分类最新，用于补齐第一段不足的名额。
+
+        分类同样用子查询按当前 slug 取，不要求调用方先查 categoryId。
+        excludeSlugs 是第一段已选中的，可能为空——用 <if> 包住，
+        空集合时整个 NOT IN 子句不出现，而不是拼出 `NOT IN ()` 语法错误。
+        当前文章自己始终由 a.slug != #{currentSlug} 排除，不依赖 excludeSlugs。
+    -->
+    <select id="selectRelatedByCategory" resultType="com.jiuyu.replay.system.vo.site.SeoSiteArticleListVo">
+        SELECT
+            a.title,
+            a.slug,
+            a.summary,
+            a.cover_url,
+            a.publish_time,
+            c.category_name,
+            c.slug AS category_slug
+        FROM tb_seo_article a
+        INNER JOIN tb_seo_category c ON c.id = a.category_id AND c.is_deleted = #{notDeleted}
+        WHERE a.is_deleted = #{notDeleted}
+          AND a.article_status = #{published}
+          AND a.slug != #{currentSlug}
+          AND a.category_id = (
+              SELECT a2.category_id
+              FROM tb_seo_article a2
+              WHERE a2.slug = #{currentSlug}
+                AND a2.is_deleted = #{notDeleted}
+          )
+        <if test="excludeSlugs != null and excludeSlugs.size() > 0">
+            AND a.slug NOT IN
+            <foreach collection="excludeSlugs" item="excludeSlug" open="(" separator="," close=")">
+                #{excludeSlug}
+            </foreach>
+        </if>
+        ORDER BY a.publish_time DESC, a.id DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- sitemap：全部已发布文章的 slug + updateDate，不分页 -->
+    <select id="selectSitemapArticles" resultType="com.jiuyu.replay.system.vo.site.SeoSiteSitemapItemVo">
+        SELECT a.slug, a.update_date
+        FROM tb_seo_article a
+        WHERE a.is_deleted = #{notDeleted}
+          AND a.article_status = #{published}
+        ORDER BY a.publish_time DESC, a.id DESC
+    </select>
+
+    <!--
+        sitemap：有已发布文章的分类。
+
+        updateDate 取【该分类下最新文章的 update_date】而不是分类自己的——
+        分类的 update_date 改个描述就会变，那不代表栏目内容有更新，
+        用它会让搜索引擎白跑一趟。
+    -->
+    <select id="selectSitemapCategories" resultType="com.jiuyu.replay.system.vo.site.SeoSiteSitemapItemVo">
+        SELECT
+            c.slug,
+            MAX(a.update_date) AS update_date
+        FROM tb_seo_category c
+        INNER JOIN tb_seo_article a
+                ON a.category_id = c.id
+               AND a.is_deleted = #{notDeleted}
+               AND a.article_status = #{published}
+        WHERE c.is_deleted = #{notDeleted}
+        GROUP BY c.id, c.slug
+        ORDER BY c.sort ASC, c.id ASC
+    </select>
+
+    <!--
+        sitemap：已发布文章数达标的标签（决策 7，阈值 SITE_TAG_INDEX_MIN_COUNT）。
+
+        HAVING 而不是 WHERE：过滤的是聚合结果。
+        阈值在后端统一把控，官网不再重复判断。
+    -->
+    <select id="selectSitemapTags" resultType="com.jiuyu.replay.system.vo.site.SeoSiteSitemapItemVo">
+        SELECT
+            g.slug,
+            MAX(a.update_date) AS update_date
+        FROM tb_seo_tag g
+        INNER JOIN tb_seo_article_tag t ON t.tag_id = g.id
+        INNER JOIN tb_seo_article a
+                ON a.id = t.article_id
+               AND a.is_deleted = #{notDeleted}
+               AND a.article_status = #{published}
+        WHERE g.is_deleted = #{notDeleted}
+          AND g.tag_status = #{enabled}
+        GROUP BY g.id, g.slug
+        HAVING COUNT(a.id) &gt;= #{minCount}
+        ORDER BY g.id ASC
+    </select>
+
+</mapper>

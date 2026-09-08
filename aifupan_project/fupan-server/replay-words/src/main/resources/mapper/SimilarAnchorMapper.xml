@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.SimilarAnchorDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jiuyu.replay.words.entity.SimilarAnchorEntity">
+        <id column="id" property="id"/>
+        <result column="similar_score" property="similarScore"/>
+        <result column="live_average_uv" property="liveAverageUv"/>
+        <result column="follower_count" property="followerCount"/>
+        <result column="live_average_user" property="liveAverageUser"/>
+        <result column="live_average_amount" property="liveAverageAmount"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="live_total_amount_cmm_ind" property="liveTotalAmountCmmInd"/>
+        <result column="live_count" property="liveCount"/>
+        <result column="live_average_online" property="liveAverageOnline"/>
+        <result column="author_id" property="authorId"/>
+        <result column="unique_id" property="uniqueId"/>
+        <result column="sec_uid" property="secUid"/>
+        <result column="collect_date" property="collectDate"/>
+        <result column="anchor_name" property="anchorName"/>
+        <result column="anchor_avatar" property="anchorAvatar"/>
+        <result column="account_heat" property="accountHeat"/>
+        <result column="total_amount_numeric" property="totalAmountNumeric"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="similar_collect_id" property="similarCollectId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, similar_score, live_average_uv, follower_count, live_average_user,
+        live_average_amount, total_amount, live_total_amount_cmm_ind, live_count,
+        live_average_online, author_id, unique_id, sec_uid, collect_date,
+        anchor_name, anchor_avatar, account_heat, total_amount_numeric, create_date, update_date, is_deleted
+    </sql>
+
+    <!--
+        行业热榜分页查询（使用连接查询优化性能，只查询最近30天的数据）
+        作者: RayChou
+        日期: 2025-10-28
+        更新: 2025-11-12
+        说明:
+        1. 使用INNER JOIN代替子查询，可以更好地利用索引
+        2. 只查询最近30天的数据（sa.update_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)）
+        3. 新增过滤条件：平均场观 >= 5000，总销售额 >= 50000（使用 total_amount_numeric 字段）
+        4. 新增过滤条件：只查询行业热榜生效的行业（t.rank_enabled = 1）
+        5. 需要在tb_similar_collect表的(trade_id, create_date)字段上建立组合索引
+        6. 需要在tb_similar_anchor表的account_heat字段上建立索引
+        7. 查询结果按热度倒序排序
+    -->
+    <select id="pageTradeRank" resultMap="BaseResultMap">
+        <bind name="tableAlias" value="'sa'"/>
+        SELECT sa.id,
+               sa.similar_score,
+               sa.live_average_uv,
+               sa.follower_count,
+               sa.live_average_user,
+               sa.live_average_amount,
+               sa.total_amount,
+               sa.live_total_amount_cmm_ind,
+               sa.live_count,
+               sa.live_average_online,
+               sa.author_id,
+               sa.unique_id,
+               sa.sec_uid,
+               sa.collect_date,
+               sa.anchor_name,
+               sa.anchor_avatar,
+               sa.account_heat,
+        sa.total_amount_numeric,
+               sa.create_date,
+               sa.update_date,
+               sa.is_deleted
+        FROM tb_similar_anchor sa
+                 INNER JOIN tb_hot_search_trade_ranking_list sc ON sa.id = sc.similar_anchor_id
+        <if test="liveKeyword != null and liveKeyword != ''">
+            join tb_anchor_url as au on sc.system_anchor_id = au.id and au.platform = 0
+            join tb_anchor_crux_words_rela as acwr on acwr.sec_uid = au.sec_uid and acwr.is_deleted = 0
+            join tb_anchor_crux_words as acw on acwr.keyword_id = acw.id and acw.is_deleted = 0
+        </if>
+        INNER JOIN tb_trade t ON sc.trade_id = t.id
+        WHERE sc.trade_id = #{tradeId} and sc.up_ranking = 1
+        AND t.rank_enabled = 1
+          AND sc.is_deleted = 0
+          AND sa.is_deleted = 0
+        AND t.is_deleted = 0
+        AND sa.update_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        <if test="liveKeyword != null and liveKeyword != ''">
+            AND acw.keyword = #{liveKeyword}
+        </if>
+        <if test="anchorName != null and anchorName != ''">
+            AND sa.anchor_name LIKE CONCAT('%', #{anchorName}, '%')
+        </if>
+        ORDER BY sc.weight_score DESC, source_type desc
+    </select>
+
+    <!--
+        后台管理系统-行业热榜分页查询（支持多条件筛选）
+        作者: RayChou
+        日期: 2025-10-28
+        更新: 2025-11-12
+        说明:
+        1. 行业ID可选：不传则查询全部行业数据，传入则查询指定行业所有数据
+        2. 支持主播抖音账号精确筛选（uniqueId）
+        3. 支持主播名称模糊搜索（anchorName）
+        4. 支持热度范围筛选（heatStart、heatEnd）
+        5. 支持更新时间范围筛选（updateTimeStart、updateTimeEnd）
+        6. 新增过滤条件：只查询最近30天数据、平均场观 >= 5000、总销售额 >= 50000
+        7. 支持动态排序：粉丝量、直播场次、平均场观、总销售额、热度（升序/降序）
+        8. 使用动态SQL：tradeId为null时直接查询tb_similar_anchor表
+        9. 使用动态SQL：tradeId不为null时使用INNER JOIN查询
+        10. 索引使用：
+           - 查询全部：使用tb_similar_anchor表的account_heat索引
+           - 查询指定行业：使用tb_similar_collect表的(trade_id)索引 + tb_similar_anchor表的account_heat索引
+        11. 返回tb_similar_anchor表所有字段
+    -->
+    <!-- 通用过滤条件SQL片段（30天内、平均场观>=5000、总销售额>=50000） -->
+    <sql id="Common_Filter_Conditions">
+        <!-- 只查询最近30天的数据 -->
+        AND ${tableAlias}.update_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        <!-- 平均场观 >= 5000 -->
+        AND CAST(${tableAlias}.live_average_user AS SIGNED) >= 5000
+        <!-- 总销售额 >= 50000（使用 total_amount_numeric 字段，性能更高） -->
+        AND ${tableAlias}.total_amount_numeric >= 50000
+    </sql>
+
+    <!-- 动态排序SQL片段 -->
+    <sql id="Dynamic_Order_By">
+        ORDER BY
+        <choose>
+            <when test="orderBy == 'followerCount'">
+                <!-- 粉丝量排序：follower_count 是字符串类型，需要转换为数值 -->
+                CAST(${tableAlias}.follower_count AS SIGNED)
+            </when>
+            <when test="orderBy == 'liveCount'">
+                ${tableAlias}.live_count
+            </when>
+            <when test="orderBy == 'liveAverageUser'">
+                CAST(${tableAlias}.live_average_user AS SIGNED)
+            </when>
+            <when test="orderBy == 'totalAmount'">
+                <!-- 总销售额排序：使用 total_amount_numeric 字段，性能更高 -->
+                ${tableAlias}.total_amount_numeric
+            </when>
+            <otherwise>
+                ${tableAlias}.account_heat
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="orderDirection != null and orderDirection.toUpperCase() == 'ASC'">
+                ASC
+            </when>
+            <otherwise>
+                DESC
+            </otherwise>
+        </choose>
+    </sql>
+
+    <!-- 注意此处因为迭代问题，把 pre_anchor_id 前置账户当作 system_anchor_id 使用 -->
+    <select id="pageTradeRankAdmin" resultType="com.jiuyu.replay.words.vo.TradeRankAdminVo">
+        <bind name="tableAlias" value="'sa'"/>
+        select sa.id,
+        sa.similar_score,
+        sa.live_average_uv,
+        sa.follower_count,
+        sa.live_average_user,
+        sa.live_average_amount,
+        sa.total_amount,
+        sa.live_total_amount_cmm_ind,
+        sa.live_count,
+        sa.live_average_online,
+        sa.author_id,
+        sa.unique_id,
+        sa.sec_uid,
+        sa.collect_date,
+        sa.anchor_name,
+        sa.anchor_avatar,
+        sa.account_heat,
+        sa.total_amount_numeric,
+        sa.create_date,
+        sa.update_date,
+        sa.is_deleted,
+        str.id AS similar_collect_id,
+        str.source_type,
+        str.system_anchor_id,
+        str.pre_anchor_id,
+        str.system_trade_id,
+        str.last_update_system_trade_time,
+        str.collect_status, str.up_ranking
+        from tb_similar_anchor as sa
+               join tb_hot_search_trade_ranking_list as str on sa.id = str.similar_anchor_id
+        <if test="liveKeyword != null and liveKeyword != ''">
+            join tb_anchor_url as au on str.system_anchor_id = au.id and au.platform = 0
+            join tb_anchor_crux_words_rela as acwr on acwr.sec_uid = au.sec_uid and acwr.is_deleted = 0
+            join tb_anchor_crux_words as acw on acwr.keyword_id = acw.id and acw.is_deleted = 0
+        </if>
+        where sa.is_deleted = 0 and str.is_deleted = 0
+        <if test="effective != null and effective">
+            and sa.update_date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        </if>
+        <if test="effective != null and !effective">
+            AND sa.update_date &lt; DATE_SUB(NOW(), INTERVAL 30 DAY)
+        </if>
+        <if test="tradeId != null">
+            AND str.trade_id = #{tradeId}
+        </if>
+        <if test="upRanking != null">
+            AND str.up_ranking = #{upRanking}
+        </if>
+        <if test="collectStatus != null and collectStatus.size() > 0">
+            AND str.collect_status IN
+            <foreach item="item" collection="collectStatus" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </if>
+        <if test="sourceTypes != null and sourceTypes.size() > 0">
+            AND str.source_type IN
+            <foreach item="item" collection="sourceTypes" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </if>
+        <if test="inStock != null">
+            AND str.system_anchor_id
+            <choose>
+                <when test="inStock">
+                    > 0
+                </when>
+                <otherwise>
+                    &lt;= 0
+                </otherwise>
+            </choose>
+        </if>
+        <if test="uniqueId != null and uniqueId != ''">
+            AND sa.unique_id = #{uniqueId}
+        </if>
+        <if test="anchorName != null and anchorName != ''">
+            AND sa.anchor_name LIKE CONCAT('%', #{anchorName}, '%')
+        </if>
+        <if test="heatStart != null">
+            AND sa.account_heat >= #{heatStart}
+        </if>
+        <if test="heatEnd != null">
+            AND sa.account_heat &lt;= #{heatEnd}
+        </if>
+        <if test="updateTimeStart != null">
+            AND sa.update_date >= #{updateTimeStart}
+        </if>
+        <if test="updateTimeEnd != null">
+            AND sa.update_date &lt;= #{updateTimeEnd}
+        </if>
+        <if test="liveKeyword != null and liveKeyword != ''">
+            AND acw.keyword = #{liveKeyword}
+        </if>
+        <include refid="Dynamic_Order_By"/>
+    </select>
+    
+    <update id="batchUpdateBaseInfo">
+        update tb_similar_anchor
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="unique_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.uniqueId != null">
+                        when id = #{item.id} then #{item.uniqueId}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="sec_uid = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.secUid != null">
+                        when id = #{item.id} then #{item.secUid}
+                    </if>
+                </foreach>
+            </trim>
+            
+            <trim prefix="anchor_name = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.anchorName != null">
+                        when id = #{item.id} then #{item.anchorName}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="anchor_avatar = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.anchorAvatar != null">
+                        when id = #{item.id} then #{item.anchorAvatar}
+                    </if>
+                </foreach>
+            </trim>
+            
+            
+        </trim>
+        where id in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.id}
+        </foreach>
+    </update>
+    
+    <insert id="batchInsertBaseInfo">
+        insert into tb_similar_anchor
+        (id,
+        author_id, unique_id, sec_uid, anchor_name, anchor_avatar, create_date,
+        update_date)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.authorId}, #{item.uniqueId},
+            #{item.secUid},  #{item.anchorName}, #{item.anchorAvatar},
+            #{item.createDate}, #{item.updateDate}
+            )
+        </foreach>
+    </insert>
+    
+    <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into tb_similar_anchor
+    (id, similar_score, account_heat, live_average_uv, follower_count, live_average_user,
+    live_average_amount, total_amount, live_total_amount_cmm_ind, live_count, live_average_online,
+    author_id, unique_id, sec_uid, collect_date, anchor_name, anchor_avatar, create_date,
+    update_date, is_deleted, total_amount_numeric)
+    values
+    <foreach collection="list" item="item" separator=",">
+        (#{item.id}, #{item.similarScore}, #{item.accountHeat}, #{item.liveAverageUv}, #{item.followerCount},
+        #{item.liveAverageUser}, #{item.liveAverageAmount}, #{item.totalAmount}, #{item.liveTotalAmountCmmInd},
+        #{item.liveCount}, #{item.liveAverageOnline}, #{item.authorId}, #{item.uniqueId},
+        #{item.secUid}, #{item.collectDate}, #{item.anchorName}, #{item.anchorAvatar},
+        #{item.createDate}, #{item.updateDate}, #{item.isDeleted}, #{item.totalAmountNumeric}
+        )
+    </foreach>
+    </insert>
+    <update id="batchUpdateSelective">
+        update tb_similar_anchor
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="similar_score = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.similarScore != null">
+                        when id = #{item.id} then #{item.similarScore}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="account_heat = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.accountHeat != null">
+                        when id = #{item.id} then #{item.accountHeat}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="live_average_uv = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.liveAverageUv != null">
+                        when id = #{item.id} then #{item.liveAverageUv}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="follower_count = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.followerCount != null">
+                        when id = #{item.id} then #{item.followerCount}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="live_average_user = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.liveAverageUser != null">
+                        when id = #{item.id} then #{item.liveAverageUser}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="live_average_amount = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.liveAverageAmount != null">
+                        when id = #{item.id} then #{item.liveAverageAmount}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="total_amount = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.totalAmount != null">
+                        when id = #{item.id} then #{item.totalAmount}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="live_total_amount_cmm_ind = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.liveTotalAmountCmmInd != null">
+                        when id = #{item.id} then #{item.liveTotalAmountCmmInd}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="live_count = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.liveCount != null">
+                        when id = #{item.id} then #{item.liveCount}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="live_average_online = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.liveAverageOnline != null">
+                        when id = #{item.id} then #{item.liveAverageOnline}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="author_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.authorId != null">
+                        when id = #{item.id} then #{item.authorId}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="unique_id = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.uniqueId != null">
+                        when id = #{item.id} then #{item.uniqueId}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="sec_uid = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.secUid != null">
+                        when id = #{item.id} then #{item.secUid}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="collect_date = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.collectDate != null">
+                        when id = #{item.id} then #{item.collectDate}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="anchor_name = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.anchorName != null">
+                        when id = #{item.id} then #{item.anchorName}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="anchor_avatar = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.anchorAvatar != null">
+                        when id = #{item.id} then #{item.anchorAvatar}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="create_date = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.createDate != null">
+                        when id = #{item.id} then #{item.createDate}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="update_date = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.updateDate != null">
+                        when id = #{item.id} then #{item.updateDate}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="is_deleted = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.isDeleted != null">
+                        when id = #{item.id} then #{item.isDeleted}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="total_amount_numeric = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.totalAmountNumeric != null">
+                        when id = #{item.id} then #{item.totalAmountNumeric}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.id}
+        </foreach>
+    </update>
+</mapper>
+

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.system.repository.dao.SeoArticleDao">
+
+    <!--
+        文章列表分页。
+
+        整条查询放在 XML 而不是用 LambdaQueryWrapper 拼，是因为它要按标签筛选——
+        那是多对多关联表上的条件，Wrapper 只能靠 apply() 塞一段原生 SQL 字符串，
+        既绕过了「查询用 LambdaQueryWrapper（类型安全）」这条约束的本意，
+        又让 SQL 以无高亮、无上下文的字面量形式散在 Java 里。实际代价已经付过：
+        子查询里的关联列曾误写成裸 id，被 MySQL 解析成 tb_seo_article_tag 自己的主键，
+        标签筛选恒为空且不报错。SQL 成型地写在这里，这类问题在 review 时看得见。
+    -->
+    <select id="selectArticlePage" resultType="com.jiuyu.replay.system.entity.SeoArticleEntity">
+        SELECT
+            a.id,
+            a.title,
+            a.slug,
+            a.category_id,
+            a.cover_url,
+            a.article_status,
+            a.publish_time,
+            a.update_date
+        <!--
+            刻意不 SELECT content：正文可能很大，列表页又用不到它，
+            带上会显著拖慢接口。需要正文请走 info 接口。
+        -->
+        FROM tb_seo_article a
+        WHERE a.is_deleted = #{notDeleted}
+        <if test="bo.title != null and bo.title.trim() != ''">
+            AND a.title LIKE CONCAT('%', #{bo.title}, '%')
+        </if>
+        <if test="bo.categoryId != null">
+            AND a.category_id = #{bo.categoryId}
+        </if>
+        <if test="bo.articleStatus != null">
+            AND a.article_status = #{bo.articleStatus}
+        </if>
+        <if test="bo.tagId != null">
+            <!--
+                标签筛选走关联表的 EXISTS 半连接。
+
+                不先查出 article_id 集合再 IN：那是两次查询，且一个标签下可能有上万篇文章，
+                拼出的 IN 列表既走不了索引也没法分页——本项目处理大 IN 的惯例是
+                Lists.partition 分批，而分批与 LIMIT/OFFSET 互斥，分页会直接失效。
+
+                用 EXISTS 而非 JOIN：单标签场景两者等价（uk_article_tag 保证一篇文章
+                对一个标签只有一行，JOIN 不会产生重复行），但 EXISTS 命中第一行即短路；
+                日后若要支持多标签筛选，JOIN 会产生笛卡尔重复、被迫加 DISTINCT，
+                而 DISTINCT 配分页在 MySQL 上更慢。
+
+                【关联列必须写 a.id，不能写裸 id】tb_seo_article_tag 自己也有 id 主键列，
+                子查询里的未限定列名 MySQL 优先在子查询自己的表里解析——写裸 id 会变成
+                t.article_id = t.id，几乎永不成立，筛选恒为空且不报任何错。
+                这里外层表带了别名 a，正是为了让这个限定无法被省略。
+
+                走 idx_tag(tag_id) 索引。
+            -->
+            AND EXISTS (
+                SELECT 1 FROM tb_seo_article_tag t
+                WHERE t.article_id = a.id AND t.tag_id = #{bo.tagId}
+            )
+        </if>
+        <!--
+            id 兜底排序（雪花 ID 单调递增，等价于按创建先后）。
+            没有它时排序键相同的行在 MySQL 里顺序不确定，翻页会出现重复行或漏行——
+            批量导入正好会让一批文章的 update_date 完全相同，是必然踩到的场景。
+        -->
+        ORDER BY a.update_date DESC, a.id DESC
+    </select>
+
+    <!--
+        按分类统计文章数，供分类列表的 articleCount 列。
+
+        统计口径（openspec §6.4）：该分类下**未删除**的文章数，**包含已下架**——
+        运营要看的是「这个栏目底下有多少内容」，下架只是暂时不对外，不代表内容不存在。
+
+        用 GROUP BY 聚合而不是把明细行拉回内存计数：一个分类下的文章可能上万。
+    -->
+    <select id="countByCategoryIds" resultType="com.jiuyu.replay.system.vo.SeoIdCountVo">
+        SELECT
+            a.category_id AS id,
+            COUNT(*)      AS total
+        FROM tb_seo_article a
+        WHERE a.is_deleted = #{notDeleted}
+          AND a.category_id IN
+        <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+        GROUP BY a.category_id
+    </select>
+
+</mapper>

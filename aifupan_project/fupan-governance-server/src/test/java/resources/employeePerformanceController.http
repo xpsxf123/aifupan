@@ -1,0 +1,283 @@
+@baseUrl = http://localhost:6626
+@token =  5WjXS4B7acCZ6r6w6x7Fng2eOfkzMQ0k92irBvb9oxprOcp2Yy42UuZGNhRdD5+nv1SZ8G3uuw4dPODVFswnJfVAzQkoeAzbIINZyxuE/i1AzpdtvULGJqUR9F4ySGoG4g5YY3MkVTcjr5G8tEjR2wXSTDk8stkeJywGNrdvAwx77CP3oBAK8HeRKgUSOlSbujZDrvh9ypgOfJfSiUpsYLOXCoeICRYTHpt1AIJ6v5bUYxNubSxwMqf1Wc0lxrAMLewgyfTPxurM7p7j0aShuuxzNNxrPqC8tS5gB17IKIcGdwP04v/3KR5REiSjt5fZxjsEAIqkmjgJWeb1ajdiVMM0aENCXDBjsDvY90X9PP2/RHgYAyuyzPJ8FHr4jQNjeLlsfQhtk+vsvDrKp36xrsWoN9NpcCm6KT7c+xXW3VoCpdijZzRZbV58AnzP53FqMac/ZRvUJKTRZt8xsEyJD2VqLS/ADj4vNMBbWegevkAxc29F9VcgjsDV8y+cwqBVHxi4yTw4E7CLGWJN1+UhYdACPYmq3x5aXTWKJQ2zN8o=
+@contentType = application/json
+
+### 1. 人员业绩分页查询（基础查询）
+POST {{baseUrl}}/api/governance/performance/employee/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 2. 人员业绩分页查询（按分公司筛选）
+POST {{baseUrl}}/api/governance/performance/employee/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "companyId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 3. 人员业绩分页查询（按部门筛选）
+POST {{baseUrl}}/api/governance/performance/employee/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "companyId": 1,
+  "deptId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 4. 人员业绩分页查询（按小组筛选）
+POST {{baseUrl}}/api/governance/performance/employee/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "companyId": 1,
+  "deptId": 1,
+  "teamId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 5. 人员业绩分页查询（按岗位筛选）
+POST {{baseUrl}}/api/governance/performance/employee/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "positionId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 6. 人员业绩分页查询（按账号状态筛选）
+POST {{baseUrl}}/api/governance/performance/employee/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "accountStatus": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 7. 人员业绩分页查询（按员工姓名模糊搜索）
+POST {{baseUrl}}/api/governance/performance/employee/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeName": "张",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 8. 人员业绩分页查询（按手机号筛选）
+POST {{baseUrl}}/api/governance/performance/employee/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "mobile": "13800138000",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 9. 人员业绩分页查询（组合条件筛选）
+POST {{baseUrl}}/api/governance/performance/employee/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "companyId": 1,
+  "deptId": 1,
+  "teamId": 1,
+  "positionId": 1,
+  "accountStatus": 1,
+  "employeeName": "张",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 10. 人员业绩时段统计
+POST {{baseUrl}}/api/governance/performance/employee/period-stats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073
+}
+
+### 11. 人员业绩汇总统计
+POST {{baseUrl}}/api/governance/performance/employee/summary
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073
+}
+
+### 12. 人员业绩趋势数据
+POST {{baseUrl}}/api/governance/performance/employee/trend
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "startDate": "2026-03-01",
+  "endDate": "2026-03-31"
+}
+
+### 13. 员工业绩按天维度分页查询（基础查询）
+POST {{baseUrl}}/api/governance/performance/employee/daily/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 14. 员工业绩按天维度分页查询（带时间范围）
+POST {{baseUrl}}/api/governance/performance/employee/daily/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "startDate": "2026-03-01",
+  "endDate": "2026-03-31",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 15. 员工业绩按天维度分页查询（按直播间名称筛选）
+POST {{baseUrl}}/api/governance/performance/employee/daily/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "liveRoomName": "鲸启信息咨询",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 16. 员工业绩按天维度分页查询（按场观排序）
+POST {{baseUrl}}/api/governance/performance/employee/daily/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "sortField": "viewCount",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 17. 员工业绩按天维度分页查询（按销售额排序）
+POST {{baseUrl}}/api/governance/performance/employee/daily/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "sortField": "salesRevenue",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 18. 员工业绩按班次维度分页查询（基础查询）
+POST {{baseUrl}}/api/governance/performance/employee/schedule/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 19. 员工业绩按班次维度分页查询（带时间范围）
+POST {{baseUrl}}/api/governance/performance/employee/schedule/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "startDate": "2026-03-01",
+  "endDate": "2026-03-31",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 20. 员工业绩按班次维度分页查询（按直播间名称筛选）
+POST {{baseUrl}}/api/governance/performance/employee/schedule/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "liveRoomName": "直播间",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 21. 员工业绩按班次维度分页查询（按开播时间排序）
+POST {{baseUrl}}/api/governance/performance/employee/schedule/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "sortField": "startTime",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 22. 员工业绩按班次维度分页查询（按销售额排序）
+POST {{baseUrl}}/api/governance/performance/employee/schedule/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "sortField": "salesRevenue",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 23. 员工业绩按班次维度分页查询（按场观排序升序）
+POST {{baseUrl}}/api/governance/performance/employee/schedule/page
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "employeeId": 2036372964081283073,
+  "sortField": "viewCount",
+  "sortOrder": "ASC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 24. 人员业绩时段统计（缺少必填参数-测试校验）
+POST {{baseUrl}}/api/governance/performance/employee/period-stats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+}

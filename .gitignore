@@ -1,9 +1,4 @@
-# 本仓库只同步爱复盘「客户端」源码，不含服务端。
-# 各子项目在公司仍使用各自的 origin，本仓库是个人备份。
-
-# 服务端（不纳入）
-aifupan_project/fupan-server/
-aifupan_project/fupan-governance-server/
+# 爱复盘个人备份。各子项目在公司仍使用各自的 origin。
 
 # 依赖与构建产物
 **/node_modules/
@@ -14,6 +9,8 @@ aifupan_project/fupan-governance-server/
 **/bin/
 **/obj/
 **/packages/
+**/target/
+**/.gradle/
 **/.vs/
 **/.idea/
 **/.vscode/
@@ -24,6 +21,14 @@ aifupan_project/fupan-governance-server/
 # 密钥与本地配置
 **/.env
 **/.env.*
+**/*.env
+
+# 含云厂商密钥的环境配置（GitHub 禁止推送，本地文件保留不入库）
+**/application-dev.yml
+**/application-prod.yml
+**/application-test.yml
+**/application-yz.yml
+**/application-local.yml
 **/.env.local
 **/.env.*.local
 **/*.pem

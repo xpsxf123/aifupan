@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.reward.repository.dao.ClientInviteRewardRecordDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jiuyu.replay.reward.entity.ClientInviteRewardRecordEntity">
+        <id column="id" property="id"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="progress_id" property="progressId"/>
+        <result column="progress_reward_id" property="progressRewardId"/>
+        <result column="reward_target_type" property="rewardTargetType"/>
+        <result column="reward_user_id" property="rewardUserId"/>
+        <result column="reward_source_user_id" property="rewardSourceUserId"/>
+        <result column="reward_tenant_id" property="rewardTenantId"/>
+        <result column="progress_code" property="progressCode"/>
+        <result column="reward_status" property="rewardStatus"/>
+        <result column="send_date" property="sendDate"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , activity_id, progress_id, progress_reward_id, reward_target_type, reward_user_id, reward_source_user_id, reward_tenant_id, progress_code, reward_status, send_date, create_date, update_date, is_deleted
+    </sql>
+
+    <!-- 分页分组获取用户奖励记录 -->
+    <select id="pageUserRewardListByRewardUserIdAndRewardTargetTypeGroupByProgressId"
+            resultType="com.jiuyu.replay.reward.entity.ClientInviteRewardRecordGroupEntity">
+        SELECT progress_id,
+               reward_user_id,
+               send_date,
+               progress_code,
+               GROUP_CONCAT(progress_reward_id SEPARATOR '_') AS progressRewardIdStr,
+               reward_source_user_id
+        FROM tb_client_invite_reward_record
+        WHERE reward_user_id = #{userId}
+          AND reward_target_type = #{rewardTargetType}
+          AND reward_status = 1
+        GROUP BY progress_id, reward_source_user_id
+        ORDER BY send_date DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.performance.mapper.LiveVideoMapper">
+    <resultMap id="BaseResultMap" type="com.jiuyu.governance.business.performance.pojo.entity.LiveVideo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId"/>
+        <result column="batch_number" jdbcType="VARCHAR" property="batchNumber"/>
+        <result column="video_id" jdbcType="VARCHAR" property="videoId"/>
+        <result column="has_performance" jdbcType="TINYINT" property="hasPerformance"/>
+        <result column="video_oss_url" jdbcType="VARCHAR" property="videoOssUrl"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="cumulative_view" jdbcType="INTEGER" property="cumulativeView"/>
+        <result column="sales_revenue" jdbcType="DECIMAL" property="salesRevenue"/>
+        <result column="cumulative_refund" jdbcType="DECIMAL" property="cumulativeRefund"/>
+        <result column="investment" jdbcType="DECIMAL" property="investment"/>
+        <result column="sec_uid" jdbcType="VARCHAR" property="secUid"/>
+        <result column="process_status" jdbcType="TINYINT" property="processStatus"/>
+        <result column="process_time" jdbcType="TIMESTAMP" property="processTime"/>
+        <result column="fail_reason" jdbcType="VARCHAR" property="failReason"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+    </resultMap>
+
+
+    <!-- 获取待处理视频分组列表 -->
+    <select id="selectPendingVideoGroups" resultType="com.jiuyu.governance.business.performance.pojo.bo.PendingVideoGroup">
+        SELECT tenant_id AS tenantId, batch_number AS batchNumber
+        FROM live_video
+        WHERE process_status = 0
+          AND is_deleted = 0
+        GROUP BY tenant_id, batch_number
+        ORDER BY MIN(create_date) ASC
+        LIMIT #{limit}
+    </select>
+</mapper>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.TbHotSearchTradeRankingListMapper">
+  <resultMap id="BaseResultMap" type="com.jiuyu.replay.words.entity.TbHotSearchTradeRankingList">
+    <!--@mbg.generated-->
+    <!--@Table tb_hot_search_trade_ranking_list-->
+    <id column="id" property="id" />
+    <result column="created_by" property="createdBy" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="similar_anchor_id" property="similarAnchorId" />
+    <result column="system_anchor_id" property="systemAnchorId" />
+    <result column="trade_id" property="tradeId" />
+    <result column="system_trade_id" property="systemTradeId" />
+    <result column="last_update_system_trade_time" property="lastUpdateSystemTradeTime" />
+    <result column="source_type" property="sourceType" />
+    <result column="collect_status" property="collectStatus" />
+    <result column="up_ranking" property="upRanking" />
+    <result column="create_date" property="createDate" />
+    <result column="update_date" property="updateDate" />
+    <result column="is_deleted" property="isDeleted" />
+    <result column="weight_score" property="weightScore" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, created_by, updated_by, similar_anchor_id, system_anchor_id, trade_id, system_trade_id,
+    last_update_system_trade_time, source_type, collect_status, up_ranking, create_date,
+    update_date, is_deleted, weight_score
+  </sql>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update tb_hot_search_trade_ranking_list
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="created_by = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createdBy != null">
+            when id = #{item.id} then #{item.createdBy}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="updated_by = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.updatedBy != null">
+            when id = #{item.id} then #{item.updatedBy}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="similar_anchor_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.similarAnchorId != null">
+            when id = #{item.id} then #{item.similarAnchorId}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="system_anchor_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.systemAnchorId != null">
+            when id = #{item.id} then #{item.systemAnchorId}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="trade_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.tradeId != null">
+            when id = #{item.id} then #{item.tradeId}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="system_trade_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.systemTradeId != null">
+            when id = #{item.id} then #{item.systemTradeId}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="last_update_system_trade_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.lastUpdateSystemTradeTime != null">
+            when id = #{item.id} then #{item.lastUpdateSystemTradeTime}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="source_type = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.sourceType != null">
+            when id = #{item.id} then #{item.sourceType}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="collect_status = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.collectStatus != null">
+            when id = #{item.id} then #{item.collectStatus}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="up_ranking = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.upRanking != null">
+            when id = #{item.id} then #{item.upRanking}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="create_date = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createDate != null">
+            when id = #{item.id} then #{item.createDate}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="update_date = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.updateDate != null">
+            when id = #{item.id} then #{item.updateDate}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="is_deleted = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.isDeleted != null">
+            when id = #{item.id} then #{item.isDeleted}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="weight_score = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.weightScore != null">
+            when id = #{item.id} then #{item.weightScore}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="pre_anchor_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.preAnchorId != null">
+            when id = #{item.id} then #{item.preAnchorId}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_hot_search_trade_ranking_list
+    (created_by, updated_by, similar_anchor_id, system_anchor_id, trade_id, system_trade_id,
+      last_update_system_trade_time, source_type, collect_status, up_ranking, create_date,
+      update_date, is_deleted, weight_score, pre_anchor_id)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.createdBy}, #{item.updatedBy}, #{item.similarAnchorId}, #{item.systemAnchorId},
+        #{item.tradeId}, #{item.systemTradeId}, #{item.lastUpdateSystemTradeTime}, #{item.sourceType},
+        #{item.collectStatus}, #{item.upRanking}, #{item.createDate}, #{item.updateDate},
+        #{item.isDeleted}, #{item.weightScore}, #{item.preAnchorId})
+    </foreach>
+  </insert>
+  
+  <select id="countTradeAnchor" resultType="com.jiuyu.framework.shandard.Entry">
+    select a.trade_id as `key`, count(*) as `value`
+    from tb_hot_search_trade_ranking_list as a
+    join tb_similar_anchor as b on a.similar_anchor_id = b.id
+    where a.is_deleted = 0
+    <if test="isUp != null">
+      and a.up_ranking = #{isUp}
+    </if>
+    <if test="channelTypes != null and channelTypes.size() != 0">
+      and a.source_type in
+      <foreach collection="channelTypes" item="item" open="(" separator=", " close=")" >
+        #{item}
+      </foreach>
+    </if>
+    <if test="collectStatus != null">
+      and a.collect_status = #{collectStatus}
+    </if>
+    <if test="lastUpdate != null">
+      and b.update_date >= #{lastUpdate}
+    </if>
+    <if test="tradeIds != null and tradeIds.size() != 0">
+      and a.trade_id in
+      <foreach collection="tradeIds" item="item" open="(" separator=", " close=")" >
+        #{item}
+      </foreach>
+    </if>
+    group by a.trade_id
+  </select>
+  
+  <update id="batchDelete">
+    update tb_hot_search_trade_ranking_list set is_deleted = 1, update_date = now(), updated_by = #{operationUserId}
+    where id in
+    <foreach close=")" collection="ids" item="id" open="(" separator=", ">
+      #{id}
+    </foreach>
+  </update>
+  
+  <select id="queryAnchorNumberNotCorrelation" resultMap="BaseResultMap">
+    select a.id, a.system_anchor_id, a.similar_anchor_id, a.trade_id, a.system_trade_id from tb_hot_search_trade_ranking_list as a
+            join tb_similar_anchor as b on a.similar_anchor_id = b.id
+    where a.is_deleted = 0 and b.is_deleted = 0 and b.unique_id in
+    <foreach collection="anchorNumbers" item="item" open="(" separator=", " close=")" >
+      #{item}
+    </foreach>
+    and a.system_anchor_id = 0
+  </select>
+</mapper>

@@ -1,0 +1,349 @@
+{
+  "version": 1,
+  "roles": {
+    "ambiguity_gatekeeper": {
+      "artifacts_required": [
+        "{focus_card}"
+      ],
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/ambiguity_gate.py",
+          "args": [
+            "--intent",
+            "{intent_text}"
+          ]
+        },
+        {
+          "script": ".claude/scripts/gates/focus_card_gate.py",
+          "args": [
+            "--file",
+            "{focus_card}"
+          ]
+        }
+      ]
+    },
+    "focus_guard": {
+      "artifacts_required": [
+        "{focus_card}"
+      ],
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/scope_guard.py",
+          "args": [
+            "--focus-card",
+            "{focus_card}",
+            "--files",
+            "{changed_files}"
+          ]
+        }
+      ]
+    },
+    "architecture_curator": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/writeback_gate.py",
+          "args": [
+            "--topic",
+            "{topic}",
+            "--date",
+            "{date}",
+            "--require",
+            "architecture"
+          ]
+        }
+      ]
+    },
+    "security_sentinel": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/secrets_linter.py",
+          "args": [
+            "--paths",
+            "src/main/resources/**/*.yml",
+            "src/main/resources/**/*.yaml",
+            "src/main/resources/**/*.properties",
+            ".claude/**/*.md"
+          ]
+        }
+      ]
+    },
+    "documentation_curator": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/delivery_capsule_gate.py",
+          "args": [
+            "--file",
+            "{delivery_file}"
+          ]
+        },
+        {
+          "script": ".claude/scripts/wiki/wiki_linter.py",
+          "args": []
+        }
+      ]
+    },
+    "skill_graph_curator": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/skill_index_linter.py",
+          "args": [
+            "--index",
+            ".claude/skills/trae-skill-index/SKILL.md",
+            "--skills-dir",
+            ".claude/skills",
+            "--fail-on-missing"
+          ]
+        }
+      ]
+    },
+    "requirement_engineer": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/ambiguity_gate.py",
+          "args": [
+            "--require",
+            "explore_report.md"
+          ]
+        }
+      ]
+    },
+    "system_architect": {
+      "comment": "openspec.md structural gate is schema_checker.py under scripts/wiki (not gates). It validates the contract before Implement.",
+      "gates": [
+        {
+          "script": ".claude/scripts/wiki/schema_checker.py",
+          "args": [
+            "{run_dir}/openspec.md"
+          ]
+        }
+      ]
+    },
+    "lead_engineer": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/scope_guard.py",
+          "args": [
+            "--focus-card",
+            "{focus_card}",
+            "--files",
+            "{changed_files}"
+          ]
+        }
+      ]
+    },
+    "code_reviewer": {
+      "comment": "Two layers compose orthogonally: (1) Subjective design / correctness review → dispatched to @code-reviewer sub-agent (see policy.md Tier-1 MANDATORY). (2) Deterministic style / Javadoc lint → comment_linter_java.py against the changed files. The sub-agent does NOT replace the deterministic gate.",
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/comment_linter_java.py",
+          "args": [
+            "--changed-paths",
+            "{changed_files}"
+          ]
+        }
+      ]
+    },
+    "librarian": {
+      "gates": [
+        {
+          "script": ".claude/scripts/wiki/wiki_linter.py",
+          "args": []
+        }
+      ]
+    },
+    "knowledge_harvester": {
+      "artifacts_required": [
+        ".claude/llm_wiki/wiki/.last_harvest.json"
+      ],
+      "gates": [
+        {
+          "script": ".claude/scripts/wiki/harvest_threshold.py",
+          "args": [
+            "--module",
+            "{module}"
+          ]
+        }
+      ]
+    },
+    "frontend_api_doc_writer": {
+      "comment": "Produces .claude/llm_wiki/wiki/frontend-api/<module>.md. Mode resolved from openspec frontmatter: forward at Propose (before Implement), reverse at Archive. No automated gate — output is human-reviewable markdown; field-drift detection happens at next reverse-mode run.",
+      "artifacts_required": [
+        ".claude/llm_wiki/wiki/frontend-api/_response_envelope.md"
+      ],
+      "gates": []
+    },
+    "debugger": {
+      "comment": "Read-only root-cause investigator dispatched on Scenario DEBUG (@debug). Produces RCA report and yields to user; never modifies business code. No automated gate — RCA report quality is reviewed by the user before any follow-up Change task is launched.",
+      "gates": []
+    }
+  },
+  "mounts": [
+    {
+      "intent": "Change",
+      "profile": "PATCH",
+      "phase": "Explorer",
+      "roles": [
+        "ambiguity_gatekeeper",
+        "focus_guard"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "PATCH",
+      "phase": "Implement",
+      "roles": [
+        "focus_guard",
+        "security_sentinel"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "PATCH",
+      "phase": "QA",
+      "roles": [
+        "documentation_curator"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "PATCH",
+      "phase": "Archive",
+      "roles": [
+        "documentation_curator",
+        "skill_graph_curator"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Explorer",
+      "roles": [
+        "ambiguity_gatekeeper",
+        "requirement_engineer",
+        "focus_guard"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Propose",
+      "roles": [
+        "system_architect"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Propose",
+      "condition": "openspec.frontend_facing == true",
+      "comment": "forward mode — dispatch frontend-api-doc-writer after design is finalized so frontend team has a contract before backend Implement starts",
+      "roles": [
+        "frontend_api_doc_writer"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Implement",
+      "roles": [
+        "lead_engineer",
+        "focus_guard",
+        "security_sentinel"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "QA",
+      "roles": [
+        "code_reviewer",
+        "documentation_curator"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Archive",
+      "roles": [
+        "documentation_curator",
+        "skill_graph_curator",
+        "librarian"
+      ]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Archive",
+      "condition": "openspec.frontend_facing == true",
+      "comment": "reverse mode — re-scan Controller + Bo/Vo to detect field drift between contract and implementation; reports [Field Drift Detected] if mismatched",
+      "roles": [
+        "frontend_api_doc_writer"
+      ]
+    },
+    {
+      "intent": "Workflow",
+      "profile": "PATCH",
+      "phase": "Explorer",
+      "roles": [
+        "ambiguity_gatekeeper",
+        "focus_guard"
+      ]
+    },
+    {
+      "intent": "Workflow",
+      "profile": "PATCH",
+      "phase": "Implement",
+      "roles": [
+        "focus_guard",
+        "security_sentinel"
+      ]
+    },
+    {
+      "intent": "Workflow",
+      "profile": "PATCH",
+      "phase": "Archive",
+      "roles": [
+        "architecture_curator",
+        "documentation_curator",
+        "skill_graph_curator"
+      ]
+    },
+    {
+      "intent": "Workflow",
+      "profile": "STANDARD",
+      "phase": "Explorer",
+      "roles": [
+        "ambiguity_gatekeeper",
+        "focus_guard"
+      ]
+    },
+    {
+      "intent": "Workflow",
+      "profile": "STANDARD",
+      "phase": "Implement",
+      "roles": [
+        "focus_guard",
+        "security_sentinel"
+      ]
+    },
+    {
+      "intent": "Workflow",
+      "profile": "STANDARD",
+      "phase": "Archive",
+      "roles": [
+        "architecture_curator",
+        "documentation_curator",
+        "skill_graph_curator"
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario": "DEBUG",
+      "comment": "Triggered by @debug shortcut or bug/test-failure/unexpected-exception input with unknown root cause. Read-only investigation; produces RCA report and yields to user. Fix lives in a follow-up Change task — debugger never writes business code.",
+      "roles": [
+        "debugger"
+      ]
+    }
+  ]
+}

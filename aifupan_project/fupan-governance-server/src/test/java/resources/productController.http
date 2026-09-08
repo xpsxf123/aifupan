@@ -1,0 +1,275 @@
+@baseUrl = http://localhost:6626
+@token = 44d54cbde191480d8a13c5830327f35c
+@contentType = application/json
+
+### 1. 商品排行分页查询（基础查询）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 2. 商品排行分页查询（按分公司筛选）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "companyId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 3. 商品排行分页查询（按部门筛选）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "companyId": 1,
+  "deptId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 4. 商品排行分页查询（按小组筛选）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "companyId": 1,
+  "deptId": 1,
+  "teamId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 5. 商品排行分页查询（按销量排序）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "quantity",
+  "sortOrder": "desc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 6. 商品排行分页查询（按销售额排序）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "salesAmount",
+  "sortOrder": "desc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 7. 商品排行分页查询（按退款率排序）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "refundRate",
+  "sortOrder": "asc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 8. 商品排行分页查询（按直播场次数排序）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "sessionCount",
+  "sortOrder": "desc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 9. 商品排行分页查询（按关联分公司数排序）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "companyCount",
+  "sortOrder": "desc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 10. 商品关联直播场次分页查询（基础查询）
+POST {{baseUrl}}/api/governance/performance/product/sessions
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 11. 商品关联直播场次分页查询（按开播时间排序）
+POST {{baseUrl}}/api/governance/performance/product/sessions
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "startTime",
+  "sortOrder": "desc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 12. 商品关联直播场次分页查询（按场次时长排序）
+POST {{baseUrl}}/api/governance/performance/product/sessions
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "duration",
+  "sortOrder": "desc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 13. 商品关联直播场次分页查询（按销量排序）
+POST {{baseUrl}}/api/governance/performance/product/sessions
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "quantity",
+  "sortOrder": "desc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 14. 商品关联直播场次分页查询（按销售额排序）
+POST {{baseUrl}}/api/governance/performance/product/sessions
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "salesAmount",
+  "sortOrder": "desc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 15. 商品关联直播场次分页查询（按场观排序）
+POST {{baseUrl}}/api/governance/performance/product/sessions
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "viewCount",
+  "sortOrder": "desc",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 16. 商品关联分公司列表查询（基础查询）
+POST {{baseUrl}}/api/governance/performance/product/companies
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07"
+}
+
+### 17. 商品关联分公司列表查询（按销量排序）
+POST {{baseUrl}}/api/governance/performance/product/companies
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "quantity",
+  "sortOrder": "desc"
+}
+
+### 18. 商品关联分公司列表查询（按销售额排序）
+POST {{baseUrl}}/api/governance/performance/product/companies
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "salesAmount",
+  "sortOrder": "desc"
+}
+
+### 19. 商品关联分公司列表查询（按场观排序）
+POST {{baseUrl}}/api/governance/performance/product/companies
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "productId": "product_001",
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "sortBy": "viewCount",
+  "sortOrder": "desc"
+}
+
+### 20. 商品排行分页查询（缺少必填参数-测试校验）
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "pageNum": 1,
+  "pageSize": 10
+}

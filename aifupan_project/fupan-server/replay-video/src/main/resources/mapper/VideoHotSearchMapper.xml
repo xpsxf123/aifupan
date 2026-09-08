@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.video.project.dao.VideoHotSearchDao">
+
+    <!-- 连表查询爆款搜索结果 -->
+    <select id="listByPlatformTypeAndSearchKeywords"
+            resultType="com.jiuyu.replay.video.project.entity.VideoHotSearchEntity">
+        SELECT * FROM tb_video_hot_search
+        WHERE
+        <foreach collection="queryList" item="condition" separator=" OR ">
+            (platform_type = #{condition.platformType} AND search_keyword = #{condition.searchKeyword} AND is_deleted =
+            0)
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.performance.mapper.OrgPerformanceMapper">
+
+  <select id="pageQuerySubCompanyPerformance"
+          resultType="com.jiuyu.governance.business.performance.pojo.bo.OrgPerformanceBO">
+    SELECT
+        sc.id AS id,
+        sc.name AS name,
+        COALESCE(SUM(sp.view_count), 0) AS viewCount,
+        COALESCE(SUM(sp.sales_revenue), 0) AS salesRevenue,
+        COALESCE(SUM(sp.refund), 0) AS refund,
+        COALESCE(SUM(sp.net_sales), 0) AS netSales,
+        COALESCE(SUM(sp.investment), 0) AS investment
+    FROM sub_company sc
+    LEFT JOIN session_performance sp
+        ON sp.company_id = sc.id
+        AND sp.tenant_id = #{req.tenantId}
+        AND sp.stats_date BETWEEN #{req.startDate} AND #{req.endDate}
+        AND sp.is_deleted = 0
+    WHERE sc.tenant_id = #{req.tenantId}
+      AND sc.is_deleted = 0
+      <if test="req.companyIds != null and req.companyIds.size() > 0">
+          AND sc.id IN
+          <foreach collection="req.companyIds" item="id" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+      </if>
+      <if test="req.name != null and req.name != ''">
+          AND sc.name LIKE CONCAT('%', #{req.name}, '%')
+      </if>
+    GROUP BY sc.id
+    ORDER BY
+        <choose>
+            <when test="req.sortField == 'viewCount'">viewCount</when>
+            <when test="req.sortField == 'salesRevenue'">salesRevenue</when>
+            <when test="req.sortField == 'refund'">refund</when>
+            <when test="req.sortField == 'netSales'">netSales</when>
+            <when test="req.sortField == 'investment'">investment</when>
+            <otherwise>salesRevenue</otherwise>
+        </choose>
+        <choose>
+            <when test="req.sortOrder == 'ASC'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+  </select>
+
+  <select id="pageQueryDeptPerformance"
+          resultType="com.jiuyu.governance.business.performance.pojo.bo.OrgPerformanceBO">
+    SELECT
+        d.id AS id,
+        d.name AS name,
+        COALESCE(SUM(sp.view_count), 0) AS viewCount,
+        COALESCE(SUM(sp.sales_revenue), 0) AS salesRevenue,
+        COALESCE(SUM(sp.refund), 0) AS refund,
+        COALESCE(SUM(sp.net_sales), 0) AS netSales,
+        COALESCE(SUM(sp.investment), 0) AS investment
+    FROM dept d
+    LEFT JOIN session_performance sp
+        ON sp.dept_id = d.id
+        AND sp.tenant_id = #{req.tenantId}
+        AND sp.stats_date BETWEEN #{req.startDate} AND #{req.endDate}
+        AND sp.is_deleted = 0
+    WHERE d.tenant_id = #{req.tenantId}
+      AND d.is_deleted = 0
+      <if test="req.companyId != null">
+          AND d.company_id = #{req.companyId}
+      </if>
+      <if test="req.deptIds != null and req.deptIds.size() > 0">
+          AND d.id IN
+          <foreach collection="req.deptIds" item="id" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+      </if>
+      <if test="req.name != null and req.name != ''">
+          AND d.name LIKE CONCAT('%', #{req.name}, '%')
+      </if>
+    GROUP BY d.id
+    ORDER BY
+        <choose>
+            <when test="req.sortField == 'viewCount'">viewCount</when>
+            <when test="req.sortField == 'salesRevenue'">salesRevenue</when>
+            <when test="req.sortField == 'refund'">refund</when>
+            <when test="req.sortField == 'netSales'">netSales</when>
+            <when test="req.sortField == 'investment'">investment</when>
+            <otherwise>salesRevenue</otherwise>
+        </choose>
+        <choose>
+            <when test="req.sortOrder == 'ASC'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+  </select>
+
+  <select id="pageQueryTeamPerformance"
+          resultType="com.jiuyu.governance.business.performance.pojo.bo.OrgPerformanceBO">
+    SELECT
+        t.id AS id,
+        t.name AS name,
+        COALESCE(SUM(sp.view_count), 0) AS viewCount,
+        COALESCE(SUM(sp.sales_revenue), 0) AS salesRevenue,
+        COALESCE(SUM(sp.refund), 0) AS refund,
+        COALESCE(SUM(sp.net_sales), 0) AS netSales,
+        COALESCE(SUM(sp.investment), 0) AS investment
+    FROM team t
+    LEFT JOIN session_performance sp
+        ON sp.team_id = t.id
+        AND sp.tenant_id = #{req.tenantId}
+        AND sp.stats_date BETWEEN #{req.startDate} AND #{req.endDate}
+        AND sp.is_deleted = 0
+    WHERE t.tenant_id = #{req.tenantId}
+      AND t.is_deleted = 0
+      <if test="req.companyId != null">
+          AND t.company_id = #{req.companyId}
+      </if>
+      <if test="req.deptId != null">
+          AND t.dept_id = #{req.deptId}
+      </if>
+      <if test="req.teamIds != null and req.teamIds.size() > 0">
+          AND t.id IN
+          <foreach collection="req.teamIds" item="id" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+      </if>
+      <if test="req.name != null and req.name != ''">
+          AND t.name LIKE CONCAT('%', #{req.name}, '%')
+      </if>
+    GROUP BY t.id
+    ORDER BY
+        <choose>
+            <when test="req.sortField == 'viewCount'">viewCount</when>
+            <when test="req.sortField == 'salesRevenue'">salesRevenue</when>
+            <when test="req.sortField == 'refund'">refund</when>
+            <when test="req.sortField == 'netSales'">netSales</when>
+            <when test="req.sortField == 'investment'">investment</when>
+            <otherwise>salesRevenue</otherwise>
+        </choose>
+        <choose>
+            <when test="req.sortOrder == 'ASC'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+  </select>
+
+</mapper>

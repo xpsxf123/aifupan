@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.video.project.dao.VideoInfoDao">
+
+    <!-- 批量查询视频信息 -->
+    <select id="batchQueryByPlatformAndVideoIds" resultType="com.jiuyu.replay.video.project.entity.VideoInfoEntity">
+        SELECT
+        *
+        FROM tb_video_info
+        WHERE is_deleted = 0
+        <if test="videoIds != null and videoIds.size() != 0">
+            AND platform_video_id IN
+            <foreach item="videoId" collection="videoIds"  separator="," open="(" close=")">
+                #{videoId}
+            </foreach>
+        </if>
+        <if test="platformTypes != null and platformTypes.size() != 0">
+            AND platform_type IN
+            <foreach item="platformType" collection="platformTypes" separator="," open="(" close=")">
+                #{platformType}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="queryVideoListByIdsAndCondition"
+            resultType="com.jiuyu.replay.video.project.vo.hotsearch.VideoHotSearchResultVo">
+        SELECT
+        v.id as videoId,
+        uv.id as extractId,
+        v.platform_type as platformType,
+        v.platform_video_id as platformVideoId,
+        v.title as videoTitle,
+        v.cover_url as videoCover,
+        v.video_url as videoUrl,
+        v.duration as duration,
+        v.publish_time as publishTime,
+        hs.influencer_nickname as influencerNickname,
+        hs.influencer_platform_user_id as influencerPlatformUserId,
+        hs.influencer_avatar as influencerAvatar,
+        hs.influencer_followers_count as followersCount,
+        v.like_count as likeCount,
+        v.comment_count as commentCount,
+        v.share_count as shareCount,
+        v.collect_count as collectCount,
+        CASE
+        WHEN v.like_count > 0 THEN CAST(ROUND(v.comment_count / v.like_count, 2) AS CHAR)
+        ELSE '0.00'
+        END as commentLikeRatio,
+        COALESCE(uv.extract_status, 0) as extractStatus
+        FROM tb_video_hot_search_video hs
+        LEFT JOIN tb_video_info v ON hs.video_id = v.id
+        LEFT JOIN tb_video_user_video uv ON (
+        uv.video_id = v.id
+        AND uv.tenant_id = #{tenantId}
+        AND uv.source_type = 4
+        AND uv.is_deleted = 0
+        )
+        WHERE hs.search_id = #{searchId}
+        AND hs.is_deleted = 0
+        AND v.is_deleted = 0
+        <!--<if test="subscriptionLikeCountThreshold != null">
+            AND v.like_count >= #{subscriptionLikeCountThreshold}
+        </if>-->
+        <if test="queryBo.likeCount != null">
+            AND v.like_count >= #{queryBo.likeCount}
+        </if>
+        <if test="queryBo.commentCount != null">
+            AND v.comment_count >= #{queryBo.commentCount}
+        </if>
+        <if test="queryBo.shareCount != null">
+            AND v.share_count >= #{queryBo.shareCount}
+        </if>
+        <if test="queryBo.collectCount != null">
+            AND v.collect_count >= #{queryBo.collectCount}
+        </if>
+        <if test="queryBo.publishStartTime != null">
+            AND v.publish_time >= #{queryBo.publishStartTime}
+        </if>
+        <if test="queryBo.publishEndTime != null">
+            AND v.publish_time &lt;= #{queryBo.publishEndTime}
+        </if>
+        <if test="queryBo.durationStartNumber != null">
+            AND v.duration >= #{queryBo.durationStartNumber}
+        </if>
+        <if test="queryBo.durationEndNumber != null">
+            AND v.duration &lt;= #{queryBo.durationEndNumber}
+        </if>
+        <if test="videoUpdateStartTime != null">
+            AND hs.created_date >= #{videoUpdateStartTime}
+        </if>
+        <if test="videoUpdateEndTime != null">
+            AND hs.created_date &lt;= #{videoUpdateEndTime}
+        </if>
+        <!-- 粉丝量筛选条件 -->
+        <if test="queryBo.followersCountFilter != null">
+            <choose>
+                <when test="queryBo.followersCountFilter == 1">
+                    AND hs.influencer_followers_count &lt;= 5000
+                </when>
+                <when test="queryBo.followersCountFilter == 2">
+                    AND hs.influencer_followers_count &lt;= 10000
+                </when>
+                <when test="queryBo.followersCountFilter == 3">
+                    AND hs.influencer_followers_count &lt;= 20000
+                </when>
+                <when test="queryBo.followersCountFilter == 4">
+                    AND hs.influencer_followers_count &lt;= 50000
+                </when>
+                <when test="queryBo.followersCountFilter == 5">
+                    AND hs.influencer_followers_count &lt;= 100000
+                </when>
+            </choose>
+        </if>
+        <!-- 评赞比筛选条件 -->
+        <if test="queryBo.commentLikeRatioFilter != null">
+            <choose>
+                <when test="queryBo.commentLikeRatioFilter == 1">
+                    AND v.like_count > 0 AND (v.comment_count / v.like_count) > 0.05
+                </when>
+                <when test="queryBo.commentLikeRatioFilter == 2">
+                    AND v.like_count > 0 AND (v.comment_count / v.like_count) > 0.10
+                </when>
+                <when test="queryBo.commentLikeRatioFilter == 3">
+                    AND v.like_count > 0 AND (v.comment_count / v.like_count) > 0.15
+                </when>
+                <when test="queryBo.commentLikeRatioFilter == 4">
+                    AND v.like_count > 0 AND (v.comment_count / v.like_count) > 0.20
+                </when>
+                <when test="queryBo.commentLikeRatioFilter == 5">
+                    AND v.like_count > 0 AND (v.comment_count / v.like_count) > 0.25
+                </when>
+            </choose>
+        </if>
+        <!-- 动态排序 -->
+        <choose>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 2">
+                <!-- 点赞数排序 -->
+                ORDER BY v.like_count
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 3">
+                <!-- 评论数排序 -->
+                ORDER BY v.comment_count
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 4">
+                <!-- 转发数排序 -->
+                ORDER BY v.share_count
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 5">
+                <!-- 收藏数排序 -->
+                ORDER BY v.collect_count
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 6">
+                <!-- 粉丝量排序 -->
+                ORDER BY hs.influencer_followers_count
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <when test="queryBo.sortCode != null and queryBo.sortCode == 7">
+                <!-- 评赞比排序 -->
+                ORDER BY CASE WHEN v.like_count > 0 THEN v.comment_count / v.like_count ELSE 0 END
+                <if test="queryBo.sortSequence != null and queryBo.sortSequence == 1">ASC</if>
+                <if test="queryBo.sortSequence == null or queryBo.sortSequence == 0">DESC</if>
+            </when>
+            <otherwise>
+                <!-- 默认排序：按照sort_order升序 -->
+                ORDER BY v.like_count DESC,hs.sort_order ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="countVideoNumberBySearchIdAndLikeCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM tb_video_info AS v
+                 LEFT JOIN tb_video_hot_search_video AS hsv ON v.id = hsv.video_id
+        WHERE hsv.search_id = #{searchId}
+          and hsv.is_deleted = 0
+          AND v.like_count >= #{likeCount}
+    </select>
+
+    <!-- 批量查询视频数量 -->
+    <select id="batchCountVideoNumberBySearchIdAndLikeCount"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfoDao$VideoCountResult">
+        <foreach collection="queryParams" item="param" separator="UNION ALL">
+            SELECT
+            #{param.searchId} as searchId,
+            #{param.likeCount} as likeCount,
+            (
+            SELECT count(*)
+            FROM tb_video_info AS v
+            LEFT JOIN tb_video_hot_search_video AS hsv ON v.id = hsv.video_id
+            WHERE hsv.search_id = #{param.searchId}
+            AND hsv.is_deleted = 0
+            AND v.like_count >= #{param.likeCount}
+            ) as videoCount
+        </foreach>
+    </select>
+
+    <!-- 批量根据达人平台用户ID统计视频数量 -->
+    <select id="batchCountVideoNumberByAuthorIds"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfoDao$AuthorVideoCountResult">
+        SELECT
+        author_id AS authorId,
+        COUNT(*) AS videoCount
+        FROM tb_video_info
+        WHERE author_id IN
+        <foreach collection="authorIds" item="authorId" open="(" separator="," close=")">
+            #{authorId}
+        </foreach>
+        AND is_deleted = 0
+        GROUP BY author_id
+    </select>
+
+    <!-- 批量统计租户已采集的达人短视频数量（按 author_id 聚合，dedup by video id） -->
+    <select id="batchCountCollectedByAuthorIds"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfoDao$AuthorVideoCountResult">
+        SELECT
+        v.author_id AS authorId,
+        COUNT(*) AS videoCount
+        FROM tb_video_info v
+        WHERE v.is_deleted = 0
+        AND v.author_id IN
+        <foreach collection="authorIds" item="authorId" open="(" separator="," close=")">
+            #{authorId}
+        </foreach>
+        AND v.id IN (
+        SELECT uv.video_id
+        FROM tb_video_user_video uv
+        WHERE uv.is_deleted = 0
+        AND uv.tenant_id = #{tenantId}
+        )
+        GROUP BY v.author_id
+    </select>
+
+    <!-- 批量统计达人短视频互动汇总（全库爬取；租户口径由调用方先把 authorIds 收窄为已订阅达人） -->
+    <select id="batchStatsByAuthorIds"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfoDao$AuthorVideoStatsResult">
+        SELECT
+        v.author_id AS authorId,
+        COUNT(*) AS videoCount,
+        COALESCE(SUM(v.like_count), 0) AS totalLikeCount,
+        COALESCE(SUM(v.comment_count), 0) AS totalCommentCount,
+        COALESCE(SUM(v.share_count), 0) AS totalShareCount,
+        COALESCE(SUM(v.collect_count), 0) AS totalCollectCount
+        FROM tb_video_info v
+        WHERE v.is_deleted = 0
+        AND v.author_id IN
+        <foreach collection="authorIds" item="authorId" open="(" separator="," close=")">
+            #{authorId}
+        </foreach>
+        <if test="publishStartTime != null and publishStartTime != ''">
+            AND v.publish_time &gt;= #{publishStartTime}
+        </if>
+        <if test="publishEndTime != null and publishEndTime != ''">
+            AND v.publish_time &lt;= #{publishEndTime}
+        </if>
+        GROUP BY v.author_id
+    </select>
+
+    <!--
+      本租户可见范围内的短视频分页（游标）。可见范围 = 本租户已订阅达人名下的全部 tb_video_info，
+      与该租户是否提取过文案无关；提取状态过滤单独走 tb_video_user_video.extract_status=3 的 EXISTS。
+
+      authorIds 由调用方在 Java 侧算好（订阅达人 ∩ 达人维度过滤）后以绑定参数传入，必非空。
+      不在 SQL 里 CAST 订阅表的 influencer_id(BIGINT) 去比 author_id(VARCHAR)：
+      CAST 结果带连接默认字符序，与列字符序不同会触发 error 1267 Illegal mix of collations；
+      而绑定参数是字面量、字符序可强制转换，会自动采用列字符序，author_id 索引也照常可用。
+    -->
+    <select id="pageSubscribedInfluencerVideos" resultType="com.jiuyu.replay.video.project.entity.VideoInfoEntity">
+        SELECT v.*
+        FROM tb_video_info v
+        WHERE v.is_deleted = 0
+        AND v.author_id IN
+        <foreach collection="authorIds" item="authorId" open="(" separator="," close=")">
+            #{authorId}
+        </foreach>
+        <if test="platformTypes != null and platformTypes.size() != 0">
+            AND v.platform_type IN
+            <foreach collection="platformTypes" item="pt" open="(" separator="," close=")">
+                #{pt}
+            </foreach>
+        </if>
+        <if test="tenantExtracted != null">
+            <choose>
+                <when test="tenantExtracted">
+                    AND EXISTS (
+                    SELECT 1 FROM tb_video_user_video uv
+                    WHERE uv.is_deleted = 0 AND uv.tenant_id = #{tenantId}
+                    AND uv.video_id = v.id AND uv.extract_status = 3
+                    )
+                </when>
+                <otherwise>
+                    AND NOT EXISTS (
+                    SELECT 1 FROM tb_video_user_video uv
+                    WHERE uv.is_deleted = 0 AND uv.tenant_id = #{tenantId}
+                    AND uv.video_id = v.id AND uv.extract_status = 3
+                    )
+                </otherwise>
+            </choose>
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (v.title LIKE CONCAT('%', #{keyword}, '%') OR v.video_description LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="publishStartTime != null and publishStartTime != ''">
+            AND v.publish_time &gt;= #{publishStartTime}
+        </if>
+        <if test="publishEndTime != null and publishEndTime != ''">
+            AND v.publish_time &lt;= #{publishEndTime}
+        </if>
+        <!-- keyset 游标：idOnly 仅按 id；否则 (排序列, id) 行值比较，DESC 取更小、ASC 取更大 -->
+        <if test="cursorId != null">
+            <choose>
+                <when test="idOnly">
+                    <choose>
+                        <when test="desc">AND v.id &lt; #{cursorId}</when>
+                        <otherwise>AND v.id &gt; #{cursorId}</otherwise>
+                    </choose>
+                </when>
+                <otherwise>
+                    <choose>
+                        <when test="desc">
+                            AND (
+                            <choose>
+                                <when test="sortField == 1">v.like_count</when>
+                                <when test="sortField == 2">v.comment_count</when>
+                                <when test="sortField == 3">v.share_count</when>
+                                <when test="sortField == 4">v.collect_count</when>
+                                <when test="sortField == 5">v.publish_time</when>
+                                <otherwise>v.id</otherwise>
+                            </choose>
+                            , v.id) &lt; (#{cursorSortVal}, #{cursorId})
+                        </when>
+                        <otherwise>
+                            AND (
+                            <choose>
+                                <when test="sortField == 1">v.like_count</when>
+                                <when test="sortField == 2">v.comment_count</when>
+                                <when test="sortField == 3">v.share_count</when>
+                                <when test="sortField == 4">v.collect_count</when>
+                                <when test="sortField == 5">v.publish_time</when>
+                                <otherwise>v.id</otherwise>
+                            </choose>
+                            , v.id) &gt; (#{cursorSortVal}, #{cursorId})
+                        </otherwise>
+                    </choose>
+                </otherwise>
+            </choose>
+        </if>
+        ORDER BY
+        <choose>
+            <when test="sortField == 1">v.like_count</when>
+            <when test="sortField == 2">v.comment_count</when>
+            <when test="sortField == 3">v.share_count</when>
+            <when test="sortField == 4">v.collect_count</when>
+            <when test="sortField == 5">v.publish_time</when>
+            <otherwise>v.id</otherwise>
+        </choose>
+        <choose><when test="desc">DESC</when><otherwise>ASC</otherwise></choose>
+        <if test="sortField != 0">
+            , v.id <choose><when test="desc">DESC</when><otherwise>ASC</otherwise></choose>
+        </if>
+        LIMIT #{limit}
+    </select>
+
+    <!-- 视频在本租户下的采集时间（单表聚合 MAX(created_date)，允许 GROUP BY） -->
+    <select id="listVideoCollectTimes"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfoDao$VideoCollectTimeRow">
+        SELECT
+        uv.video_id AS videoId,
+        MAX(uv.created_date) AS collectTime
+        FROM tb_video_user_video uv
+        WHERE uv.is_deleted = 0
+        AND uv.tenant_id = #{tenantId}
+        
+        AND uv.video_id IN
+        <foreach collection="videoIds" item="vid" open="(" separator="," close=")">
+            #{vid}
+        </foreach>
+        GROUP BY uv.video_id
+    </select>
+
+    <!-- 按视频主键批量查 id + video_hash -->
+    <select id="listVideoHashByIds"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfoDao$VideoHashRow">
+        SELECT
+        id AS id,
+        video_hash AS videoHash
+        FROM tb_video_info
+        WHERE is_deleted = 0
+        AND id IN
+        <foreach collection="ids" item="vid" open="(" separator="," close=")">
+            #{vid}
+        </foreach>
+    </select>
+
+    <!-- 本租户在给定视频集合中「文案提取成功」的视频 id（tb_video_user_video 有记录 = 该租户发起过提取） -->
+    <select id="listTenantExtractedVideoIds" resultType="java.lang.Long">
+        SELECT DISTINCT uv.video_id
+        FROM tb_video_user_video uv
+        WHERE uv.is_deleted = 0
+        AND uv.tenant_id = #{tenantId}
+        AND uv.extract_status = 3
+        AND uv.video_id IN
+        <foreach collection="videoIds" item="vid" open="(" separator="," close=")">
+            #{vid}
+        </foreach>
+    </select>
+
+    <!-- 单达人作品互动明细投影（统计概览专用；直读公共爬取库，租户口径由调用方先校验达人订阅关系） -->
+    <select id="listAuthorClipMetrics"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfoDao$ClipMetricRow">
+        SELECT
+        v.id AS videoId,
+        v.title AS title,
+        v.like_count AS likeCount,
+        v.comment_count AS commentCount,
+        v.share_count AS shareCount,
+        v.collect_count AS collectCount,
+        v.duration AS duration,
+        v.publish_time AS publishTime
+        FROM tb_video_info v
+        WHERE v.is_deleted = 0
+        AND v.author_id = #{authorId}
+        <if test="platformType != null">
+            AND v.platform_type = #{platformType}
+        </if>
+        <if test="publishStartTime != null and publishStartTime != ''">
+            AND v.publish_time &gt;= #{publishStartTime}
+        </if>
+        <if test="publishEndTime != null and publishEndTime != ''">
+            AND v.publish_time &lt;= #{publishEndTime}
+        </if>
+        ORDER BY v.publish_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 爆款视频过滤条件（title/描述关键词、标题内 #标签、互动指标、时长）复用片段 -->
+    <sql id="hotSearchVideoFilter">
+        <if test="keyword != null and keyword != ''">
+            AND (v.title LIKE CONCAT('%', #{keyword}, '%')
+            OR v.video_description LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="tags != null and tags.size() != 0">
+            AND (
+            <foreach collection="tags" item="tag" separator=" OR ">
+                v.title LIKE CONCAT('%#', #{tag}, '%')
+            </foreach>
+            )
+        </if>
+        <if test="likeCountMin != null">AND v.like_count &gt;= #{likeCountMin}</if>
+        <if test="commentCountMin != null">AND v.comment_count &gt;= #{commentCountMin}</if>
+        <if test="shareCountMin != null">AND v.share_count &gt;= #{shareCountMin}</if>
+        <if test="collectCountMin != null">AND v.collect_count &gt;= #{collectCountMin}</if>
+        <if test="durationMin != null">AND v.duration &gt;= #{durationMin}</if>
+        <if test="durationMax != null">AND v.duration &lt;= #{durationMax}</if>
+        <if test="publishStartTime != null and publishStartTime != ''">AND v.publish_time &gt;= #{publishStartTime}</if>
+        <if test="publishEndTime != null and publishEndTime != ''">AND v.publish_time &lt;= #{publishEndTime}</if>
+    </sql>
+
+    <!-- 爆款排序列表达式（sortField → 列） -->
+    <sql id="hotSortColumn">
+        <choose>
+            <when test="sortField == 1">v.like_count</when>
+            <when test="sortField == 2">v.comment_count</when>
+            <when test="sortField == 3">v.share_count</when>
+            <when test="sortField == 4">v.collect_count</when>
+            <when test="sortField == 5">v.publish_time</when>
+            <otherwise>hs.sort_order</otherwise>
+        </choose>
+    </sql>
+
+    <!-- 爆款关键词下的视频 keyset 游标分页（JOIN，出 video_id + 排序值字符串） -->
+    <select id="pageHotSearchVideoRows"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfoDao$HotSearchVideoRow">
+        SELECT
+        hs.video_id AS videoId,
+        CAST(<include refid="hotSortColumn"/> AS CHAR) AS sortVal
+        FROM tb_video_hot_search_video hs
+        INNER JOIN tb_video_info v ON v.id = hs.video_id AND v.is_deleted = 0
+        WHERE hs.is_deleted = 0
+        AND hs.search_id = #{searchId}
+        <include refid="hotSearchVideoFilter"/>
+        <if test="authorIds != null and authorIds.size() != 0">
+            AND v.author_id IN
+            <foreach collection="authorIds" item="aid" open="(" separator="," close=")">
+                #{aid}
+            </foreach>
+        </if>
+        <if test="lastVideoId != null">
+            AND (
+            <include refid="hotSortColumn"/> <if test="keysetDesc">&lt;</if><if test="!keysetDesc">&gt;</if> #{lastSortVal}
+            OR (
+            <include refid="hotSortColumn"/> = #{lastSortVal}
+            AND hs.video_id <if test="keysetDesc">&lt;</if><if test="!keysetDesc">&gt;</if> #{lastVideoId}
+            )
+            )
+        </if>
+        ORDER BY
+        <include refid="hotSortColumn"/> <if test="keysetDesc">DESC</if><if test="!keysetDesc">ASC</if>
+        , hs.video_id <if test="keysetDesc">DESC</if><if test="!keysetDesc">ASC</if>
+        LIMIT #{limit}
+    </select>
+
+    <!-- 本租户文案提取成功条数（只回 COUNT，不拉 id 列表；调用方分批传入 videoIds） -->
+    <select id="countTenantExtractedVideoIds" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT uv.video_id)
+        FROM tb_video_user_video uv
+        WHERE uv.is_deleted = 0
+        AND uv.tenant_id = #{tenantId}
+        AND uv.extract_status = 3
+        AND uv.video_id IN
+        <foreach collection="videoIds" item="vid" open="(" separator="," close=")">
+            #{vid}
+        </foreach>
+    </select>
+
+    <!-- 爆款选题拆解样本投影（§6.21）：某 searchId 下时间窗内互动量 Top N，公共爬取库、不做租户裁剪 -->
+    <select id="listHotSearchClipMetrics"
+            resultType="com.jiuyu.replay.video.project.dao.VideoInfoDao$HotSearchClipRow">
+        SELECT
+        v.id AS videoId,
+        v.title AS title,
+        v.author_id AS authorId,
+        v.author_name AS authorName,
+        v.platform_type AS platformType,
+        v.like_count AS likeCount,
+        v.comment_count AS commentCount,
+        v.share_count AS shareCount,
+        v.collect_count AS collectCount,
+        v.duration AS duration,
+        v.publish_time AS publishTime,
+        hs.influencer_nickname AS influencerNickname,
+        hs.influencer_avatar AS influencerAvatar,
+        hs.influencer_followers_count AS influencerFollowersCount,
+        hs.influencer_platform_user_id AS influencerPlatformUserId,
+        hs.influencer_platform_type AS influencerPlatformType
+        FROM tb_video_hot_search_video hs
+        INNER JOIN tb_video_info v ON v.id = hs.video_id AND v.is_deleted = 0
+        WHERE hs.is_deleted = 0
+        AND hs.search_id = #{searchId}
+        <if test="platformType != null">
+            AND v.platform_type = #{platformType}
+        </if>
+        <if test="publishStartTime != null and publishStartTime != ''">
+            AND v.publish_time &gt;= #{publishStartTime}
+        </if>
+        <if test="publishEndTime != null and publishEndTime != ''">
+            AND v.publish_time &lt;= #{publishEndTime}
+        </if>
+        ORDER BY (COALESCE(v.like_count, 0) + COALESCE(v.comment_count, 0)
+        + COALESCE(v.share_count, 0) + COALESCE(v.collect_count, 0)) DESC, hs.video_id DESC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

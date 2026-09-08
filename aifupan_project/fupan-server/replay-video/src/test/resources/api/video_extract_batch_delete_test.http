@@ -1,0 +1,112 @@
+### 视频文案提取批量删除接口测试
+### 作者: RayChou
+### 创建时间: 2025-08-14
+### 描述: 视频文案提取批量删除功能的API测试用例
+
+### 1. 批量删除单个记录
+DELETE http://localhost:8080/replay/video/extract/batch/1
+Content-Type: application/json
+
+### 2. 批量删除多个记录
+DELETE http://localhost:8080/replay/video/extract/batch/1,2,3
+Content-Type: application/json
+
+### 3. 批量删除大量记录
+DELETE http://localhost:8080/replay/video/extract/batch/1,2,3,4,5,6,7,8,9,10
+Content-Type: application/json
+
+### 4. 删除不存在的记录
+DELETE http://localhost:8080/replay/video/extract/batch/999999
+Content-Type: application/json
+
+### 5. 删除混合存在和不存在的记录
+DELETE http://localhost:8080/replay/video/extract/batch/1,999999,2
+Content-Type: application/json
+
+### ========================================
+### 错误场景测试
+### ========================================
+
+### 6. 空ID列表
+DELETE http://localhost:8080/replay/video/extract/batch/
+Content-Type: application/json
+
+### 7. 无效的ID格式
+DELETE http://localhost:8080/replay/video/extract/batch/abc,def
+Content-Type: application/json
+
+### 8. 包含空格的ID
+DELETE http://localhost:8080/replay/video/extract/batch/1, 2 , 3
+Content-Type: application/json
+
+### 9. 包含负数ID
+DELETE http://localhost:8080/replay/video/extract/batch/-1,2,3
+Content-Type: application/json
+
+### 10. 包含零ID
+DELETE http://localhost:8080/replay/video/extract/batch/0,1,2
+Content-Type: application/json
+
+### ========================================
+### 权限测试场景
+### ========================================
+
+### 11. 主账号删除租户下所有记录
+DELETE http://localhost:8080/replay/video/extract/batch/1,2,3
+Content-Type: application/json
+# 需要使用主账号token
+
+### 12. 子账号删除自己的记录
+DELETE http://localhost:8080/replay/video/extract/batch/1,2
+Content-Type: application/json
+# 需要使用子账号token，且记录属于该子账号
+
+### 13. 子账号尝试删除其他用户的记录
+DELETE http://localhost:8080/replay/video/extract/batch/1,2,3
+Content-Type: application/json
+# 需要使用子账号token，但记录不属于该子账号
+
+### ========================================
+### 边界测试
+### ========================================
+
+### 14. 单个字符ID
+DELETE http://localhost:8080/replay/video/extract/batch/1
+Content-Type: application/json
+
+### 15. 长ID列表（100个）
+DELETE http://localhost:8080/replay/video/extract/batch/1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100
+Content-Type: application/json
+
+### 16. 重复ID
+DELETE http://localhost:8080/replay/video/extract/batch/1,1,2,2,3,3
+Content-Type: application/json
+
+### 17. 超大ID值
+DELETE http://localhost:8080/replay/video/extract/batch/9223372036854775807
+Content-Type: application/json
+
+### ========================================
+### 响应验证
+### ========================================
+
+### 期望的成功响应格式：
+# {
+#   "code": 200,
+#   "message": "success",
+#   "data": true
+# }
+
+### 期望的失败响应格式：
+# {
+#   "code": 500,
+#   "message": "ID格式错误",
+#   "data": false
+# }
+
+### 期望的权限错误响应格式：
+# {
+#   "code": 500,
+#   "message": "没有可删除的记录或无权限删除",
+#   "data": false
+# }

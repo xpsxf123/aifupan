@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.performance.mapper.LiveRoomPerformanceMapper">
+
+  <select id="pageQueryLiveRoomPerformance"
+          resultType="com.jiuyu.governance.business.performance.pojo.bo.LiveRoomPerformanceBO">
+    SELECT
+        lr.id AS id,
+        lr.anchor_name AS name,
+        lr.anchor_avatar AS anchorAvatar,
+        COALESCE(SUM(sp.view_count), 0) AS viewCount,
+        COALESCE(SUM(sp.sales_revenue), 0) AS salesRevenue,
+        COALESCE(SUM(sp.refund), 0) AS refund,
+        COALESCE(SUM(sp.net_sales), 0) AS netSales,
+        COALESCE(SUM(sp.investment), 0) AS investment
+    FROM live_room lr
+    LEFT JOIN session_performance sp
+        ON sp.live_room_id = lr.id
+        AND sp.tenant_id = #{req.tenantId}
+        AND sp.stats_date BETWEEN #{req.startDate} AND #{req.endDate}
+        AND sp.is_deleted = 0
+    WHERE lr.tenant_id = #{req.tenantId}
+      AND lr.is_deleted = 0
+      <if test="req.companyId != null">
+          AND lr.company_id = #{req.companyId}
+      </if>
+      <if test="req.deptId != null">
+          AND lr.dept_id = #{req.deptId}
+      </if>
+      <if test="req.teamId != null">
+          AND lr.team_id = #{req.teamId}
+      </if>
+      <if test="req.liveRoomIds != null and req.liveRoomIds.size() > 0">
+          AND lr.id IN
+          <foreach collection="req.liveRoomIds" item="id" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+      </if>
+      <if test="req.name != null and req.name != ''">
+          AND lr.anchor_name LIKE CONCAT('%', #{req.name}, '%')
+      </if>
+    GROUP BY lr.id
+    ORDER BY
+        <choose>
+            <when test="req.sortField == 'viewCount'">viewCount</when>
+            <when test="req.sortField == 'salesRevenue'">salesRevenue</when>
+            <when test="req.sortField == 'refund'">refund</when>
+            <when test="req.sortField == 'netSales'">netSales</when>
+            <when test="req.sortField == 'investment'">investment</when>
+            <otherwise>salesRevenue</otherwise>
+        </choose>
+        <choose>
+            <when test="req.sortOrder == 'ASC'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+  </select>
+
+</mapper>

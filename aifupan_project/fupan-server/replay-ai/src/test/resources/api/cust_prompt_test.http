@@ -1,0 +1,454 @@
+### 用户自定义提示词接口测试
+### 作者: jxy
+### 创建时间: 2025-01-21
+### 描述: 用户自定义提示词增删改查功能的API测试用例
+
+### ========================================
+### 变量配置
+### ========================================
+### 说明：
+### 1. 在 IntelliJ IDEA 中，可以在 Settings -> Tools -> HTTP Client -> Private Environment Variables 中配置
+### 2. 或者在项目根目录创建 http-client.env.json 文件配置
+### 3. 或者在项目根目录创建 http-client.private.env.json 文件配置（推荐，不提交到版本控制）
+### 4. 也可以在运行时手动替换 {{token}} 为实际的 token 值
+
+@baseUrl = http://localhost:6606
+@token = 1ff7f31704a542fe896a59dba1acc564
+@userId = 123456
+
+### ========================================
+### 基础功能测试
+### ========================================
+
+### 测试
+GET {{baseUrl}}/replay/openapi/v2100/onlineChartData?videoId=cae3f1a2-df6f-489f-a0ee-366f8fe343b7
+token: {{token}}
+
+
+### 测试
+POST {{baseUrl}}/replay/sales/updateEmployeeStatus
+Content-Type: application/json
+token: {{token}}
+
+{
+  "sourceId": 4506459562864009216,
+  "sourceType": 1,
+  "employeeStatus": 0
+}
+
+### 1. 新增提示词 - 基础场景
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "AI写作助手",
+  "promptContent": "帮助用",
+  "promptSort": 5
+}
+
+### 2. 新增提示词 - 多个不同的提示词
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "代码审查专家",
+  "promptContent": "专业的代码审查和优化建议",
+  "promptSort": 2
+}
+
+### 3. 新增提示词 - 长内容
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "数据分析师",
+  "promptContent": "专业的数据分析和可视化建议，包括数据清洗、统计分析、趋势预测等多个方面的内容",
+  "promptSort": 3
+}
+
+### 4. 获取提示词详情 - 有效ID
+GET {{baseUrl}}/replay/ai/custPrompt/info?id=4508328991369322496
+Content-Type: application/json
+token: {{token}}
+
+### 5. 获取提示词详情 - 另一个有效ID
+GET {{baseUrl}}/replay/ai/custPrompt/info?id=4508329172563255296
+Content-Type: application/json
+token: {{token}}
+
+### 6. 修改提示词 - 基础场景
+POST {{baseUrl}}/replay/ai/custPrompt/update
+Content-Type: application/json
+token: {{token}}
+
+{
+  "id": 4508328991369322496,
+  "promptTitle": "AI写作助手 - 升级版",
+  "promptContent": "升级后的AI写作助手，支持更多功能",
+  "promptSort": 1
+}
+
+### 7. 修改提示词 - 修改排序
+POST {{baseUrl}}/replay/ai/custPrompt/update
+Content-Type: application/json
+token: {{token}}
+
+{
+  "id": 4508329172563255296,
+  "promptTitle": "代码审查专家",
+  "promptContent": "专业的代码审查和优化建议",
+  "promptSort": 5
+}
+
+### 8. 删除提示词 - 单个删除
+GET {{baseUrl}}/replay/ai/custPrompt/delete?id=4508329244059361280
+Content-Type: application/json
+token: {{token}}
+
+### 9. 删除提示词 - 另一个删除
+GET {{baseUrl}}/replay/ai/custPrompt/delete?id=1234567891
+Content-Type: application/json
+token: {{token}}
+
+### 10. 分页查询 - 第一页
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 10
+}
+
+### 11. 分页查询 - 第二页
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 2,
+  "limit": 10
+}
+
+### 12. 分页查询 - 自定义分页大小
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 20
+}
+
+### ========================================
+### 搜索功能测试
+### ========================================
+
+### 13. 模糊搜索 - 按标题搜索
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 10,
+  "keyword": "AI"
+}
+
+### 14. 模糊搜索 - 按内容搜索
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 10,
+  "keyword": "创作"
+}
+
+### 15. 模糊搜索 - 搜索代码相关
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 10,
+  "keyword": "代码"
+}
+
+### 16. 模糊搜索 - 搜索不存在的关键词
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 10,
+  "keyword": "不存在的关键词"
+}
+
+### ========================================
+### 错误场景测试
+### ========================================
+
+### 17. 新增提示词 - 缺少标题
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "",
+  "promptContent": "这是内容",
+  "promptSort": 1
+}
+
+### 18. 新增提示词 - 缺少内容
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "标题",
+  "promptContent": "",
+  "promptSort": 1
+}
+
+### 19. 新增提示词 - 标题过长
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "这是一个非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常长的标题",
+  "promptContent": "内容",
+  "promptSort": 1
+}
+
+### 20. 新增提示词 - 内容过长
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "标题",
+  "promptContent": "这是一个非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常长的内容",
+  "promptSort": 1
+}
+
+### 21. 获取详情 - 不存在的ID
+GET {{baseUrl}}/replay/ai/custPrompt/info?id=999999999
+Content-Type: application/json
+token: {{token}}
+
+### 22. 获取详情 - 无效的ID格式
+GET {{baseUrl}}/replay/ai/custPrompt/info?id=abc
+Content-Type: application/json
+token: {{token}}
+
+### 23. 修改提示词 - 不存在的ID
+POST {{baseUrl}}/replay/ai/custPrompt/update
+Content-Type: application/json
+token: {{token}}
+
+{
+  "id": 999999999,
+  "promptTitle": "修改标题",
+  "promptContent": "修改内容",
+  "promptSort": 1
+}
+
+### 24. 删除提示词 - 不存在的ID
+GET {{baseUrl}}/replay/ai/custPrompt/delete?id=999999999
+Content-Type: application/json
+token: {{token}}
+
+### 25. 删除提示词 - 无效的ID格式
+GET {{baseUrl}}/replay/ai/custPrompt/delete?id=abc
+Content-Type: application/json
+token: {{token}}
+
+### ========================================
+### 边界值测试
+### ========================================
+
+### 26. 新增提示词 - 最小排序值
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "最小排序",
+  "promptContent": "排序值为0",
+  "promptSort": 0
+}
+
+### 27. 新增提示词 - 最大排序值
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "最大排序",
+  "promptContent": "排序值为127",
+  "promptSort": 127
+}
+
+### 28. 分页查询 - 第一页，每页1条
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 1
+}
+
+### 29. 分页查询 - 大页码
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1000,
+  "limit": 10
+}
+
+### 30. 分页查询 - 大分页大小
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 1000
+}
+
+### ========================================
+### 完整流程测试
+### ========================================
+
+### 31. 完整流程 - 第1步：新增提示词
+POST {{baseUrl}}/replay/ai/custPrompt/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "promptTitle": "完整流程测试",
+  "promptContent": "这是完整流程测试的提示词",
+  "promptSort": 10
+}
+
+### 32. 完整流程 - 第2步：查询详情（使用上一步返回的ID）
+GET {{baseUrl}}/replay/ai/custPrompt/info?id=1234567890
+Content-Type: application/json
+token: {{token}}
+
+### 33. 完整流程 - 第3步：修改提示词
+POST {{baseUrl}}/replay/ai/custPrompt/update
+Content-Type: application/json
+token: {{token}}
+
+{
+  "id": 1234567890,
+  "promptTitle": "完整流程测试 - 已修改",
+  "promptContent": "这是修改后的提示词内容",
+  "promptSort": 11
+}
+
+### 34. 完整流程 - 第4步：查询列表
+POST {{baseUrl}}/replay/ai/custPrompt/list
+Content-Type: application/json
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 10,
+  "keyword": "完整流程"
+}
+
+### 35. 完整流程 - 第5步：删除提示词
+GET {{baseUrl}}/replay/ai/custPrompt/delete?id=1234567890
+Content-Type: application/json
+token: {{token}}
+
+### ========================================
+### 响应验证
+### ========================================
+
+### 期望的新增成功响应格式：
+# {
+#   "code": 200,
+#   "msg": "添加成功",
+#   "data": {
+#     "id": 1234567890,
+#     "promptTitle": "AI写作助手",
+#     "promptContent": "帮助用户进行内容创作和文案优化",
+#     "promptSort": 1,
+#     "userId": 123456,
+#     "updateDate": "2025-01-21 10:00:00",
+#     "createDate": "2025-01-21 10:00:00"
+#   }
+# }
+
+### 期望的查询详情成功响应格式：
+# {
+#   "code": 200,
+#   "msg": "获取成功",
+#   "data": {
+#     "id": 1234567890,
+#     "promptTitle": "AI写作助手",
+#     "promptContent": "帮助用户进行内容创作和文案优化",
+#     "promptSort": 1,
+#     "userId": 123456,
+#     "updateDate": "2025-01-21 10:00:00",
+#     "createDate": "2025-01-21 10:00:00"
+#   }
+# }
+
+### 期望的修改成功响应格式：
+# {
+#   "code": 200,
+#   "msg": "修改成功",
+#   "data": null
+# }
+
+### 期望的删除成功响应格式：
+# {
+#   "code": 200,
+#   "msg": "删除成功",
+#   "data": null
+# }
+
+### 期望的列表查询成功响应格式：
+# {
+#   "code": 200,
+#   "msg": "获取成功",
+#   "data": {
+#     "list": [
+#       {
+#         "id": 1234567890,
+#         "promptTitle": "AI写作助手",
+#         "promptContent": "帮助用户进行内容创作和文案优化",
+#         "promptSort": 1,
+#         "userId": 123456,
+#         "updateDate": "2025-01-21 10:00:00",
+#         "createDate": "2025-01-21 10:00:00"
+#       }
+#     ],
+#     "total": 1,
+#     "page": 1,
+#     "limit": 10
+#   }
+# }
+
+### 期望的错误响应格式：
+# {
+#   "code": 500,
+#   "msg": "参数错误或数据不存在",
+#   "data": null
+# }
+

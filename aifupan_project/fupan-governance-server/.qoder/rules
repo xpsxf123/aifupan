@@ -1,0 +1,276 @@
+# 爱复盘企业治理服务端 (fupan-governance-server)
+
+## 项目概述
+这是一个基于 Spring Boot 3.3.0 的企业级后台管理服务端项目，用于爱复盘企业治理系统。项目提供多用户类型认证、签名验证、内部服务调用等核心功能。
+
+## 技术栈
+
+### 核心框架
+- **Java**: 17
+- **Spring Boot**: 3.3.0
+- **Spring Cloud**: 2025.0.1
+- **Spring Cloud Alibaba**: 2025.0.0.0
+
+### Web服务器
+- **Undertow**: 替代默认Tomcat，高性能Web容器
+
+### 数据层
+- **MyBatis-Plus**: ORM框架 (starter-mybatis-plus)
+- **MySQL**: 数据库 (com.mysql.cj.jdbc.Driver)
+- **HikariCP**: 数据库连接池
+- **Redis**: 缓存和分布式锁 (Jedis)
+
+### HTTP客户端
+- **Apache HttpClient 5**: 5.4.3 版本
+- 自定义连接池配置 (HttpClientPoolProperties)
+- 支持负载均衡 (LightweightLoadBalancerInterceptor)
+
+### 安全认证
+- **nimbus-jose-jwt**: JWT令牌处理
+- **自定义OAuth模块**: oauth-client-starter
+- **签名框架**: signature-spring-boot-starter
+- **Jasypt**: 配置文件加密 (jasypt-spring-boot-starter)
+
+### 其他
+- **Lombok**: 代码简化
+- **Caffeine**: 本地缓存
+- **distributed-starter-lock**: 分布式锁
+
+## 项目结构
+
+```
+src/main/java/com/jiuyu/governance/
+├── common/                          # 通用模块
+│   ├── exceptions/                  # 异常定义
+│   │   └── BusinessException.java   # 业务异常
+│   ├── pojo/
+│   │   └── ErrorCode.java           # 错误码枚举
+│   ├── replay/                      # 内部服务调用
+│   │   ├── FupanServerProperties.java    # 服务配置
+│   │   ├── ReplayHttpServer.java         # HTTP服务接口
+│   │   └── RestReplayHttpServer.java     # 服务实现
+│   └── utils/                       # 工具类
+│       ├── RequestUtil.java
+│       └── XXHash.java
+├── plugins/                         # 插件模块
+│   ├── http/                        # HTTP拦截器
+│   │   ├── FuPanSignInterceptor.java         # 签名拦截器
+│   │   ├── LightweightLoadBalancerInterceptor.java  # 负载均衡
+│   │   └── ServiceInstance.java              # 服务实例
+│   ├── oauth/                       # 认证授权
+│   │   ├── client/                  # 客户端
+│   │   │   ├── RestAuthenticationTokenProvide.java
+│   │   │   └── RestUserPermissionProvide.java
+│   │   ├── server/                  # 服务端
+│   │   │   ├── AuthenticationTokenStorage.java
+│   │   │   ├── DbTokenStorage.java
+│   │   │   └── DefaultAuthenticationTokenStorage.java
+│   │   ├── pojo/
+│   │   │   └── ReplayAccessUser.java
+│   │   ├── ClientUser.java          # 客户端用户注解
+│   │   ├── GovernanceUser.java      # 企业管理用户注解
+│   │   ├── SystemUser.java          # 系统管理用户注解
+│   │   └── OauthConstant.java       # 认证常量
+│   ├── sign/                        # 签名模块
+│   │   ├── ReplaySignatureCalculate.java   # 签名计算
+│   │   └── SignatureConstants.java         # 签名常量
+│   └── webmvc/                      # Web MVC配置
+│       ├── serializer/              # 序列化器
+│       │   ├── BaseEnumDeserializer.java
+│       │   ├── BaseEnumSerializer.java
+│       │   ├── LongToStringSerializer.java
+│       │   └── ...
+│       ├── GlobalExceptionHandler.java     # 全局异常处理
+│       ├── HttpClientPoolProperties.java   # HTTP连接池配置
+│       └── WebContextConfigure.java        # Web上下文配置
+├── rbac/                            # RBAC权限模块
+│   ├── controller/                  # 控制器
+│   │   ├── MenuController.java
+│   │   ├── RoleController.java
+│   │   └── UserMenuController.java
+│   ├── mapper/                      # Mapper接口
+│   │   ├── MenuMapper.java
+│   │   ├── MenuRoleMapper.java
+│   │   └── RoleMapper.java
+│   ├── pojo/
+│   │   ├── constants/               # 常量
+│   │   ├── entity/                  # 实体类
+│   │   ├── request/                 # 请求对象
+│   │   └── response/                # 响应对象
+│   └── service/                     # 服务层
+│       ├── impl/
+│       ├── MenuService.java
+│       └── RoleService.java
+└── ServerApplication.java           # 启动类
+```
+
+## 核心功能
+
+### 1. 多用户类型认证
+系统支持三种用户类型：
+- `client_user` - 客户端用户（C端用户）
+- `system_user` - 爱复盘后台管理系统用户
+- `governance_user` - 企业管理系统用户
+
+使用注解控制访问权限：
+```java
+@ClientUser      // 仅客户端用户访问
+@SystemUser      // 仅系统管理员访问
+@GovernanceUser  // 仅企业管理员访问
+@RequiredLogin   // 任意登录用户访问
+@RequiredLogin({OauthConstant.GOVERNANCE_USER, OauthConstant.CLIENT_USER})  // 多种用户类型
+@Permissions("sys:dept:add")  // 操作权限校验
+```
+
+### 2. 签名验证
+采用 HMAC-SHA256 或 MD5 算法进行请求签名：
+- 签名参数：appId, timestamp, nonce, fingerprint, requestId, body
+- 支持双向签名验证
+
+### 3. 内部服务调用
+通过 `ReplayHttpServer` 接口调用爱复盘主服务：
+- 支持 GET/POST/PUT/DELETE/PATCH 方法
+- 自动签名
+- 可选负载均衡
+
+### 4. 全局异常处理
+`GlobalExceptionHandler` 统一处理：
+- 业务异常 (BusinessException)
+- 认证异常 (AuthenticationException)
+- 参数校验异常
+- SQL异常
+- 签名异常等
+
+## 配置说明
+
+### 环境配置
+- `application.yml` - 通用配置
+- `application-local.yml` - 本地开发环境
+- `application-dev.yml` - 开发环境
+
+### 关键配置项
+```yaml
+# 签名配置
+jiuyu:
+  signature:
+    overdue-time: 600000
+    app-name: X-App-Id
+    sign-name: X-Signature
+    time-name: X-Timestamp
+
+# 爱复盘服务配置
+jiuyu:
+  fupan-server:
+    client-id: "xxx"
+    client-secret: "xxx"
+    enable-load-balance: false
+    base-url: "https://api.domain.com"
+
+# OAuth配置
+jiuyu:
+  oauth:
+    client:
+      header-name: Token
+      secret: "xxx"
+    server:
+      token-expire-day: 30
+      secret: "xxx"
+```
+
+### 加密配置
+使用 Jasypt 加密敏感配置：
+```yaml
+password: ${DATASOURCE_PWD:ENC(encrypted_value)}
+```
+
+## 开发规范
+
+### 异常处理
+使用 `BusinessException` 抛出业务异常：
+```java
+throw new BusinessException(ErrorCode.FAIL, "操作失败");
+throw new BusinessException(ErrorCode.NOT_FOUND, "数据不存在");
+```
+
+### API响应
+统一使用 `ApiResponse` 包装：
+```java
+return ApiResponse.success(data);
+return ApiResponse.failed("错误信息");
+return ApiResponse.failed(code, "错误信息");
+```
+
+### Controller规范
+- API基础路径已配置 context-path: `/api/governance`
+- 类级别添加用户类型注解（@SystemUser/@GovernanceUser/@ClientUser）
+- 方法级别添加 `@Permissions` 权限注解
+
+```java
+@GovernanceUser
+@RestController
+@RequestMapping("/role")
+public class RoleController {
+    
+    @Permissions("sys:role:add")
+    @PostMapping("/add")
+    public ApiResponse<Void> addRole(@Valid @RequestBody RoleAddRequest request, AccessUser accessUser) {
+        return roleService.addRole(request, accessUser.currentTenantId());
+    }
+    
+    @Permissions({"sys:role:update", "sys:role:add"})  // 多个权限满足其一
+    @PostMapping("/update")
+    public ApiResponse<Void> updateRole(@Valid @RequestBody RoleUpdateRequest request) {
+        return roleService.updateRole(request);
+    }
+}
+```
+
+### Service规范
+- 接口不继承 IService，实现类继承 ServiceImpl
+- 使用 `@Service` 和 `@Slf4j` 注解
+- 事务管理使用 `@Transactional(rollbackFor = Exception.class)`
+- 注入使用构造器注入（推荐 @AllArgsConstructor）
+- 分布式锁使用 `@ResourceLock` 注解
+
+```java
+@ResourceLock(value = "lock:prefix", key = "#id", timeout = 5, message = "请勿频繁操作")
+public void doSomething(Long id) {
+    // 业务逻辑
+}
+```
+
+### Mapper XML规范
+- XML文件位置：`src/main/resources/mapper/{module}/`
+- namespace 必须与 Mapper 接口全限定名一致
+- ResultMap id 固定为 `BaseResultMap`
+
+## 运行说明
+
+### 环境要求
+- JDK 17+
+- Maven 3.8+
+- MySQL 8.0+
+- Redis 6.0+
+
+### 启动命令
+```bash
+# 本地开发
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+
+# 打包
+mvn clean package -DskipTests
+```
+
+### 端口
+- 本地环境: 6626
+- 其他环境: 动态分配 (server.port: 0)
+
+## 注意事项
+
+1. **配置加密**: 敏感信息必须使用 Jasypt 加密
+2. **签名验证**: 对外接口需要配置签名校验
+3. **权限控制**: Controller 类级别添加用户类型注解，方法级别添加 @Permissions 权限注解
+4. **异常处理**: 业务异常统一使用 BusinessException
+5. **日志规范**: 使用 Slf4j + Logback，格式 `[模块名] 操作说明, 关键信息`
+6. **API路径**: 所有接口基础路径为 `/api/governance`
+7. **事务管理**: 使用 `@Transactional(rollbackFor = Exception.class)`

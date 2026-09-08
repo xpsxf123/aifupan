@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.agent.repository.dao.AgentPlatformSaleDao">
+
+    <select id="getValidAgentSaleList" resultType="com.jiuyu.replay.agent.vo.AgentPlatformSaleInfoVo">
+        SELECT spa.*, s.sales_name, s.phone, s.sales_type
+        FROM tb_agent_platform_sale spa
+                 LEFT JOIN tb_sales s ON spa.sale_id = s.id
+        WHERE spa.is_deleted = 0
+          AND s.is_deleted = 0
+          AND s.is_choose = 1
+          and spa.agent_id = #{agentId}
+        order by spa.id ASC
+    </select>
+
+    <select id="listAgentSales" resultType="com.jiuyu.replay.agent.vo.AgentPlatformSaleInfoVo">
+        SELECT sa.*,
+               s.sales_name,
+               s.phone
+        FROM tb_agent_platform_sale sa
+                 LEFT JOIN tb_sales s ON sa.sale_id = s.id
+        WHERE sa.is_deleted = 0
+          AND s.is_deleted = 0
+          AND sa.agent_id = #{agentId}
+          AND s.sales_type = #{salesType}
+    </select>
+
+</mapper>

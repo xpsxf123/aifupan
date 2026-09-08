@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.rbac.mapper.EmployeeMapper">
+  <resultMap id="BaseResultMap" type="com.jiuyu.governance.business.rbac.pojo.entity.Employee">
+    <!--@mbg.generated-->
+    <!--@Table employee-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="is_deleted" jdbcType="BOOLEAN" property="isDeleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+    <result column="hold_tenant" jdbcType="BOOLEAN" property="holdTenant" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="user_avatar" jdbcType="VARCHAR" property="userAvatar" />
+    <result column="staff_number" jdbcType="VARCHAR" property="staffNumber" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="team_id" jdbcType="BIGINT" property="teamId" />
+    <result column="position_id" jdbcType="BIGINT" property="positionId" />
+    <result column="on_rec" jdbcType="BOOLEAN" property="onRec" />
+    <result column="connector_client_user_id" jdbcType="BIGINT" property="connectorClientUserId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, create_date, update_date, create_by, update_by, is_deleted, tenant_id, hold_tenant,
+    `name`, user_avatar, staff_number, mobile, email, company_id, dept_id, team_id, position_id,
+    on_rec, connector_client_user_id
+  </sql>
+  
+  <select id="countPositionEmployee" resultType="com.jiuyu.governance.common.pojo.bo.CountData">
+      select position_id as id,
+             count(*)    as count
+      from employee
+      where is_deleted = 0
+        and position_id in
+      <foreach item="item" index="index" collection="positionIds" open="(" separator="," close=")">
+          #{item}
+      </foreach>
+      group by position_id
+  </select>
+
+  <select id="pageQueryEmployee" resultType="com.jiuyu.governance.business.rbac.pojo.entity.Employee">
+      select e.id,
+             e.tenant_id,
+             e.hold_tenant,
+             e.`name`,
+             e.user_avatar,
+             e.staff_number,
+             e.mobile,
+             e.email,
+             e.company_id,
+             e.dept_id,
+             e.team_id,
+             e.position_id,
+             e.on_rec,
+             e.job_type,
+             e.account_status
+      from employee e
+      where e.tenant_id = #{tenantId}
+        and e.is_deleted = 0
+      <if test="req.id != null">
+          and e.id = #{req.id}
+      </if>
+      <if test="req.name != null and req.name != ''">
+          and e.`name` like concat('%', #{req.name}, '%')
+      </if>
+      <if test="req.mobile != null and req.mobile != ''">
+          and e.mobile like concat('%', #{req.mobile}, '%')
+      </if>
+      <if test="req.staffNumber != null and req.staffNumber != ''">
+          and e.staff_number like concat('%', #{req.staffNumber}, '%')
+      </if>
+      <if test="req.systemUser == null or req.systemUser == false">
+          <trim prefix="and (" suffix=")" prefixOverrides="or">
+              <if test="req.dataCompanyIds != null and req.dataCompanyIds.size() &gt; 0">
+                  or e.company_id in
+                  <foreach item="item" collection="req.dataCompanyIds" open="(" separator="," close=")">
+                      #{item}
+                  </foreach>
+              </if>
+              <if test="req.dataDeptIds != null and req.dataDeptIds.size() &gt; 0">
+                  or e.dept_id in
+                  <foreach item="item" collection="req.dataDeptIds" open="(" separator="," close=")">
+                      #{item}
+                  </foreach>
+              </if>
+              <if test="req.dataTeamIds != null and req.dataTeamIds.size() &gt; 0">
+                  or e.team_id in
+                  <foreach item="item" collection="req.dataTeamIds" open="(" separator="," close=")">
+                      #{item}
+                  </foreach>
+              </if>
+          </trim>
+      </if>
+      <if test="req.companyIds != null and req.companyIds.size() &gt; 0">
+          and e.company_id in
+          <foreach item="item" collection="req.companyIds" open="(" separator="," close=")">
+              #{item}
+          </foreach>
+      </if>
+      <if test="req.deptIds != null and req.deptIds.size() &gt; 0">
+          and e.dept_id in
+          <foreach item="item" collection="req.deptIds" open="(" separator="," close=")">
+              #{item}
+          </foreach>
+      </if>
+      <if test="req.teamIds != null and req.teamIds.size() &gt; 0">
+          and e.team_id in
+          <foreach item="item" collection="req.teamIds" open="(" separator="," close=")">
+              #{item}
+          </foreach>
+      </if>
+      <if test="req.positionIds != null and req.positionIds.size() &gt; 0">
+          and e.position_id in
+          <foreach item="item" collection="req.positionIds" open="(" separator="," close=")">
+              #{item}
+          </foreach>
+      </if>
+      <if test="req.accountStatus != null">
+          and e.account_status = #{req.accountStatus}
+      </if>
+      <if test="req.onRec != null">
+          and e.on_rec = #{req.onRec}
+      </if>
+      <if test="req.jobType != null">
+          and e.job_type = #{req.jobType}
+      </if>
+      order by e.id desc
+  </select>
+</mapper>

@@ -1,0 +1,75 @@
+### 云空间对比记录接口测试
+### 描述: 删除云空间对比记录（只修改上传分享状态，不删视频）
+### 修改时间: 2026-03-25
+
+### ========================================
+### 公共变量定义
+### ========================================
+
+@baseUrl = http://localhost:6606/replay
+@token = 16ab18d1cd224bc5875ab4ac4b1e557a
+@contentType = application/json
+
+### ========================================
+### 1. 删除云空间对比记录（修改后：只改状态不删视频）
+### ========================================
+
+### 1.1 正常删除 - 已上传云空间的视频对比记录
+GET {{baseUrl}}/synccontrast/clientDeleteCloudContrast?contrastId=test-contrast-uuid-001
+token: {{token}}
+
+### 验证要点:
+### - 返回 R<String>，code=0，msg="删除成功"
+### - 数据库 tb_sync_contrast 中 is_shard 更新为 0
+### - 数据库 tb_sync_contrast 中 share_url 被清空
+### - 对比记录关联的视频（video_one_id、video_two_id）不会被删除
+### - 视频的 upload_status 保持不变（仍为1）
+### - VOD 中的视频文件不会被删除
+### - 用户存储空间统计不会变化
+
+### 1.2 正常删除 - 已从对比列表删除的云空间记录（deleteStatus=1）
+GET {{baseUrl}}/synccontrast/clientDeleteCloudContrast?contrastId=test-contrast-uuid-002
+token: {{token}}
+
+### 验证要点:
+### - 返回 R<String>，code=0
+### - is_shard 更新为 0，share_url 被清空
+### - delete_status 从 1 更新为 2（已从列表和云空间都删除）
+### - 视频不受影响
+
+### 1.3 删除不存在的对比记录
+GET {{baseUrl}}/synccontrast/clientDeleteCloudContrast?contrastId=not-exist-uuid
+token: {{token}}
+
+### 验证要点:
+### - 返回错误提示 "数据不存在"
+
+### 1.4 缺少contrastId参数
+GET {{baseUrl}}/synccontrast/clientDeleteCloudContrast
+token: {{token}}
+
+### 验证要点:
+### - 返回参数缺失错误
+
+### ========================================
+### 数据库校验说明
+### ========================================
+
+### 执行删除云空间对比记录后检查：
+# 【对比记录状态变更】
+#   - 表：tb_sync_contrast
+#   - 验证：is_shard 已更新为 0
+#   - 验证：share_url 已被清空
+#   - 验证：如果原 delete_status=1，则更新为 2
+#
+# 【视频不受影响】
+#   - 表：tb_anchor_video
+#   - 验证：对比记录关联的视频 upload_status 保持不变
+#   - 验证：视频的 play_url 保持不变（VOD未删除）
+#
+# 校验SQL：
+# SELECT contrast_id, is_shard, share_url, delete_status, video_one_id, video_two_id
+# FROM tb_sync_contrast WHERE contrast_id = 'test-contrast-uuid-001';
+#
+# SELECT video_id, upload_status, play_url
+# FROM tb_anchor_video WHERE video_id IN ('关联的video_one_id', '关联的video_two_id');

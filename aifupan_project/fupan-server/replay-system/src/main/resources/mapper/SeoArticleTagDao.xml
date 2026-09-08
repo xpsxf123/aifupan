@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.system.repository.dao.SeoArticleTagDao">
+
+    <!--
+        按标签统计文章数，供标签列表的 articleCount 列。
+
+        统计口径（openspec §6.4）：该标签关联的**未删除**文章数，**包含已下架**。
+
+        之所以要 JOIN 文章表：关联表 tb_seo_article_tag 不带 is_deleted，
+        文章被逻辑删除后关联行仍在，只数关联行会把已删文章算进去。
+
+        原先的 Java 实现是把关联行全查回内存、再回查文章表、在 Java 里累加——
+        一个热门标签关联上万篇文章就会把上万行拉回来，且直接违反
+        openspec §6「articleCount 由 SQL join 聚合返回，禁止 N+1」。
+    -->
+    <select id="countArticlesByTagIds" resultType="com.jiuyu.replay.system.vo.SeoIdCountVo">
+        SELECT
+            t.tag_id AS id,
+            COUNT(*) AS total
+        FROM tb_seo_article_tag t
+        INNER JOIN tb_seo_article a
+                ON a.id = t.article_id
+               AND a.is_deleted = #{notDeleted}
+        WHERE t.tag_id IN
+        <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">
+            #{tagId}
+        </foreach>
+        GROUP BY t.tag_id
+    </select>
+
+</mapper>

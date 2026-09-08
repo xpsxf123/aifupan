@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.AnchorVideoRecycleDao">
+    
+    <insert id="batchInsert">
+       insert into tb_anchor_video_recycle (id, video_id, video_name, play_url, file_id, video_size, user_id, user_name, tenant_id, delete_time, restore_status, vod_deleted, is_deleted, create_date, update_date) values
+       <foreach item="item" index="index" collection="list" separator=",">
+           (#{item.id},#{item.videoId}, #{item.videoName}, #{item.playUrl}, #{item.fileId}, #{item.videoSize}, #{item.userId}, #{item.userName}, #{item.tenantId}, #{item.deleteTime}, #{item.restoreStatus}, #{item.vodDeleted}, #{item.isDeleted}, #{item.createDate}, #{item.updateDate})
+       </foreach>
+    </insert>
+</mapper>

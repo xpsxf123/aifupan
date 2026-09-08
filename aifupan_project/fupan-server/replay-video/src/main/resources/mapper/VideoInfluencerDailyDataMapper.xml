@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.video.project.dao.VideoInfluencerDailyDataDao">
+
+    <!-- 查询每个达人最近的同步数据 -->
+    <select id="getLatestDailyDataByInfluencerIds"
+            resultType="com.jiuyu.replay.video.project.entity.VideoInfluencerDailyDataEntity">
+        SELECT t1.*
+        FROM tb_video_influencer_daily_data t1
+        INNER JOIN (
+        SELECT influencer_id, MAX(data_date) as max_date
+        FROM tb_video_influencer_daily_data
+        WHERE influencer_id IN
+        <foreach collection="influencerIds" item="influencerId" open="(" separator="," close=")">
+            #{influencerId}
+        </foreach>
+        AND data_date &lt; #{currentDate}
+        GROUP BY influencer_id
+        ) t2 ON t1.influencer_id = t2.influencer_id AND t1.data_date = t2.max_date
+        ORDER BY t1.influencer_id
+    </select>
+
+</mapper>

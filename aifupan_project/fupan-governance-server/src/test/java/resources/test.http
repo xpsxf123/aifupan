@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:6626
+@token = 44d54cbde191480d8a13c5830327f35c
+@contentType = application/json
+
+### 1. 新增版本基础信息
+POST {{baseUrl}}/api/governance/performance/product/ranking
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startDate": "2023-07-01",
+  "endDate": "2023-07-07",
+  "companyId": null,
+  "deptId": null,
+  "teamId": null
+}

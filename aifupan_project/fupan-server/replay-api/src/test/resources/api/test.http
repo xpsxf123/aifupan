@@ -1,0 +1,42 @@
+### 用户版本管理 - 新版本接口测试
+### 作者: lujie
+### 创建时间: 2025-11-20
+### 描述: 用户版本管理相关的API测试用例
+
+### ========================================
+### 公共变量定义
+### ========================================
+
+@baseUrl = http://localhost:6606/replay
+@token = 16ab18d1cd224bc5875ab4ac4b1e557a
+@contentType = application/json
+@packageId = 4511886555950206976
+
+
+### 1.服务器生成html
+GET {{baseUrl}}/ai/conversation/serviceGenerateHtml?id=694cd49dc05141748c6fa1e5
+#Content-Type: {{contentType}}
+token: {{token}}
+
+### 2.
+GET {{baseUrl}}/ai/conversation/getHtmlSignUploadUrl
+#Content-Type: {{contentType}}
+token: {{token}}
+
+### 3.
+POST {{baseUrl}}/words/cueWords/pageCueWords
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "page": 1,
+  "limit": 10,
+  "sourceId": "f3e3e881-a952-4bff-ab2a-58e72c02b5d8",
+  "sourceType": "0",
+  "cueType": "0"
+}
+
+### 4.
+GET {{baseUrl}}/AnchorVideo/getDataDiagnosisConfig?sourceId=f3e3e881-a952-4bff-ab2a-58e72c02b5d8&sourceType=0
+#Content-Type: {{contentType}}
+token: {{token}}

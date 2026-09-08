@@ -1,0 +1,140 @@
+{
+  "version": 3,
+  "roles": {
+    "ambiguity_gatekeeper": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/ambiguity_gate.py",
+          "args": ["--intent", "{intent_text}"]
+        }
+      ]
+    },
+    "security_sentinel": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/secrets_linter.py",
+          "args": [
+            "--paths",
+            "src/main/resources/**/*.yml",
+            "src/main/resources/**/*.yaml",
+            "src/main/resources/**/*.properties"
+          ]
+        }
+      ]
+    },
+    "documentation_curator": {
+      "gates": [
+        {
+          "script": ".claude/scripts/wiki/wiki_linter.py",
+          "args": []
+        }
+      ]
+    },
+    "skill_graph_curator": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/skill_index_linter.py",
+          "args": [
+            "--index", ".claude/skills/skill-index/SKILL.md",
+            "--skills-dir", ".claude/skills"
+          ]
+        }
+      ]
+    },
+    "system_architect": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/task_brief_gate.py",
+          "args": ["--require", ".claude/runs/task-briefs/<YYYY-MM-DD>_<slug>_task_brief.md"]
+        }
+      ]
+    },
+    "lead_engineer": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/scope_guard.py",
+          "args": [
+            "--task-brief", ".claude/runs/task-briefs/<YYYY-MM-DD>_<slug>_task_brief.md",
+            "--files", "{changed_files}"
+          ]
+        }
+      ]
+    },
+    "code_reviewer": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/linter.py",
+          "args": ["--strict"]
+        }
+      ]
+    },
+    "librarian": {
+      "gates": [
+        {
+          "script": ".claude/scripts/wiki/wiki_linter.py",
+          "args": []
+        }
+      ]
+    },
+    "knowledge_extractor": {
+      "gates": [
+        {
+          "script": ".claude/scripts/gates/writeback_gate.py",
+          "args": [
+            "--topic", "{topic}",
+            "--date", "{date}",
+            "--require", "domain,api,rules"
+          ]
+        },
+        {
+          "script": ".claude/scripts/wiki/wiki_linter.py",
+          "args": []
+        }
+      ]
+    }
+  },
+  "mounts": [
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Explorer",
+      "roles": ["ambiguity_gatekeeper", "requirement_engineer"]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Propose",
+      "roles": ["system_architect"]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Implement",
+      "roles": ["lead_engineer", "security_sentinel"]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "QA",
+      "roles": ["code_reviewer"]
+    },
+    {
+      "intent": "Change",
+      "profile": "STANDARD",
+      "phase": "Archive",
+      "roles": ["knowledge_extractor", "documentation_curator", "skill_graph_curator", "librarian"]
+    },
+    {
+      "intent": "Change",
+      "profile": "PATCH",
+      "phase": "Implement",
+      "roles": ["security_sentinel"]
+    },
+    {
+      "intent": "Change",
+      "profile": "PATCH",
+      "phase": "QA",
+      "roles": ["code_reviewer"]
+    }
+  ]
+}

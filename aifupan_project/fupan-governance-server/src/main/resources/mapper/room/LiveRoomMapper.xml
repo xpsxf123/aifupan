@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.room.mapper.LiveRoomMapper">
+  <resultMap id="BaseResultMap" type="com.jiuyu.governance.business.room.pojo.entity.LiveRoom">
+    <!--@mbg.generated-->
+    <!--@Table live_room-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="is_deleted" jdbcType="BOOLEAN" property="isDeleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+    <result column="sec_uid" jdbcType="VARCHAR" property="secUid" />
+    <result column="home_url" jdbcType="VARCHAR" property="homeUrl" />
+    <result column="live_url" jdbcType="VARCHAR" property="liveUrl" />
+    <result column="anchor_name" jdbcType="VARCHAR" property="anchorName" />
+    <result column="debut_date" jdbcType="DATE" property="debutDate" />
+    <result column="anchor_avatar" jdbcType="VARCHAR" property="anchorAvatar" />
+    <result column="platform" jdbcType="TINYINT" property="platform" />
+    <result column="anchor_number" jdbcType="VARCHAR" property="anchorNumber" />
+    <result column="trade_id" jdbcType="BIGINT" property="tradeId" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="team_id" jdbcType="BIGINT" property="teamId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, create_date, update_date, create_by, update_by, is_deleted, tenant_id, sec_uid,
+    home_url, live_url, anchor_name, debut_date, anchor_avatar, platform, anchor_number,
+    trade_id, company_id, dept_id, team_id
+  </sql>
+  
+  <select id="pageQueryLiveRoom" resultType="com.jiuyu.governance.business.room.pojo.response.LiveRoomResponse">
+      select a.id,
+             a.create_date,
+             a.update_date,
+             a.sec_uid,
+             a.home_url,
+             a.live_url,
+             a.anchor_name,
+             a.debut_date,
+             a.anchor_avatar,
+             a.platform,
+             a.anchor_number,
+             a.trade_id,
+             a.company_id,
+             a.dept_id,
+             a.team_id
+      from live_room as a
+      <if test="req.managerUserId != null or req.currentUserId != null">
+          <if test="((req.companyIds != null and req.companyIds.size() != 0) or (req.deptIds != null and req.deptIds.size() != 0) or (req.teamIds != null and req.teamIds.size() != 0))">
+              left
+          </if>
+          join manager_connector as b on a.id = b.target_id and b.manager_type = 4  and b.is_deleted = 0 and b.employee_id = #{req.currentUserId}
+      </if>
+      where a.is_deleted = 0
+        and a.tenant_id = #{tenantId}
+      <if test="req.anchorName != null">
+          and a.anchor_name like concat('%', #{req.anchorName}, '%')
+      </if>
+      <if test="req.anchorNumber != null">
+          and a.anchor_number like concat(#{req.anchorNumber}, '%')
+      </if>
+      <if test="req.companyId != null">
+          and a.company_id = #{req.companyId}
+      </if>
+
+      <if test="req.deptId != null">
+          and a.dept_id = #{req.deptId}
+      </if>
+      <if test="(req.companyIds != null and req.companyIds.size() != 0) or (req.deptIds != null and req.deptIds.size() != 0) or (req.teamIds != null and req.teamIds.size() != 0)">
+          <trim prefix="and (" suffix=")" prefixOverrides="or">
+              <if test="req.currentUserId != null">
+                  or b.employee_id = #{req.currentUserId}
+              </if>
+              <if test="req.companyIds != null and req.companyIds.size() != 0">
+                  or a.company_id in (
+                  <foreach item="item" collection="req.companyIds" separator=","  index="">
+                      #{item}
+                  </foreach>
+                  )
+              </if>
+              <if test="req.deptIds != null and req.deptIds.size() != 0">
+                  or a.dept_id in (
+                  <foreach item="item" collection="req.deptIds" separator=","  index="">
+                      #{item}
+                  </foreach>
+                  )
+              </if>
+              <if test="req.teamIds != null and req.teamIds.size() != 0">
+                  or a.team_id in (
+                  <foreach item="item" collection="req.teamIds" separator=","  index="">
+                      #{item}
+                  </foreach>
+                  )
+              </if>
+          </trim>
+      </if>
+
+      <if test="req.teamId != null">
+          and a.team_id = #{req.teamId}
+      </if>
+
+      <if test="req.platform != null">
+          and a.platform = #{req.platform}
+      </if>
+      <if test="req.accountStatus != null">
+          and a.account_status = #{req.accountStatus}
+      </if>
+      order by a.id desc
+  </select>
+  
+  <select id="getEmployeeJoinRoomIds" resultType="java.lang.Long">
+    select distinct live_room_id from schedule_employee where is_deleted = 0 and employee_id = #{employeeId}
+      <if test="positionId != null">
+          and position_id = #{positionId}
+      </if>
+      <if test="deadlineDay != null">
+          and work_day >= #{deadlineDay}
+      </if>
+      limit 1000
+  </select>
+  
+  <select id="getEmployeeJoinRoomInfos" resultType="com.jiuyu.governance.business.room.pojo.entity.ScheduleEmployee">
+    select distinct live_room_id, employee_id from schedule_employee where is_deleted = 0 and employee_id in
+    <foreach item="item" collection="employeeIds" separator=","  index="" open="(" close=")">
+      #{item}
+    </foreach>
+      <if test="deadlineDay != null">
+          and work_day >= #{deadlineDay}
+      </if>
+      <if test="positionId != null">
+          and position_id = #{positionId}
+      </if>
+    limit 10000
+  </select>
+  
+  <select id="countOrgRoomMap" resultType="com.jiuyu.governance.common.pojo.bo.CountData">
+      select
+      <if test="type == 1">
+          company_id as id
+      </if>
+      <if test="type == 2">
+          dept_id as id
+      </if>
+      <if test="type == 3">
+          team_id as id
+      </if>
+      , count(1) as `count`
+      from live_room where tenant_id = #{tenantId}
+                       and is_deleted = 0
+      <if test="type == 1">
+          and company_id in
+          <foreach item="item" collection="orgIds" separator="," index="" open="(" close=")">
+              #{item}
+          </foreach>
+      </if>
+      <if test="type == 2">
+          and dept_id in
+          <foreach item="item" collection="orgIds" separator="," index="" open="(" close=")">
+              #{item}
+          </foreach>
+      </if>
+      <if test="type == 3">
+          and team_id in
+          <foreach item="item" collection="orgIds" separator="," index="" open="(" close=")">
+              #{item}
+          </foreach>
+      </if>
+      group by
+      <if test="type == 1">
+          company_id
+      </if>
+      <if test="type == 2">
+          dept_id
+      </if>
+      <if test="type == 3">
+          team_id
+      </if>
+  </select>
+  
+  <select id="listLiveRooms" resultMap="BaseResultMap">
+      select a.id,
+      a.create_date,
+      a.update_date,
+      a.sec_uid,
+      a.home_url,
+      a.live_url,
+      a.anchor_name,
+      a.debut_date,
+      a.anchor_avatar,
+      a.platform,
+      a.anchor_number,
+      a.trade_id,
+      a.company_id,
+      a.dept_id,
+      a.team_id
+      from live_room as a
+      <if test="req.currentUserId != null">
+          <if test="(req.companyIds != null and req.companyIds.size() != 0) or (req.deptIds != null and req.deptIds.size() != 0) or (req.teamIds != null and req.teamIds.size() != 0)">
+              left
+          </if>
+          join manager_connector as b on a.id = b.target_id and b.manager_type = 4 and b.employee_id = #{req.currentUserId} and b.is_deleted = 0
+      </if>
+      where a.is_deleted = 0
+      and a.tenant_id = #{req.tenantId}
+      <if test="req.keyword!= null and req.keyword != ''">
+          and (
+              a.anchor_name like concat('%', #{req.keyword}, '%')
+              or a.anchor_number like concat('%', #{req.keyword}, '%')
+          )
+      </if>
+      <if test="req.companyId != null">
+          and a.company_id = #{req.companyId}
+      </if>
+      
+      <if test="req.deptId != null">
+          and a.dept_id = #{req.deptId}
+      </if>
+      <if test="(req.companyIds != null and req.companyIds.size() != 0) or (req.deptIds != null and req.deptIds.size() != 0) or (req.teamIds != null and req.teamIds.size() != 0)">
+          <trim prefix="and (" suffix=")" prefixOverrides="or">
+              <if test="req.currentUserId != null">
+                  or b.employee_id = #{req.currentUserId}
+              </if>
+              <if test="req.companyIds != null and req.companyIds.size() != 0">
+                  or a.company_id in (
+                  <foreach item="item" collection="req.companyIds" separator=","  index="">
+                      #{item}
+                  </foreach>
+                  )
+              </if>
+              <if test="req.deptIds != null and req.deptIds.size() != 0">
+                  or a.dept_id in (
+                  <foreach item="item" collection="req.deptIds" separator=","  index="">
+                      #{item}
+                  </foreach>
+                  )
+              </if>
+              <if test="req.teamIds != null and req.teamIds.size() != 0">
+                  or a.team_id in (
+                  <foreach item="item" collection="req.teamIds" separator=","  index="">
+                      #{item}
+                  </foreach>
+                  )
+              </if>
+          </trim>
+      </if>
+
+      <if test="req.teamId != null">
+          and a.team_id = #{req.teamId}
+      </if>
+
+      <if test="req.platform != null">
+          and a.platform = #{req.platform}
+      </if>
+      <if test="req.accountStatus != null">
+          and a.account_status = #{req.accountStatus}
+      </if>
+      limit #{req.limit}
+  </select>
+
+  <select id="pageQueryLiveRoomWithTodayPerformance" resultType="com.jiuyu.governance.business.room.pojo.response.LiveRoomResponse">
+      select a.id,
+             a.create_date,
+             a.update_date,
+             a.sec_uid,
+             a.home_url,
+             a.live_url,
+             a.anchor_name,
+             a.debut_date,
+             a.anchor_avatar,
+             a.platform,
+             a.anchor_number,
+             a.trade_id,
+             a.company_id,
+             a.dept_id,
+             a.team_id
+      from live_room as a
+      <if test="req.sortField != null">
+          LEFT JOIN (
+              SELECT live_room_id,
+                  COALESCE(SUM(view_count), 0) AS todayViewCount,
+                  COALESCE(SUM(sales_revenue), 0) AS todaySalesRevenue,
+                  COALESCE(SUM(refund), 0) AS todayRefund,
+                  COALESCE(SUM(net_sales), 0) AS todayNetSales,
+                  COALESCE(SUM(investment), 0) AS todayInvestment
+              FROM session_performance
+              WHERE tenant_id = #{tenantId}
+                AND stats_date = CURDATE()
+                AND is_deleted = 0
+              GROUP BY live_room_id
+          ) sp_today ON a.id = sp_today.live_room_id
+      </if>
+      <if test="req.managerUserId != null or req.currentUserId != null">
+          <if test="((req.companyIds != null and req.companyIds.size() != 0) or (req.deptIds != null and req.deptIds.size() != 0) or (req.teamIds != null and req.teamIds.size() != 0))">
+              left
+          </if>
+          join manager_connector as b on a.id = b.target_id and b.manager_type = 4  and b.is_deleted = 0 and b.employee_id = #{req.currentUserId}
+      </if>
+      where a.is_deleted = 0
+        and a.tenant_id = #{tenantId}
+      <if test="req.anchorName != null">
+          and a.anchor_name like concat('%', #{req.anchorName}, '%')
+      </if>
+      <if test="req.anchorNumber != null">
+          and a.anchor_number like concat(#{req.anchorNumber}, '%')
+      </if>
+      <if test="req.companyId != null">
+          and a.company_id = #{req.companyId}
+      </if>
+
+      <if test="req.deptId != null">
+          and a.dept_id = #{req.deptId}
+      </if>
+      <if test="(req.companyIds != null and req.companyIds.size() != 0) or (req.deptIds != null and req.deptIds.size() != 0) or (req.teamIds != null and req.teamIds.size() != 0)">
+          <trim prefix="and (" suffix=")" prefixOverrides="or">
+              <if test="req.currentUserId != null">
+                  or b.employee_id = #{req.currentUserId}
+              </if>
+              <if test="req.companyIds != null and req.companyIds.size() != 0">
+                  or a.company_id in (
+                  <foreach item="item" collection="req.companyIds" separator=","  index="">
+                      #{item}
+                  </foreach>
+                  )
+              </if>
+              <if test="req.deptIds != null and req.deptIds.size() != 0">
+                  or a.dept_id in (
+                  <foreach item="item" collection="req.deptIds" separator=","  index="">
+                      #{item}
+                  </foreach>
+                  )
+              </if>
+              <if test="req.teamIds != null and req.teamIds.size() != 0">
+                  or a.team_id in (
+                  <foreach item="item" collection="req.teamIds" separator=","  index="">
+                      #{item}
+                  </foreach>
+                  )
+              </if>
+          </trim>
+      </if>
+
+      <if test="req.teamId != null">
+          and a.team_id = #{req.teamId}
+      </if>
+
+      <if test="req.platform != null">
+          and a.platform = #{req.platform}
+      </if>
+      <if test="req.accountStatus != null">
+          and a.account_status = #{req.accountStatus}
+      </if>
+      ORDER BY
+          <choose>
+              <when test="req.sortField == 'todayViewCount'">sp_today.todayViewCount</when>
+              <when test="req.sortField == 'todaySalesRevenue'">sp_today.todaySalesRevenue</when>
+              <when test="req.sortField == 'todayRefund'">sp_today.todayRefund</when>
+              <when test="req.sortField == 'todayNetSales'">sp_today.todayNetSales</when>
+              <when test="req.sortField == 'todayInvestment'">sp_today.todayInvestment</when>
+              <otherwise>a.id</otherwise>
+          </choose>
+          <choose>
+              <when test="req.sortOrder == 'ASC'">ASC</when>
+              <otherwise>DESC</otherwise>
+          </choose>
+  </select>
+
+</mapper>

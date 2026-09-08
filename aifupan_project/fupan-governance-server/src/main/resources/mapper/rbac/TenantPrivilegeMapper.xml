@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.rbac.mapper.TenantPrivilegeMapper">
+  <resultMap id="BaseResultMap" type="com.jiuyu.governance.business.rbac.pojo.entity.TenantPrivilege">
+    <!--@mbg.generated-->
+    <!--@Table tenant_privilege-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="account_status" jdbcType="TINYINT" property="accountStatus" />
+    <result column="first_open_time" jdbcType="TIMESTAMP" property="firstOpenTime" />
+    <result column="recently_open_time" jdbcType="TIMESTAMP" property="recentlyOpenTime" />
+    <result column="recently_freeze_time" jdbcType="TIMESTAMP" property="recentlyFreezeTime" />
+    <result column="freeze_user_id" jdbcType="BIGINT" property="freezeUserId" />
+    <result column="first_open_user_id" jdbcType="BIGINT" property="firstOpenUserId" />
+    <result column="recently_open_user_id" jdbcType="BIGINT" property="recentlyOpenUserId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, account_status, first_open_time, recently_open_time, recently_freeze_time, freeze_user_id, 
+    first_open_user_id, recently_open_user_id
+  </sql>
+</mapper>

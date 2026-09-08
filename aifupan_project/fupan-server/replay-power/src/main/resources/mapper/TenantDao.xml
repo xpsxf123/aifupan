@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuyu.replay.power.repository.dao.TenantDao">
+    
+    <select id="selectOptions" resultType="com.jiuyu.replay.power.vo.TenantOptionVo">
+        select a.id as tenantId, b.nick_name as accountName, b.phone as accountMobile from tb_tenant as a
+               join tb_user as b on a.id = b.active_tenant_id
+        where b.user_type = #{userType} and a.is_deleted = 0 and b.is_deleted = 0
+        <if test="name != null and name != ''">
+            and b.nick_name like concat('%',#{name},'%')
+        </if>
+        <if test="mobile != null and mobile != ''">
+            and b.phone like concat(#{mobile},'%')
+        </if>
+        order by a.id limit #{limit}
+     </select>
+
+    <select id="pageNormalUserTenants" resultType="com.jiuyu.replay.power.vo.TenantListVo">
+        SELECT a.*
+        FROM tb_tenant AS a
+        INNER JOIN tb_user AS b ON a.user_id = b.id
+        <if test="phone != null and phone != ''">
+            inner join tb_user c on a.id = c.active_tenant_id
+        </if>
+        WHERE b.user_type = 0 AND a.is_deleted = 0 AND b.is_deleted = 0
+        <if test="phone != null and phone != ''">
+            AND c.phone LIKE concat('%', #{phone},'%')
+        </if>
+        <if test="phone != null and phone != ''">
+            GROUP BY a.id
+        </if>
+        ORDER BY a.id DESC
+    </select>
+</mapper>

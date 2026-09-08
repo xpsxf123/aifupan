@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.UploadFileDetailDao">
+
+    <!--
+        查询文件表中待生成自然/优化原文的记录。
+        条件：分析状态=2(完成) + 未删除 + content_status=1(待生成) + set_job=0(未被拾取) + source_type=0(服务端来源)
+        与视频表查询逻辑对称，支持 both=1 场景（一条记录两个 status 都为 1 都返回）
+    -->
+    <select id="selectFileDetailData" resultType="com.jiuyu.replay.words.entity.UploadFileDetailEntity">
+        SELECT
+            ufd.id,
+            ufd.file_id,
+            ufd.nature_content_status,
+            ufd.optimize_content_status,
+            ufd.has_diagnosis_report,
+            ufd.user_id,
+            ufd.tenant_id,
+            ufd.create_date,
+            ufd.update_date,
+            ufd.is_deleted,
+            ufd.nat_set_time,
+            ufd.opt_set_time,
+            ufd.nat_set_job,
+            ufd.opt_set_job,
+            ufd.nature_source_type,
+            ufd.optimize_source_type
+        FROM
+            tb_upload_file_detail AS ufd
+        LEFT JOIN tb_upload_file AS uf ON ufd.file_id = uf.file_id
+        WHERE
+            uf.analysis_status = 2
+            AND uf.is_deleted = 0
+            AND ufd.is_deleted = 0
+            AND (
+                (ufd.nature_content_status = 1 AND ufd.nat_set_job = 0 AND ufd.nature_source_type = 0)
+                OR
+                (ufd.optimize_content_status = 1 AND ufd.opt_set_job = 0 AND ufd.optimize_source_type = 0)
+            )
+        ORDER BY
+            ufd.id ASC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

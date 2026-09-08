@@ -1,0 +1,115 @@
+### 巨量百应数据接口测试
+### 描述: 巨量百应数据更新/查询相关的API测试用例
+
+### ========================================
+### 公共变量定义
+### ========================================
+
+@baseUrl = http://localhost:6606/replay/words/oceanEngineData
+@token = 16ab18d1cd224bc5875ab4ac4b1e557a
+@contentType = application/json
+@videoId = test-video-id-001
+
+### ========================================
+### 1. 巨量数据更新接口 - 正常场景（包含ROI、投放ROI金额、退款金额、整体消耗ROI、净成交ROI字段）
+### ========================================
+POST {{baseUrl}}/updateOceanEngine
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "videoId": "{{videoId}}",
+  "secUid": "test-sec-uid",
+  "totalWatchNum": 5000,
+  "averageOnlineNum": 200,
+  "averageResidenceTime": 120,
+  "incrementFollowerCount": 50,
+  "convertFanRate": 0.05,
+  "interactionPercent": 0.12,
+  "volume": 100000,
+  "purchaseCount": 30,
+  "customerUnitPrice": 3333.33,
+  "uvValue": 2.5,
+  "goodsConvertRate": 0.03,
+  "gpm": 15000,
+  "showWatchCntRatio": 0.65,
+  "roi": 2.5,
+  "launchRoiAmount": 5000.00,
+  "refundAmount": 300.50,
+  "overallCostRoi": 3.25,
+  "netTransactionRoi": 2.80,
+  "isTakeProduct": 1,
+  "watchFlowList": [
+    {"sourceName": "自然推荐", "proportion": 60.5},
+    {"sourceName": "付费流量", "proportion": 39.5}
+  ],
+  "payFlowList": [
+    {"sourceName": "自然推荐", "proportion": 45.0},
+    {"sourceName": "付费流量", "proportion": 55.0}
+  ]
+}
+
+### 验证要点:
+### - 返回 R<Long>，包含数据看板ID
+### - 数据库 tb_video_data_viewing_confuse 中对应记录的 roi=2.5, launch_roi_amount=5000.00, refund_amount=300.50, overall_cost_roi=3.25, net_transaction_roi=2.80
+
+### ========================================
+### 2. 巨量数据更新接口 - ROI/投放ROI金额/退款金额为空（兼容旧客户端）
+### ========================================
+POST {{baseUrl}}/updateOceanEngine
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "videoId": "{{videoId}}",
+  "secUid": "test-sec-uid",
+  "totalWatchNum": 3000,
+  "averageOnlineNum": 100,
+  "averageResidenceTime": 90,
+  "incrementFollowerCount": 20,
+  "volume": 50000,
+  "purchaseCount": 15,
+  "isTakeProduct": 1
+}
+
+### 验证要点:
+### - 新字段为null时不影响接口正常运行
+### - 数据库中 roi, launch_roi_amount, refund_amount, overall_cost_roi, net_transaction_roi 为 NULL
+
+### ========================================
+### 3. 巨量数据更新接口 - 缺少videoId（校验失败）
+### ========================================
+POST {{baseUrl}}/updateOceanEngine
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid",
+  "roi": 1.8,
+  "launchRoiAmount": 2000.00,
+  "refundAmount": 100.00,
+  "overallCostRoi": 1.5,
+  "netTransactionRoi": 1.2
+}
+
+### 验证要点:
+### - 返回错误提示 "视频id不能为空"
+
+### ========================================
+### 4. 巨量数据查询接口 - 验证返回中包含新字段
+### ========================================
+GET {{baseUrl}}/getOceanEngine?videoId={{videoId}}
+token: {{token}}
+
+### 验证要点:
+### - 返回 R<OceanEngineDataVo>
+### - dataJson 中应包含 roi、launchRoiAmount、refundAmount、overallCostRoi、netTransactionRoi 字段
+
+### ========================================
+### 5. 获取巨量数据上传预签名链接
+### ========================================
+GET {{baseUrl}}/getSignUploadUrl?videoId={{videoId}}
+token: {{token}}
+
+### 验证要点:
+### - 返回 R<SignUploadUrlVo>，包含预签名上传链接

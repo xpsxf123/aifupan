@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.org.mapper.ManagerConnectorMapper">
+  <resultMap id="BaseResultMap" type="com.jiuyu.governance.business.org.pojo.entity.ManagerConnector">
+    <!--@mbg.generated-->
+    <!--@Table manager_connector-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="is_deleted" jdbcType="BOOLEAN" property="isDeleted" />
+    <result column="manager_type" jdbcType="INTEGER" property="managerType" />
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="target_id" jdbcType="BIGINT" property="targetId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, create_date, update_date, is_deleted, manager_type, employee_id, target_id
+  </sql>
+  
+  <insert id="insertBatch" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+    insert into manager_connector (id, create_date, update_date, is_deleted, manager_type, employee_id, target_id) values
+    <foreach item="item" index="index" collection="list" separator=",">
+      (#{item.id}, #{item.createDate}, #{item.updateDate}, #{item.isDeleted}, #{item.managerType}, #{item.employeeId}, #{item.targetId})
+    </foreach>
+  </insert>
+</mapper>

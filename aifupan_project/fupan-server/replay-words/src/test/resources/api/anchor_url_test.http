@@ -1,0 +1,578 @@
+### 主播添加/修改接口测试
+### 作者: AI Assistant
+### 创建时间: 2026-03-20
+### 描述: 添加或修改主播、更新用户主播信息相关的API测试用例（含"是否按排班录制"、"授权巨量百应状态修改时间"、"录制时间模式"、"时间点分段录制"字段）
+
+### ========================================
+### 公共变量定义
+### ========================================
+
+@baseUrl = http://localhost:6606/replay
+@token = 16ab18d1cd224bc5875ab4ac4b1e557a
+@contentType = application/json
+@secUid = test-sec-uid-001
+
+### ========================================
+### 1. 添加主播 - 正常场景（包含 isScheduleRecord 新字段）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "homeUrl": "https://www.douyin.com/user/test-sec-uid-001",
+  "liveUrl": "https://live.douyin.com/123456",
+  "anchorName": "测试主播",
+  "anchorAvatar": "https://example.com/avatar.jpg",
+  "platform": 0,
+  "anchorNumber": "test_anchor_001",
+  "isAutoRecord": 1,
+  "recordTime": "08:00:00-18:00:00",
+  "recordDefinition": 1,
+  "recordLimitType": 0,
+  "isScheduleRecord": 1,
+  "recordTimeMode": 1,
+  "segmentTimePoints": null
+}
+
+### 验证要点:
+### - 返回 R<String>，msg 为 "添加成功"
+### - 数据库 tb_anchor_url 中新增一条 sec_uid=test-sec-uid-001 的主播记录
+### - 数据库 tb_anchor_url_user 中新增一条关联记录，is_schedule_record=1, record_time_mode=1
+
+### ========================================
+### 2. 添加主播 - 不传 isScheduleRecord/recordTimeMode（兼容旧客户端，使用数据库默认值）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-002",
+  "homeUrl": "https://www.douyin.com/user/test-sec-uid-002",
+  "liveUrl": "https://live.douyin.com/654321",
+  "anchorName": "测试主播2",
+  "anchorAvatar": "https://example.com/avatar2.jpg",
+  "platform": 0,
+  "isAutoRecord": 1
+}
+
+### 验证要点:
+### - 接口正常返回，不因缺少新字段报错
+### - 数据库 tb_anchor_url_user 中 is_schedule_record=0（数据库默认值）
+### - 数据库 tb_anchor_url_user 中 record_time_mode=1（数据库默认值）
+### - 数据库 tb_anchor_url_user 中 segment_time_points=NULL
+
+### ========================================
+### 3. 修改主播 - 更新 isScheduleRecord 为1
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "anchorName": "测试主播",
+  "anchorAvatar": "https://example.com/avatar.jpg",
+  "isScheduleRecord": 1
+}
+
+### 验证要点:
+### - 主播已存在时执行修改逻辑
+### - 数据库 tb_anchor_url_user 中 is_schedule_record 更新为 1
+
+### ========================================
+### 4. 修改主播 - 更新 isScheduleRecord 为0（关闭按排班录制）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "anchorName": "测试主播",
+  "anchorAvatar": "https://example.com/avatar.jpg",
+  "isScheduleRecord": 0
+}
+
+### 验证要点:
+### - 数据库 tb_anchor_url_user 中 is_schedule_record 更新为 0
+
+### ========================================
+### 5. 更新用户主播信息 - 包含 isScheduleRecord
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "isScheduleRecord": 1,
+  "recordTime": "09:00:00-21:00:00",
+  "recordDefinition": 2,
+  "recordLimitType": 0
+}
+
+### 验证要点:
+### - 返回 R<String>，code=0
+### - 数据库 tb_anchor_url_user 中 is_schedule_record=1, record_time="09:00:00-21:00:00"
+
+### ========================================
+### 6. 更新用户主播信息 - 仅更新 isScheduleRecord
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "isScheduleRecord": 0
+}
+
+### 验证要点:
+### - 仅 is_schedule_record 字段被更新为 0，其他字段不受影响
+
+### ========================================
+### 7. 添加主播 - secUid为空（校验失败）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "anchorName": "缺少secUid的主播",
+  "isScheduleRecord": 1
+}
+
+### 验证要点:
+### - 返回错误提示 "主播secUid不能为空"
+
+### ========================================
+### 8. 更新用户主播信息 - secUid为空（校验失败）
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "isScheduleRecord": 1
+}
+
+### 验证要点:
+### - 返回校验失败提示 "主播标识不能为空"
+
+### ========================================
+### 数据库校验说明
+### ========================================
+
+### 写操作后的数据库验证要点：
+# 【添加主播】执行后检查：
+#   - 表：tb_anchor_url_user
+#   - 验证：新记录 is_schedule_record 值与请求参数一致
+#   - 验证：不传 isScheduleRecord 时，is_schedule_record = 0（数据库默认值）
+#   - 验证：不传 recordTimeMode 时，record_time_mode = 1（数据库默认值）
+#   - 验证：不传 segmentTimePoints 时，segment_time_points = NULL
+#   - 验证：传入 authJlbyStatus 时，auth_jlby_status_time 自动填充为当前时间
+#   - 验证：不传 authJlbyStatus 时，auth_jlby_status_time 为 NULL
+#   - 验证：传入 authQcStatus 时，auth_qc_status_time 自动填充为当前时间
+#   - 验证：不传 authQcStatus 时，auth_qc_status_time 为 NULL
+#
+# 【修改主播】执行后检查：
+#   - 表：tb_anchor_url_user
+#   - 验证：is_schedule_record 已更新为请求值
+#   - 验证：record_time_mode 已更新为请求值（如已传）
+#   - 验证：segment_time_points 已更新为请求值（如已传）
+#   - 验证：传入 authJlbyStatus 时，auth_jlby_status_time 自动更新为当前时间
+#   - 验证：传入 authQcStatus 时，auth_qc_status_time 自动更新为当前时间
+#   - 验证：update_date 已更新
+#
+# 【更新用户主播信息】执行后检查：
+#   - 表：tb_anchor_url_user
+#   - 验证：is_schedule_record 已更新为请求值
+#   - 验证：record_time_mode 已更新为请求值（如已传）
+#   - 验证：segment_time_points 已更新为请求值（如已传）
+#   - 验证：传入 authJlbyStatus 时，auth_jlby_status_time 自动更新为当前时间
+#   - 验证：不传 authJlbyStatus 时，auth_jlby_status_time 保持不变
+#   - 验证：传入 authQcStatus 时，auth_qc_status_time 自动更新为当前时间
+#   - 验证：不传 authQcStatus 时，auth_qc_status_time 保持不变
+#   - 验证：传入 authLifeStatus 时，auth_life_status_time 自动更新为当前时间
+#   - 验证：不传 authLifeStatus 时，auth_life_status_time 保持不变
+#   - 验证：其他未传字段保持不变
+
+### ========================================
+### 9. 添加主播 - 包含 authJlbyStatus（验证自动记录状态修改时间）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-003",
+  "homeUrl": "https://www.douyin.com/user/test-sec-uid-003",
+  "liveUrl": "https://live.douyin.com/789012",
+  "anchorName": "测试主播3",
+  "anchorAvatar": "https://example.com/avatar3.jpg",
+  "platform": 0,
+  "isAutoRecord": 1,
+  "authJlbyStatus": 1
+}
+
+### 验证要点:
+### - 返回 R<String>，msg 为 "添加成功"
+### - 数据库 tb_anchor_url_user 中 auth_jlby_status=1
+### - 数据库 tb_anchor_url_user 中 auth_jlby_status_time 自动填充为当前时间（非NULL）
+
+### ========================================
+### 10. 修改主播 - 修改 authJlbyStatus（验证自动更新时间）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-003",
+  "anchorName": "测试主播3",
+  "anchorAvatar": "https://example.com/avatar3.jpg",
+  "authJlbyStatus": 2
+}
+
+### 验证要点:
+### - 数据库 tb_anchor_url_user 中 auth_jlby_status 更新为 2
+### - 数据库 tb_anchor_url_user 中 auth_jlby_status_time 更新为当前时间
+
+### ========================================
+### 11. 修改主播 - 不传 authJlbyStatus（时间不应被更新）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-003",
+  "anchorName": "测试主播3修改",
+  "anchorAvatar": "https://example.com/avatar3_new.jpg"
+}
+
+### 验证要点:
+### - auth_jlby_status 保持不变
+### - auth_jlby_status_time 保持不变（不应被更新）
+
+### ========================================
+### 12. 更新用户主播信息 - 修改 authJlbyStatus（验证自动更新时间）
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "authJlbyStatus": 4
+}
+
+### 验证要点:
+### - 数据库 tb_anchor_url_user 中 auth_jlby_status=4
+### - 数据库 tb_anchor_url_user 中 auth_jlby_status_time 自动更新为当前时间
+
+### ========================================
+### 13. 更新用户主播信息 - 不传 authJlbyStatus（时间不应被更新）
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "isAutoRecord": 1
+}
+
+### 验证要点:
+### - auth_jlby_status 保持不变
+### - auth_jlby_status_time 保持不变（不应被更新）
+
+### ========================================
+### 14. 添加主播 - 包含 authQcStatus（验证自动记录千川授权状态修改时间）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-004",
+  "homeUrl": "https://www.douyin.com/user/test-sec-uid-004",
+  "liveUrl": "https://live.douyin.com/345678",
+  "anchorName": "测试主播4",
+  "anchorAvatar": "https://example.com/avatar4.jpg",
+  "platform": 0,
+  "isAutoRecord": 1,
+  "authQcStatus": 1
+}
+
+### 验证要点:
+### - 返回 R<String>，msg 为 "添加成功"
+### - 数据库 tb_anchor_url_user 中 auth_qc_status=1
+### - 数据库 tb_anchor_url_user 中 auth_qc_status_time 自动填充为当前时间（非NULL）
+
+### ========================================
+### 15. 修改主播 - 修改 authQcStatus（验证自动更新时间）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-004",
+  "anchorName": "测试主播4",
+  "anchorAvatar": "https://example.com/avatar4.jpg",
+  "authQcStatus": 2
+}
+
+### 验证要点:
+### - 数据库 tb_anchor_url_user 中 auth_qc_status 更新为 2
+### - 数据库 tb_anchor_url_user 中 auth_qc_status_time 更新为当前时间
+
+### ========================================
+### 16. 修改主播 - 不传 authQcStatus（时间不应被更新）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-004",
+  "anchorName": "测试主播4修改",
+  "anchorAvatar": "https://example.com/avatar4_new.jpg"
+}
+
+### 验证要点:
+### - auth_qc_status 保持不变
+### - auth_qc_status_time 保持不变（不应被更新）
+
+### ========================================
+### 17. 更新用户主播信息 - 修改 authQcStatus（验证自动更新时间）
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "authQcStatus": 4
+}
+
+### 验证要点:
+### - 数据库 tb_anchor_url_user 中 auth_qc_status=4
+### - 数据库 tb_anchor_url_user 中 auth_qc_status_time 自动更新为当前时间
+
+### ========================================
+### 18. 更新用户主播信息 - 不传 authQcStatus（时间不应被更新）
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "isAutoRecord": 0
+}
+
+### 验证要点:
+### - auth_qc_status 保持不变
+### - auth_qc_status_time 保持不变（不应被更新）
+
+### ========================================
+### 19. 添加主播 - 包含 authLifeStatus（验证自动记录授权来客状态修改时间）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-005",
+  "homeUrl": "https://www.douyin.com/user/test-sec-uid-005",
+  "liveUrl": "https://live.douyin.com/567890",
+  "anchorName": "测试主播5",
+  "anchorAvatar": "https://example.com/avatar5.jpg",
+  "platform": 0,
+  "isAutoRecord": 1,
+  "authLifeStatus": 1
+}
+
+### 验证要点:
+### - 返回 R<String>，msg 为 "添加成功"
+### - 数据库 tb_anchor_url_user 中 auth_life_status=1
+### - 数据库 tb_anchor_url_user 中 auth_life_status_time 自动填充为当前时间（非NULL）
+
+### ========================================
+### 20. 修改主播 - 修改 authLifeStatus（验证自动更新时间）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-005",
+  "anchorName": "测试主播5",
+  "anchorAvatar": "https://example.com/avatar5.jpg",
+  "authLifeStatus": 2
+}
+
+### 验证要点:
+### - 数据库 tb_anchor_url_user 中 auth_life_status 更新为 2
+### - 数据库 tb_anchor_url_user 中 auth_life_status_time 更新为当前时间
+
+### ========================================
+### 21. 修改主播 - 不传 authLifeStatus（时间不应被更新）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-005",
+  "anchorName": "测试主播5修改",
+  "anchorAvatar": "https://example.com/avatar5_new.jpg"
+}
+
+### 验证要点:
+### - auth_life_status 保持不变
+### - auth_life_status_time 保持不变（不应被更新）
+
+### ========================================
+### 22. 更新用户主播信息 - 修改 authLifeStatus（验证自动更新时间）
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "authLifeStatus": 4
+}
+
+### 验证要点:
+### - 数据库 tb_anchor_url_user 中 auth_life_status=4
+### - 数据库 tb_anchor_url_user 中 auth_life_status_time 自动更新为当前时间
+
+### ========================================
+### 23. 更新用户主播信息 - 不传 authLifeStatus（时间不应被更新）
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "isAutoRecord": 0
+}
+
+### 验证要点:
+### - auth_life_status 保持不变
+### - auth_life_status_time 保持不变（不应被更新）
+
+### ========================================
+### 24. 添加主播 - 录制时间模式为按时间点分段录制
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-006",
+  "homeUrl": "https://www.douyin.com/user/test-sec-uid-006",
+  "liveUrl": "https://live.douyin.com/111222",
+  "anchorName": "测试主播6",
+  "anchorAvatar": "https://example.com/avatar6.jpg",
+  "platform": 0,
+  "isAutoRecord": 1,
+  "recordTimeMode": 2,
+  "segmentTimePoints": "09:30,10:40,11:20"
+}
+
+### 验证要点:
+### - 返回 R<String>，msg 为 "添加成功"
+### - 数据库 tb_anchor_url_user 中 record_time_mode=2
+### - 数据库 tb_anchor_url_user 中 segment_time_points="09:30,10:40,11:20"
+
+### ========================================
+### 25. 修改主播 - 切换录制时间模式为按视频时长录制
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-006",
+  "anchorName": "测试主播6",
+  "anchorAvatar": "https://example.com/avatar6.jpg",
+  "recordTimeMode": 0
+}
+
+### 验证要点:
+### - 数据库 tb_anchor_url_user 中 record_time_mode 更新为 0
+
+### ========================================
+### 26. 修改主播 - 切换录制时间模式为按北京时间录制（默认）
+### ========================================
+POST {{baseUrl}}/anchorurl/addOrUpdateAnchor
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "test-sec-uid-006",
+  "anchorName": "测试主播6",
+  "anchorAvatar": "https://example.com/avatar6.jpg",
+  "recordTimeMode": 1
+}
+
+### 验证要点:
+### - 数据库 tb_anchor_url_user 中 record_time_mode 更新为 1
+
+### ========================================
+### 27. 更新用户主播信息 - 设置录制时间模式和时间点
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "recordTimeMode": 2,
+  "segmentTimePoints": "08:00,12:00,16:00,20:00"
+}
+
+### 验证要点:
+### - 返回 R<String>，code=0
+### - 数据库 tb_anchor_url_user 中 record_time_mode=2
+### - 数据库 tb_anchor_url_user 中 segment_time_points="08:00,12:00,16:00,20:00"
+
+### ========================================
+### 28. 更新用户主播信息 - 仅更新录制时间模式（不传时间点）
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "recordTimeMode": 1
+}
+
+### 验证要点:
+### - 仅 record_time_mode 字段被更新为 1，其他字段不受影响
+
+### ========================================
+### 29. 更新用户主播信息 - 不传 recordTimeMode（不修改该字段）
+### ========================================
+POST {{baseUrl}}/words/anchorUrl/updateUserAnchorInfo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "secUid": "{{secUid}}",
+  "isAutoRecord": 1
+}
+
+### 验证要点:
+### - record_time_mode 保持原值不变
+### - segment_time_points 保持原值不变

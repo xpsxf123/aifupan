@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.TradeThirdRankingRelationMapper">
+  <resultMap id="BaseResultMap" type="com.jiuyu.replay.words.entity.TradeThirdRankingRelation">
+    <!--@mbg.generated-->
+    <!--@Table tb_trade_third_ranking_relation-->
+    <id column="id" property="id" />
+    <result column="trade_id" property="tradeId" />
+    <result column="third_ranking_id" property="thirdRankingId" />
+    <result column="third_ranking_name" property="thirdRankingName" />
+    <result column="create_date" property="createDate" />
+    <result column="created_by" property="createdBy" />
+    <result column="update_date" property="updateDate" />
+    <result column="updated_by" property="updatedBy" />
+    <result column="last_collect_time" property="lastCollectTime" />
+    <result column="enable_collect" property="enableCollect" />
+    <result column="day_of_week" property="dayOfWeek" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, trade_id, third_ranking_id, third_ranking_name, create_date, created_by, update_date,
+    updated_by, last_collect_time, enable_collect, day_of_week
+  </sql>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update tb_trade_third_ranking_relation
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="trade_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.tradeId != null">
+            when id = #{item.id} then #{item.tradeId}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="third_ranking_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.thirdRankingId != null">
+            when id = #{item.id} then #{item.thirdRankingId}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="third_ranking_name = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.thirdRankingName != null">
+            when id = #{item.id} then #{item.thirdRankingName}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="create_date = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createDate != null">
+            when id = #{item.id} then #{item.createDate}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="created_by = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.createdBy != null">
+            when id = #{item.id} then #{item.createdBy}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="update_date = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.updateDate != null">
+            when id = #{item.id} then #{item.updateDate}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="updated_by = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.updatedBy != null">
+            when id = #{item.id} then #{item.updatedBy}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="last_collect_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.lastCollectTime != null">
+            when id = #{item.id} then #{item.lastCollectTime}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="enable_collect = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.enableCollect != null">
+            when id = #{item.id} then #{item.enableCollect}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="day_of_week = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.dayOfWeek != null">
+            when id = #{item.id} then #{item.dayOfWeek}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_trade_third_ranking_relation
+    (trade_id, third_ranking_id, third_ranking_name, create_date, created_by, update_date,
+      updated_by, last_collect_time, enable_collect, day_of_week)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.tradeId}, #{item.thirdRankingId}, #{item.thirdRankingName}, #{item.createDate},
+        #{item.createdBy}, #{item.updateDate}, #{item.updatedBy}, #{item.lastCollectTime},
+        #{item.enableCollect}, #{item.dayOfWeek})
+    </foreach>
+  </insert>
+  
+  <select id="getDayOfWeekThirdTrades" resultMap="BaseResultMap">
+    select b.third_ranking_id, b.third_ranking_name, b.trade_id from tb_trade as a
+            join tb_trade_third_ranking_relation as b on a.id = b.trade_id
+    where b.day_of_week = #{dayOfWeek} and a.is_deleted = 0
+    and a.third_collect = 1 and b.enable_collect = 1
+  </select>
+</mapper>

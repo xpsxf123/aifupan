@@ -1,0 +1,106 @@
+### 商品管理接口测试
+### 作者: jxy
+### 创建时间: 2026-03-19
+### 描述: 商品管理相关的API测试用例
+
+### ========================================
+### 公共变量定义
+### ========================================
+
+@baseUrl = http://localhost:6606/replay/words
+@token = cb5ca46cc4d14992948994900cf178b1
+@contentType = application/json
+
+### ========================================
+### 1. 商品列表（分页查询）
+### ========================================
+GET {{baseUrl}}/productDetails/list?page=1&limit=10
+Content-Type: {{contentType}}
+token: {{token}}
+
+### 2. 商品列表（按批次号查询）
+GET {{baseUrl}}/productDetails/list?page=1&limit=10&batchNumber=BATCH001
+Content-Type: {{contentType}}
+token: {{token}}
+
+### 3. 商品列表（按视频ID查询）
+GET {{baseUrl}}/productDetails/list?page=1&limit=10&videoId=VIDEO001
+Content-Type: {{contentType}}
+token: {{token}}
+
+### 4. 商品列表（按商品ID查询）
+GET {{baseUrl}}/productDetails/list?page=1&limit=10&productId=PRODUCT001
+Content-Type: {{contentType}}
+token: {{token}}
+
+### 5. 商品列表（关键词模糊搜索）
+GET {{baseUrl}}/productDetails/list?page=1&limit=10&keyword=测试商品
+Content-Type: {{contentType}}
+token: {{token}}
+
+### ========================================
+### 6. 商品信息（根据ID查询）
+### ========================================
+GET {{baseUrl}}/productDetails/info?id=1
+Content-Type: {{contentType}}
+token: {{token}}
+
+### ========================================
+### 7. 新增商品
+### ========================================
+POST {{baseUrl}}/productDetails/save
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "batchNumber": "BATCH001",
+  "videoId": "VIDEO001",
+  "productId": "PRODUCT001",
+  "title": "测试商品标题",
+  "imageUri": "https://example.com/image.jpg",
+  "marketPrice": 99.90,
+  "productBindTime": "2026-03-19 10:00:00",
+  "productDownTime": "2026-03-19 22:00:00",
+  "explainCnt": 3,
+  "productShowUcnt": 10000,
+  "productClickUcnt": 5000,
+  "productShowClickUcntRatio": 0.5000,
+  "productShowPayUcntRatio": 0.0200,
+  "productClickPayUcntRatio": 0.0400,
+  "gpm": 1500.00,
+  "payAmt": 50000.00,
+  "avgMaxPayAmtMin": 3000.00,
+  "payComboCnt": 500,
+  "payCnt": 480,
+  "createCnt": 520,
+  "createPayUcntRatio": 0.9230,
+  "payDepositPreOrderCnt": 10,
+  "presaleDepayDeamt": 500.00,
+  "payDepositPreOrderAmt": 5000.00,
+  "refundCnt": 20,
+  "realRefundAmt": 1998.00,
+  "refundRate": 0.0400,
+  "statisticsCurve": "{\"curve\":[100,200,350,500,800]}"
+}
+
+### ========================================
+### 8. 修改商品
+### ========================================
+POST {{baseUrl}}/productDetails/update
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "id": 4555074098541940736,
+  "title": "修改后的商品标题",
+  "marketPrice": 129.90,
+  "explainCnt": 5,
+  "statisticsCurve": "{\"curve\":[100,200,350,500,800,1200]}"
+}
+
+### ========================================
+### 9. 删除商品
+### ========================================
+POST {{baseUrl}}/productDetails/delete?id=4555074098541940736
+Content-Type: {{contentType}}
+token: {{token}}

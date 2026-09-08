@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.ai.repository.dao.DiagnosisCueDao">
+
+    <select id="listUnreadDataDiagnosis" resultType="com.jiuyu.replay.generic.vo.ai.UnreadDiagnosisReportVo">
+        SELECT
+            d.id, d.source_id AS videoId,
+            d.is_read AS isRead,
+            d.cue_words_id AS cueWordsId,
+            v.video_name AS videoName,
+            v.start_time AS startTime,
+            v.end_time AS endTime,
+            v.duration, v.trade_id AS tradeId,
+            v.sec_uid AS secUid
+        FROM tb_diagnosis_cue d
+        INNER JOIN tb_anchor_video v ON d.source_id = v.video_id
+        WHERE d.source_type = 1
+          AND d.diagnosis_type = 1
+          AND d.is_read = 0
+          AND d.qa_status = 2
+          AND d.is_deleted = 0
+          AND d.user_id = #{userId}
+          AND d.tenant_id = #{tenantId}
+          AND v.video_slice_type = #{videoSliceType}
+    </select>
+
+</mapper>

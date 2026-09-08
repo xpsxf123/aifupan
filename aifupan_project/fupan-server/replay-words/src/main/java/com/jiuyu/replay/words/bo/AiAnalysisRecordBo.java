@@ -1,0 +1,62 @@
+package com.jiuyu.replay.words.bo;
+
+import java.io.Serializable;
+import java.util.Date;
+import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+/**
+ * AI分析出来的关键词总数和未匹配上词库的关键词个数信息
+ *
+ * @author jxy
+ * @email 1776764427@qq.com
+ * @date 2025-02-21 17:06:53
+ */
+@Data
+@Schema(description = "AI分析出来的关键词总数和未匹配上词库的关键词个数信息")
+public class AiAnalysisRecordBo implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * ID
+	 */
+	@Schema(description = "ID")
+	private Long id;
+	/**
+	 * 视频或文件唯一标识
+	 */
+	@Schema(description = "视频或文件唯一标识")
+	private String uuid;
+	/**
+	 * 类型  0：录制视频 1：上传文件
+	 */
+	@Schema(description = "类型  0：录制视频 1：上传文件")
+	private Integer type;
+	/**
+	 * 分析出来的关键词总数
+	 */
+	@Schema(description = "分析出来的关键词总数")
+	private Integer sensitiveWordTotal;
+	/**
+	 * 未匹配上词库的关键词个数
+	 */
+	@Schema(description = "未匹配上词库的关键词个数")
+	private Integer sensitiveWordMark;
+	/**
+	 * 创建时间
+	 */
+	@Schema(description = "创建时间")
+	private Date createDate;
+	/**
+	 * 最后修改时间
+	 */
+	@Schema(description = "最后修改时间")
+	private Date updateDate;
+	/**
+	 * 是否已删除
+	 */
+	@Schema(description = "是否已删除")
+	private Integer isDeleted;
+
+
+}

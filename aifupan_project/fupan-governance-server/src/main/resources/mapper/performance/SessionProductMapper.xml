@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.performance.mapper.SessionProductMapper">
+
+    <!-- 商品排行聚合查询 -->
+    <select id="queryProductRanking" resultType="com.jiuyu.governance.business.performance.pojo.bo.ProductRankingBO">
+        SELECT
+            sp.product_id AS productId,
+            p.name AS productName,
+            SUM(sp.quantity) AS quantity,
+            COALESCE(SUM(sp.sales_amount), 0) AS salesAmount,
+            SUM(sp.refund_quantity) AS refundQuantity,
+            COALESCE(SUM(sp.refund_amount), 0) AS refundAmount,
+            CASE 
+                WHEN SUM(sp.sales_amount) > 0 
+                THEN ROUND(SUM(sp.refund_amount) / SUM(sp.sales_amount) * 100, 2)
+                ELSE 0 
+            END AS refundRate,
+            ROUND(AVG(sp.exposure_conversion_rate), 2) AS exposureConversionRate,
+            ROUND(AVG(sp.exposure_click_rate), 2) AS exposureClickRate,
+            ROUND(AVG(sp.gpm), 2) AS gpm,
+            ROUND(AVG(sp.click_payment_rate), 2) AS clickPaymentRate,
+            COUNT(DISTINCT sp.session_id) AS sessionCount,
+            COUNT(DISTINCT sp.company_id) AS companyCount,
+            p.image_uri AS imageUri
+        FROM session_product sp
+        INNER JOIN live_session ls ON sp.session_id = ls.id AND ls.is_deleted = 0
+        LEFT JOIN product p ON sp.tenant_id = p.tenant_id 
+            AND sp.product_id = p.id
+            AND p.is_deleted = 0
+        WHERE sp.tenant_id = #{req.tenantId}
+            AND sp.is_deleted = 0
+            AND DATE(ls.start_time) BETWEEN #{req.startDate} AND #{req.endDate}
+            <if test="req.productName != null and req.productName != ''">
+                AND p.name LIKE CONCAT('%', #{req.productName}, '%')
+            </if>
+            <if test="req.companyId != null">
+                AND sp.company_id = #{req.companyId}
+            </if>
+            <if test="req.deptId != null">
+                AND sp.dept_id = #{req.deptId}
+            </if>
+            <if test="req.teamId != null">
+                AND sp.team_id = #{req.teamId}
+            </if>
+            <if test="req.systemUser == null or req.systemUser == false">
+                <trim prefix="and (" suffix=")" prefixOverrides="or">
+                    <if test="req.dataCompanyIds != null and req.dataCompanyIds.size() > 0">
+                        or sp.company_id in
+                        <foreach collection="req.dataCompanyIds" item="id" open="(" separator="," close=")">
+                            #{id}
+                        </foreach>
+                    </if>
+                    <if test="req.dataDeptIds != null and req.dataDeptIds.size() > 0">
+                        or sp.dept_id in
+                        <foreach collection="req.dataDeptIds" item="id" open="(" separator="," close=")">
+                            #{id}
+                        </foreach>
+                    </if>
+                    <if test="req.dataTeamIds != null and req.dataTeamIds.size() > 0">
+                        or sp.team_id in
+                        <foreach collection="req.dataTeamIds" item="id" open="(" separator="," close=")">
+                            #{id}
+                        </foreach>
+                    </if>
+                </trim>
+            </if>
+        GROUP BY sp.product_id, p.id
+        ORDER BY
+        <choose>
+            <when test="sortBy == 'salesAmount'">salesAmount</when>
+            <when test="sortBy == 'quantity'">quantity</when>
+            <when test="sortBy == 'refundQuantity'">refundQuantity</when>
+            <when test="sortBy == 'refundAmount'">refundAmount</when>
+            <when test="sortBy == 'refundRate'">refundRate</when>
+            <when test="sortBy == 'exposureConversionRate'">exposureConversionRate</when>
+            <when test="sortBy == 'exposureClickRate'">exposureClickRate</when>
+            <when test="sortBy == 'gpm'">gpm</when>
+            <when test="sortBy == 'clickPaymentRate'">clickPaymentRate</when>
+            <when test="sortBy == 'sessionCount'">sessionCount</when>
+            <when test="sortBy == 'companyCount'">companyCount</when>
+            <otherwise>salesAmount</otherwise>
+        </choose>
+        <choose>
+            <when test="sortOrder == 'asc'">ASC</when>
+            <when test="sortOrder == 'desc'">DESC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+    </select>
+
+    <!-- 商品关联直播场次分页查询 -->
+    <select id="queryProductSessions" resultType="com.jiuyu.governance.business.performance.pojo.bo.ProductSessionBO">
+        SELECT
+            ls.id AS sessionId,
+            lr.anchor_avatar AS anchorAvatar,
+            lr.anchor_name AS anchorName,
+            ls.start_time AS startTime,
+            ls.duration AS duration,
+            sp.quantity AS quantity,
+            sp.sales_amount AS salesAmount,
+            sp.refund_amount AS refundAmount,
+            ls.view_count AS viewCount
+        FROM session_product sp
+        INNER JOIN live_session ls ON sp.session_id = ls.id AND ls.is_deleted = 0
+        INNER JOIN live_room lr ON ls.live_room_id = lr.id AND lr.is_deleted = 0
+        WHERE sp.tenant_id = #{tenantId}
+            AND sp.product_id = #{productId}
+            AND sp.is_deleted = 0
+            AND DATE(ls.start_time) BETWEEN #{startDate} AND #{endDate}
+        ORDER BY
+        <choose>
+            <when test="sortBy == 'startTime'">start_time</when>
+            <when test="sortBy == 'duration'">duration</when>
+            <when test="sortBy == 'quantity'">quantity</when>
+            <when test="sortBy == 'salesAmount'">sales_amount</when>
+            <when test="sortBy == 'viewCount'">view_count</when>
+            <otherwise>start_time</otherwise>
+        </choose>
+        <choose>
+            <when test="sortOrder == 'asc'">ASC</when>
+            <when test="sortOrder == 'desc'">DESC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+    </select>
+
+    <!-- 商品关联分公司列表查询 -->
+    <select id="queryProductCompanies" resultType="com.jiuyu.governance.business.performance.pojo.bo.ProductCompanyBO">
+        SELECT
+            sp.company_id AS companyId,
+            sc.name AS companyName,
+            SUM(sp.quantity) AS quantity,
+            COALESCE(SUM(sp.sales_amount), 0) AS salesAmount,
+            COALESCE(SUM(sp.refund_amount), 0) AS refundAmount,
+            SUM(ls.view_count) AS viewCount
+        FROM session_product sp
+        INNER JOIN live_session ls ON sp.session_id = ls.id AND ls.is_deleted = 0
+        INNER JOIN sub_company sc ON sp.company_id = sc.id AND sc.is_deleted = 0
+        WHERE sp.tenant_id = #{tenantId}
+            AND sp.product_id = #{productId}
+            AND sp.is_deleted = 0
+            AND DATE(ls.start_time) BETWEEN #{startDate} AND #{endDate}
+        GROUP BY sp.company_id, sc.name
+        ORDER BY
+        <choose>
+            <when test="sortBy == 'salesAmount'">sales_amount</when>
+            <when test="sortBy == 'quantity'">quantity</when>
+            <when test="sortBy == 'viewCount'">view_count</when>
+            <otherwise>sales_amount</otherwise>
+        </choose>
+        <choose>
+            <when test="sortOrder == 'asc'">ASC</when>
+            <when test="sortOrder == 'desc'">DESC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+    </select>
+
+</mapper>

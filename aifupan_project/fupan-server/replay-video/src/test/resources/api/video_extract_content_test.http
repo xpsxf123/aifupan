@@ -1,0 +1,168 @@
+### 视频文案内容查询接口测试
+### 作者: RayChou
+### 创建时间: 2025-08-14
+### 描述: 通过用户视频关联表ID查询MongoDB文案内容的API测试用例
+
+### 1. 查询存在的文案内容
+GET http://localhost:8080/replay/video/extract/content/1001
+Content-Type: application/json
+
+### 2. 查询不存在的记录
+GET http://localhost:8080/replay/video/extract/content/999999
+Content-Type: application/json
+
+### 3. 查询已提取但无文案的记录
+GET http://localhost:8080/replay/video/extract/content/1002
+Content-Type: application/json
+
+### 4. 查询其他用户的记录（权限测试）
+GET http://localhost:8080/replay/video/extract/content/2001
+Content-Type: application/json
+# 应该返回权限错误
+
+### 5. 查询不同状态的记录
+GET http://localhost:8080/replay/video/extract/content/1003
+Content-Type: application/json
+# PENDING状态的记录
+
+### 6. 查询PROCESSING状态的记录
+GET http://localhost:8080/replay/video/extract/content/1004
+Content-Type: application/json
+# PROCESSING状态的记录
+
+### 7. 查询COMPLETED状态的记录
+GET http://localhost:8080/replay/video/extract/content/1005
+Content-Type: application/json
+# COMPLETED状态的记录
+
+### 8. 查询FAILED状态的记录
+GET http://localhost:8080/replay/video/extract/content/1006
+Content-Type: application/json
+# FAILED状态的记录
+
+### ========================================
+### 边界测试
+### ========================================
+
+### 9. 查询ID为0的记录
+GET http://localhost:8080/replay/video/extract/content/0
+Content-Type: application/json
+
+### 10. 查询负数ID
+GET http://localhost:8080/replay/video/extract/content/-1
+Content-Type: application/json
+
+### 11. 查询超大ID
+GET http://localhost:8080/replay/video/extract/content/9223372036854775807
+Content-Type: application/json
+
+### ========================================
+### 权限测试场景
+### ========================================
+
+### 12. 主账号查询租户下所有记录
+GET http://localhost:8080/replay/video/extract/content/1001
+Content-Type: application/json
+# 需要使用主账号token
+
+### 13. 子账号查询自己的记录
+GET http://localhost:8080/replay/video/extract/content/1001
+Content-Type: application/json
+# 需要使用子账号token，且记录属于该子账号
+
+### 14. 子账号尝试查询其他用户的记录
+GET http://localhost:8080/replay/video/extract/content/2001
+Content-Type: application/json
+# 需要使用子账号token，但记录不属于该子账号
+
+### ========================================
+### 响应验证
+### ========================================
+
+### 期望的成功响应格式（有文案内容）：
+# {
+#   "code": 200,
+#   "message": "success",
+#   "data": {
+#     "id": "64f1a2b3c4d5e6f7a8b9c0d1",
+#     "videoId": "123456789",
+#     "videoHash": "abc123def456",
+#     "audioContent": {
+#       "content": "大家好，今天教大家制作美味的家常菜...",
+#       "extractMethod": "audio_to_text",
+#       "extractTime": "2025-08-14 10:30:00"
+#     },
+#     "subtitleContent": null,
+#     "ocrContent": null,
+#     "createdDate": "2025-08-14 10:30:00",
+#     "updateDate": "2025-08-14 10:30:00",
+#     "isDeleted": 0
+#   }
+# }
+
+### 期望的成功响应格式（无文案内容）：
+# {
+#   "code": 200,
+#   "message": "success",
+#   "data": null
+# }
+
+### 期望的权限错误响应格式：
+# {
+#   "code": 500,
+#   "message": "无当前视频操作权限",
+#   "data": null
+# }
+
+### 期望的记录不存在响应格式：
+# {
+#   "code": 500,
+#   "message": "视频不存在",
+#   "data": null
+# }
+
+### ========================================
+### 测试数据准备
+### ========================================
+
+### 测试前需要准备的数据：
+# 1. 在tb_video_user_video表中插入测试记录
+# 2. 在tb_video_info表中插入对应的视频信息（包含video_hash）
+# 3. 在MongoDB的video_content_extract集合中插入文案数据
+# 4. 确保数据的关联关系正确
+
+### SQL示例（MySQL）：
+# INSERT INTO tb_video_user_video (id, video_id, user_id, tenant_id, source_type, video_title, source_id, extract_status, created_date, update_date, is_deleted)
+# VALUES (1001, 123456789, 1001, 1, 1, '测试视频', 1001, 3, NOW(), NOW(), 0);
+#
+# INSERT INTO tb_video_info (id, platform_type, platform_video_id, video_hash, title, video_url, author_id, author_name, extract_status, created_date, update_date, is_deleted)
+# VALUES (123456789, 4, NULL, 'abc123def456', '测试视频', 'https://example.com/video.mp4', '1001', '测试用户', 3, NOW(), NOW(), 0);
+
+### MongoDB示例：
+# db.video_content_extract.insertOne({
+#   "id": "64f1a2b3c4d5e6f7a8b9c0d1",
+#   "video_id": "123456789",
+#   "video_hash": "abc123def456",
+#   "audio_content": {
+#     "content": "大家好，今天教大家制作美味的家常菜...",
+#     "extract_method": "audio_to_text",
+#     "extract_time": ISODate("2025-08-14T02:30:00.000Z")
+#   },
+#   "subtitle_content": null,
+#   "ocr_content": null,
+#   "created_date": ISODate("2025-08-14T02:30:00.000Z"),
+#   "update_date": ISODate("2025-08-14T02:30:00.000Z"),
+#   "is_deleted": 0
+# });
+
+### ========================================
+### 性能测试
+### ========================================
+
+### 15. 并发查询测试（可以使用工具如JMeter）
+# 模拟多个用户同时查询不同的文案内容
+# 验证系统在并发情况下的性能表现
+
+### 16. 大文案内容查询测试
+# 查询包含大量文字内容的文案记录
+# 验证大数据量情况下的响应时间

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.AnchorVideoDetailDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jiuyu.replay.words.entity.AnchorVideoDetailEntity">
+        <id column="id" property="id" />
+        <result column="video_id" property="videoId" />
+        <result column="nature_content_status" property="natureContentStatus" />
+        <result column="optimize_content_status" property="optimizeContentStatus" />
+        <result column="has_diagnosis_report" property="hasDiagnosisReport" />
+        <result column="diagnosis_oss_name" property="diagnosisOssName" />
+        <result column="user_id" property="userId" />
+        <result column="tenant_id" property="tenantId" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="nat_set_time" property="natSetTime" />
+        <result column="opt_set_time" property="optSetTime" />
+        <result column="nat_set_job" property="natSetJob" />
+        <result column="opt_set_job" property="optSetJob" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, video_id, nature_content_status, optimize_content_status, has_diagnosis_report, diagnosis_oss_name, user_id, tenant_id, create_date, update_date, is_deleted, nat_set_time, opt_set_time, nat_set_job, opt_set_job
+    </sql>
+
+    <select id="selectVideoDetailData" resultType="com.jiuyu.replay.words.entity.AnchorVideoDetailEntity">
+        SELECT
+            anchorVideoDetail.id,
+            anchorVideoDetail.video_id,
+            anchorVideoDetail.nature_content_status,
+            anchorVideoDetail.optimize_content_status,
+            anchorVideoDetail.has_diagnosis_report,
+            anchorVideoDetail.diagnosis_oss_name,
+            anchorVideoDetail.user_id,
+            anchorVideoDetail.tenant_id,
+            anchorVideoDetail.create_date,
+            anchorVideoDetail.update_date,
+            anchorVideoDetail.is_deleted,
+            anchorVideoDetail.nat_set_time,
+            anchorVideoDetail.opt_set_time,
+            anchorVideoDetail.nat_set_job,
+            anchorVideoDetail.opt_set_job
+        FROM
+            tb_anchor_video_detail AS anchorVideoDetail
+        LEFT JOIN tb_anchor_video AS anchorVideo ON anchorVideoDetail.video_id = anchorVideo.video_id
+        WHERE
+            anchorVideo.analysis_status = 2
+            AND anchorVideo.is_deleted = 0
+            AND anchorVideoDetail.is_deleted = 0
+            AND (
+--                 条件为：自然原文内容，生成中，没有扫描到的，来源是服务器的
+            (anchorVideoDetail.nature_content_status = 1 AND anchorVideoDetail.nat_set_job = 0 AND
+             anchorVideoDetail.nature_source_type = 0)
+                OR
+--                 条件为：优化原文内容，生成中，没有扫描到的，来源是服务器的
+            (anchorVideoDetail.optimize_content_status = 1 AND anchorVideoDetail.opt_set_job = 0 AND
+             anchorVideoDetail.optimize_source_type = 0)
+            )
+        ORDER BY
+            anchorVideoDetail.id ASC
+        LIMIT #{limit}
+    </select>
+
+    <select id="tradeListBySecUids" resultType="com.jiuyu.replay.generic.vo.words.anchor.AnchorUrlTradeVo">
+        select
+        av.sec_uid, avd.suggest_trade_id as trade_id
+        from
+        tb_anchor_video av
+        inner join tb_anchor_video_detail avd on av.video_id = avd.video_id
+        where
+        av.is_deleted = 0
+        AND av.analysis_status = 2
+        AND avd.suggest_trade_id is not null
+        AND av.sec_uid in
+        <foreach item="item" index="index" collection="secUids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by av.sec_uid,avd.suggest_trade_id
+    </select>
+
+</mapper>

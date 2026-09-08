@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.governance.business.rbac.mapper.EmployeeAccessTokenMapper">
+  <resultMap id="BaseResultMap" type="com.jiuyu.governance.business.rbac.pojo.entity.EmployeeAccessToken">
+    <!--@mbg.generated-->
+    <!--@Table employee_access_token-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="access_token_hash" jdbcType="VARCHAR" property="accessTokenHash" />
+    <result column="ip_address" jdbcType="VARCHAR" property="ipAddress" />
+    <result column="client_device" jdbcType="INTEGER" property="clientDevice" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    <result column="recently_refresh_time" jdbcType="TIMESTAMP" property="recentlyRefreshTime" />
+    <result column="employee_id" jdbcType="BIGINT" property="employeeId" />
+    <result column="token_status" jdbcType="BIT" property="tokenStatus" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, create_time, access_token_hash, ip_address, client_device, device_name,
+    expire_time, recently_refresh_time, employee_id,token_status
+  </sql>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.agent.repository.dao.InviteUrlCodeDao">
+
+    <select id="inviteCodeAndPromotionName"
+            resultType="com.jiuyu.replay.generic.vo.agent.InviteUrlCodeAndPromotionName">
+        SELECT
+        iuc.url_code,
+        ap.promotion_name
+        FROM
+        tb_invite_url_code iuc
+        LEFT JOIN tb_agent_promotion ap ON iuc.promotion_id = ap.id
+        WHERE
+        iuc.is_deleted = 0
+        AND iuc.promotion_id > 0
+        AND iuc.url_code in
+        <foreach collection="inviteUrlCodes" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+
+    </select>
+</mapper>

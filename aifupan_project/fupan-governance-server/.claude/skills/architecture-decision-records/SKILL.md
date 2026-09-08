@@ -1,0 +1,183 @@
+---
+name: architecture-decision-records
+description: "Capture architectural decisions as structured ADRs. TRIGGER when: user says 'record this decision' or 'ADR this', OR when lifecycle.md Phase 2 (HIGH risk Propose) requires an ADR for an actual irreversible architectural decision (transport, persistence model, sync vs async, framework, API contract). Do NOT trigger for MEDIUM risk or purely mechanical CRUD tasks — lifecycle.md explicitly allows zero ADRs with an explicit 'mechanical implementation' note."
+---
+
+# Architecture Decision Records
+
+Capture architectural decisions as they happen during coding sessions. Instead of decisions living only in Slack threads, PR comments, or someone's memory, this skill produces structured ADR documents that live alongside the code.
+
+## When to Activate
+
+- User explicitly says "let's record this decision" or "ADR this"
+- User chooses between significant alternatives (framework, library, pattern, database, API design)
+- User says "we decided to..." or "the reason we're doing X instead of Y is..."
+- User asks "why did we choose X?" (read existing ADRs)
+- During planning phases when architectural trade-offs are discussed
+- As Phase 2 of the AI engineering pipeline (running as a background service during blueprint → eval-harness → self-improve → ai-slop-cleaner)
+
+## ADR Format
+
+Use the lightweight ADR format proposed by Michael Nygard, adapted for AI-assisted development:
+
+```markdown
+# ADR-NNNN: [Decision Title]
+
+**Date**: YYYY-MM-DD
+**Status**: proposed | accepted | deprecated | superseded by ADR-NNNN
+**Deciders**: [who was involved]
+
+## Context
+
+What is the issue that we're seeing that is motivating this decision or change?
+
+[2-5 sentences describing the situation, constraints, and forces at play]
+
+## Decision
+
+What is the change that we're proposing and/or doing?
+
+[1-3 sentences stating the decision clearly]
+
+## Alternatives Considered
+
+### Alternative 1: [Name]
+- **Pros**: [benefits]
+- **Cons**: [drawbacks]
+- **Why not**: [specific reason this was rejected]
+
+### Alternative 2: [Name]
+- **Pros**: [benefits]
+- **Cons**: [drawbacks]
+- **Why not**: [specific reason this was rejected]
+
+## Consequences
+
+What becomes easier or more difficult to do because of this change?
+
+### Positive
+- [benefit 1]
+- [benefit 2]
+
+### Negative
+- [trade-off 1]
+- [trade-off 2]
+
+### Risks
+- [risk and mitigation]
+```
+
+## Instructions
+
+### Capturing a New ADR
+
+When a decision moment is detected:
+
+1. **Initialize (first time only)** — if `.claude/wiki/wiki/architecture/adr/` does not exist, ask the user for confirmation before creating the directory, a `README.md` seeded with the index table header (see ADR Index Format below), and a blank `template.md` for manual use. Do not create files without explicit consent.
+2. **Identify the decision** — extract the core architectural choice being made
+3. **Gather context** — what problem prompted this? What constraints exist?
+4. **Document alternatives** — what other options were considered? Why were they rejected?
+5. **State consequences** — what are the trade-offs? What becomes easier/harder?
+6. **Assign a number** — scan existing ADRs in `.claude/wiki/wiki/architecture/adr/` and increment
+7. **Confirm and write** — present the draft ADR to the user for review. Only write to `.claude/wiki/wiki/architecture/adr/NNNN-decision-title.md` after explicit approval. If the user declines, discard the draft without writing any files.
+8. **Update the index** — append a row to the `## ADR List` table inside `.claude/wiki/wiki/architecture/index.md` (this is the canonical wiki index; the `adr/README.md` is only a directory-level pointer that links back here).
+
+### Reading Existing ADRs
+
+When a user asks "why did we choose X?":
+
+1. Check if `.claude/wiki/wiki/architecture/adr/` exists — if not, respond: "No ADRs found in this project. Would you like to start recording architectural decisions?"
+2. If it exists, scan the `## ADR List` table inside `.claude/wiki/wiki/architecture/index.md` for relevant entries (the wiki index is canonical; `adr/README.md` only links back here)
+3. Read matching ADR files and present the Context and Decision sections
+4. If no match is found, respond: "No ADR found for that decision. Would you like to record one now?"
+
+### ADR Directory Structure
+
+```
+.claude/wiki/wiki/architecture/
+├── index.md                  ← canonical wiki index (contains the ADR List table)
+└── adr/
+    ├── README.md             ← directory-level pointer back to ../index.md
+    ├── template.md           ← blank template for manual use
+    └── NNNN-<slug>.md        ← one file per decision (e.g. 0001-use-jwt-auth.md)
+```
+
+### ADR Index Format
+
+```markdown
+# Architecture Decision Records
+
+| ADR | Title | Status | Date |
+|-----|-------|--------|------|
+| [<NNNN>](<NNNN>-<slug>.md) | <Decision title> | accepted \| superseded \| deprecated | YYYY-MM-DD |
+| ... | ... | ... | ... |
+```
+
+## Decision Detection Signals
+
+Watch for these patterns in conversation that indicate an architectural decision:
+
+**Explicit signals**
+- "Let's go with X"
+- "We should use X instead of Y"
+- "The trade-off is worth it because..."
+- "Record this as an ADR"
+
+**Implicit signals** (suggest recording an ADR — do not auto-create without user confirmation)
+- Comparing two frameworks or libraries and reaching a conclusion
+- Making a database schema design choice with stated rationale
+- Choosing between architectural patterns (monolith vs microservices, REST vs GraphQL)
+- Deciding on authentication/authorization strategy
+- Selecting deployment infrastructure after evaluating alternatives
+
+## What Makes a Good ADR
+
+### Do
+- **Be specific** — "Use Prisma ORM" not "use an ORM"
+- **Record the why** — the rationale matters more than the what
+- **Include rejected alternatives** — future developers need to know what was considered
+- **State consequences honestly** — every decision has trade-offs
+- **Keep it short** — an ADR should be readable in 2 minutes
+- **Use present tense** — "We use X" not "We will use X"
+
+### Don't
+- Record trivial decisions — variable naming or formatting choices don't need ADRs
+- Write essays — if the context section exceeds 10 lines, it's too long
+- Omit alternatives — "we just picked it" is not a valid rationale
+- Backfill without marking it — if recording a past decision, note the original date
+- Let ADRs go stale — superseded decisions should reference their replacement
+
+## ADR Lifecycle
+
+```
+proposed → accepted → [deprecated | superseded by ADR-NNNN]
+```
+
+- **proposed**: decision is under discussion, not yet committed
+- **accepted**: decision is in effect and being followed
+- **deprecated**: decision is no longer relevant (e.g., feature removed)
+- **superseded**: a newer ADR replaces this one (always link the replacement)
+
+## Categories of Decisions Worth Recording
+
+| Category | Examples |
+|----------|---------|
+| **Technology choices** | Framework, language, database, cloud provider |
+| **Architecture patterns** | Monolith vs microservices, event-driven, CQRS |
+| **API design** | REST vs GraphQL, versioning strategy, auth mechanism |
+| **Data modeling** | Schema design, normalization decisions, caching strategy |
+| **Infrastructure** | Deployment model, CI/CD pipeline, monitoring stack |
+| **Security** | Auth strategy, encryption approach, secret management |
+| **Testing** | Test framework, coverage targets, E2E vs integration balance |
+| **Process** | Branching strategy, review process, release cadence |
+
+## Pipeline Integration
+
+This skill is Phase 2 of the AI engineering pipeline. It operates as a **continuous background service** throughout the pipeline:
+
+- During **blueprint** (Phase 1): suggest recording ADRs for architectural choices in the plan
+- During **eval-harness** (Phase 3): record decisions about evaluation methodology
+- During **self-improve** (Phase 4): capture why certain optimization approaches were chosen over others — critical for understanding code evolution across dozens of iterations
+- During **ai-slop-cleaner** (Phase 5): record decisions about what was cleaned and why
+
+Its special value: in self-improve's dozens of evolution rounds, if you don't record "why approach A was chosen over B" at each round, after a few rounds nobody (including the AI itself) can understand why the code looks the way it does.

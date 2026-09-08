@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuyu.replay.words.repository.dao.AnchorUrlUserDao">
+    
+    <select id="searchAnchorList" resultType="com.jiuyu.replay.generic.vo.aiagent.AnchorItemVo"
+    parameterType="com.jiuyu.replay.generic.bo.aiagent.AnchorListQueryBo">
+        select a.id, a.anchor_url_sec_uid as sec_uid, a.trade_id, a.account_type, a.last_record_time,a.is_barrage_monitoring as enable_barrage_monitoring, is_data_viewing as enable_data_viewing,
+        a.user_id, a.is_auto_analysis as enable_auto_analysis
+        <if test="(anchorName != null and anchorName != '') or (anchorNumber != null and anchorNumber != '') or (platforms != null and platforms.size() != 0)">
+            , b.anchor_name , b.anchor_number, b.platform, b.anchor_avatar
+        </if>
+        from tb_anchor_url_user as a
+               <if test="(anchorName != null and anchorName != '') or (anchorNumber != null and anchorNumber != '') or (platforms != null and platforms.size() != 0)">
+                   join tb_anchor_url as b on a.anchor_url_sec_uid = b.sec_uid
+               </if>
+        where a.is_deleted = 0 and a.tenant_id = #{tenantId}
+        <if test="dataSourceType == null or dataSourceType == 1">
+            and a.user_id = #{userId}
+        </if>
+        <if test="dataSourceType != null and dataSourceType == 3">
+            and a.is_auto_upload_cloud = 1
+        </if>
+        <if test="dataSourceType != null and dataSourceType == 4">
+            and (a.user_id = #{userId} or a.is_auto_upload_cloud = 1)
+        </if>
+        <if test="anchorName != null and anchorName != ''">
+            and b.anchor_name like concat('%',#{anchorName},'%')
+        </if>
+        <if test="anchorNumber != null and anchorNumber != ''">
+            and b.anchor_number = #{anchorNumber}
+        </if>
+        <if test="platforms != null and platforms.size() > 0">
+            and b.platform in
+            <foreach item="item" collection="platforms" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="addStartDate != null and addStartDate != ''">
+            and a.create_date >= #{addStartDate}
+        </if>
+        <if test="addEndDate != null and addEndDate != ''">
+            and a.create_date &lt;= #{addEndDate}
+        </if>
+        <if test="lastRecordStartDate != null and lastRecordStartDate != ''">
+            and a.last_record_time >= #{lastRecordStartDate}
+        </if>
+        <if test="lastRecordEndDate != null and lastRecordEndDate != ''">
+            and a.last_record_time &lt;= #{lastRecordEndDate}
+        </if>
+        <if test="tradeIds != null and tradeIds.size != 0">
+            and a.trade_id in
+            <foreach item="item" collection="tradeIds" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="accountType != null">
+            and a.account_type = #{accountType}
+        </if>
+        <if test="cursor != null">
+            and a.id &lt; #{cursor}
+        </if>
+        order by a.id desc limit #{pageSize}
+    </select>
+    
+    <select id="getTenantTradeIds" resultType="java.lang.Long">
+       select distinct trade_id from tb_anchor_url_user where tenant_id = #{tenantId} and is_deleted = 0
+    </select>
+</mapper>

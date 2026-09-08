@@ -1,0 +1,237 @@
+### 用户版本管理 - 新版本接口测试
+### 作者: lujie
+### 创建时间: 2025-11-20
+### 描述: 用户版本管理相关的API测试用例
+
+### ========================================
+### 公共变量定义
+### ========================================
+
+@baseUrl = http://localhost:6606
+@token = 58ff5aceea32424597ef642f39af3775
+@contentType = application/json
+@packageId = 4511886555950206976
+
+### 1. 新增版本基础信息
+POST {{baseUrl}}/replay/order/userVersion/basicInfo/saveOrUpdate
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "name": "测试版本1.0",
+  "description": "这是一个测试版本",
+  "status": 1,
+  "level": 5,
+  "logoImgs": "test/img/abc6830d1f924da2b2bdfcc639a85258.jpg",
+  "websiteLogoImages": "test/img/3c9b30a0b776411c805b03d5b892370e.png"
+}
+
+### 2. 修改版本基础信息（有ID）
+POST {{baseUrl}}/replay/order/userVersion/basicInfo/saveOrUpdate
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "id": {{packageId}},
+  "name": "测试版本1.1",
+  "description": "这是一个修改后的测试版本",
+  "level": 5,
+  "status": 1,
+  "logoImgs": "test/img/abc6830d1f924da2b2bdfcc639a85258.jpg",
+  "websiteLogoImages": "test/img/3c9b30a0b776411c805b03d5b892370e.png"
+}
+
+### 3. 新增版本商品信息
+POST {{baseUrl}}/replay/order/userVersion/commodity/saveOrUpdate
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "packageId": {{packageId}},
+  "commodityId": "4424619012441243648",
+  "number": 50
+}
+
+### 4. 修改版本商品信息（有ID）
+POST {{baseUrl}}/replay/order/userVersion/commodity/saveOrUpdate
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "id": "4511888466693042176",
+  "packageId": {{packageId}},
+  "commodityId": "4357499792499146752",
+  "number": 120
+}
+
+### 5. 删除版本商品信息（单个）
+POST {{baseUrl}}/replay/order/userVersion/commodity/delete
+Content-Type: {{contentType}}
+token: {{token}}
+
+["4511891629946163200"]
+
+### 6. 删除版本商品信息（多个）
+POST {{baseUrl}}/replay/order/userVersion/commodity/delete
+Content-Type: {{contentType}}
+token: {{token}}
+
+[2001, 2002, 2003]
+
+### 7. 分页查询商品列表
+GET {{baseUrl}}/replay/order/userVersion/commodity/list?page=2&limit=10
+token: {{token}}
+
+### 8. 分页查询商品列表（带过滤条件）
+GET {{baseUrl}}/replay/order/userVersion/commodity/list?page=1&limit=10&commodityTypeId=4357500044492931072&
+    sourceId={{packageId}}
+token: {{token}}
+
+
+### 9. 新增版本价格信息
+POST {{baseUrl}}/replay/order/userVersion/price/saveOrUpdate
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "packageId": {{packageId}},
+  "validityNum": 3,
+  "validityUnit": 5,
+  "originalPrice": 99900,
+  "discount": 0.8,
+  "realPrice": 79920,
+  "showStatus": 1,
+  "trialVersion": 0
+}
+
+### 10. 修改版本价格信息（有ID）
+POST {{baseUrl}}/replay/order/userVersion/price/saveOrUpdate
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "id": 4511895361645645824,
+  "packageId": {{packageId}},
+  "validityNum": 5,
+  "validityUnit": 5,
+  "originalPrice": 199900,
+  "discount": 0.75,
+  "realPrice": 149925,
+  "showStatus": 1,
+  "trialVersion": 0
+}
+
+### 11. 删除版本价格信息（单个）
+POST {{baseUrl}}/replay/order/userVersion/price/delete
+Content-Type: {{contentType}}
+token: {{token}}
+
+[4511895361645645824]
+
+### 12. 删除版本价格信息（多个）
+POST {{baseUrl}}/replay/order/userVersion/price/delete
+Content-Type: {{contentType}}
+token: {{token}}
+
+[3001, 3002, 3003]
+
+### 13. 分页查询价格列表
+GET {{baseUrl}}/replay/order/userVersion/price/list?page=1&limit=10
+token: {{token}}
+
+### 14. 分页查询价格列表（带过滤条件）
+GET {{baseUrl}}/replay/order/userVersion/price/list?page=1&limit=10&commodityId={{packageId}}
+token: {{token}}
+
+
+### 15. 新增版本增量包
+POST {{baseUrl}}/replay/order/userVersion/increment/saveOrUpdate
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "packageId": {{packageId}},
+  "commodityId": 4450417679911616512,
+  "commodityPriceId": 4450417680435904512,
+  "realPrice": 1999.99,
+  "discount": 0.9,
+  "discountPrice": 500.99,
+  "status": 1
+}
+
+### 16. 修改版本增量包（有ID）
+POST {{baseUrl}}/replay/order/userVersion/increment/saveOrUpdate
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "id": 4511902201185411072,
+  "packageId": {{packageId}},
+  "commodityId": 4450417679911616512,
+  "commodityPriceId": 4450417680435904512,
+  "realPrice": 199.99,
+  "discount": 0.85,
+  "discountPrice": 169.99,
+  "status": 1
+}
+
+### 17. 删除版本增量包（单个）
+POST {{baseUrl}}/replay/order/userVersion/increment/delete
+Content-Type: {{contentType}}
+token: {{token}}
+
+[4511902201185411072]
+
+### 18. 删除版本增量包（多个）
+POST {{baseUrl}}/replay/order/userVersion/increment/delete
+Content-Type: {{contentType}}
+token: {{token}}
+
+[4001, 4002, 4003]
+
+### 19. 分页查询增量包列表
+GET {{baseUrl}}/replay/order/userVersion/increment/list?page=1&limit=10
+token: {{token}}
+
+### 20. 分页查询增量包列表（带过滤条件）
+GET {{baseUrl}}/replay/order/userVersion/increment/list?page=1&limit=10&packageId={{packageId}}&status=1
+token: {{token}}
+
+
+### 21. 缺少token的请求
+POST {{baseUrl}}/replay/order/userVersion/basicInfo/saveOrUpdate
+Content-Type: {{contentType}}
+
+{
+  "name": "测试版本",
+  "description": "缺少token的请求"
+}
+
+### 22. 无效的token
+POST {{baseUrl}}/replay/order/userVersion/basicInfo/saveOrUpdate
+Content-Type: {{contentType}}
+Authorization: Bearer invalid_token_12345
+
+{
+  "name": "测试版本",
+  "description": "无效的token"
+}
+
+### 23. 删除不存在的商品
+POST {{baseUrl}}/replay/order/userVersion/commodity/delete
+Content-Type: {{contentType}}
+token: {{token}}
+
+[999999999]
+
+### 24. 查询不存在的页码
+GET {{baseUrl}}/replay/order/userVersion/commodity/list?page=9999&limit=10
+Content-Type: {{contentType}}
+token: {{token}}
+
+### 25. 导出
+POST {{baseUrl}}/replay/ai/conversation/exportByQaCode
+Content-Type: {{contentType}}
+token: {{token}}
+
+["2ddc1876fd8f44c3926727948c45f3bd", "a2d7b70e4c5c40a2a0ebc80c8dfde708"]

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.order.repository.dao.OrderDao">
+
+
+    <select id="getIncrementalSubNum" resultType="java.lang.Integer">
+        select count(total_number) as total_number
+        from tb_order o
+                 inner join tb_order_detail od on o.id = od.order_id
+        where o.is_deleted = 0
+          and o.status = 2
+          and od.status = 1
+          and o.commodity_type != 1
+          and o.user_id = #{userId}
+          and od.commodity_type_code = #{commodityTypeCode}
+    </select>
+    
+    <select id="hasPaidUser" resultType="java.lang.Integer">
+        select count(1) from tb_order
+        where status = 2 and user_id = #{orderUserId} and is_deleted = 0
+        and trial_order = 0 and order_type != 0 and level > 1 and total_price > 1 and commodity_type = 1
+        limit 1
+    </select>
+
+    <!-- 跨域读 power 域 tb_user，取下单主账号当前激活租户id（订单创建时固化用） -->
+    <select id="getActiveTenantIdByUserId" resultType="java.lang.Long">
+        SELECT active_tenant_id FROM tb_user WHERE id = #{userId} LIMIT 1
+    </select>
+</mapper>

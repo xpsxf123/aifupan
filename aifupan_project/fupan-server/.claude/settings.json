@@ -1,0 +1,76 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 .claude/scripts/gates/*)",
+      "Bash(python3 .claude/scripts/wiki/*)",
+      "Bash(python3 .claude/scripts/tools/*)",
+      "Bash(python3 .claude/scripts/harness/*)",
+      "Bash(.claude/scripts/harness/*)",
+      "Bash(mvn compile*)",
+      "Bash(mvn clean compile*)",
+      "Bash(mvn test*)",
+      "Bash(mvn dependency:tree*)",
+      "Bash(./mvnw *)",
+      "Bash(javac *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git blame*)",
+      "Bash(git add *)",
+      "Bash(git commit*)",
+      "Bash(git mv *)",
+      "Bash(git stash*)",
+      "Bash(git branch*)",
+      "Bash(grep*)",
+      "Bash(rg*)",
+      "Bash(find .*)",
+      "Bash(ls*)",
+      "Bash(wc *)",
+      "Bash(head*)",
+      "Bash(tail*)",
+      "Bash(cat .claude/*)",
+      "Bash(chmod +x .claude/scripts/*)",
+      "Bash(mkdir -p .claude/*)"
+    ],
+    "deny": [
+      "Bash(rm -rf*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/scripts/harness/pre_tool_use_hook.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/scripts/harness/post_tool_use_hook.py"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .claude/scripts/harness/user_prompt_submit_hook.py"
+          }
+        ]
+      }
+    ]
+  }
+}

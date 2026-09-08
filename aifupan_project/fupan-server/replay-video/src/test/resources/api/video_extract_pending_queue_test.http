@@ -1,0 +1,188 @@
+### 视频文案提取待处理队列接口测试
+### 作者: RayChou
+### 创建时间: 2025-08-14
+### 描述: 查询待处理和处理中状态的用户视频表数据的API测试用例
+
+### 1. 查询当前用户的待处理队列
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+
+### 2. 使用不同用户token查询（权限测试）
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+Authorization: Bearer {{user2_token}}
+
+### 3. 使用子账号token查询
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+Authorization: Bearer {{sub_user_token}}
+
+### 4. 使用主账号token查询
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+Authorization: Bearer {{main_user_token}}
+
+### ========================================
+### 不同场景测试
+### ========================================
+
+### 5. 空队列场景（用户没有待处理任务）
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+# 使用没有待处理任务的用户token
+
+### 6. 大量待处理任务场景
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+# 使用有大量待处理任务的用户token
+
+### 7. 混合状态场景（包含PENDING和PROCESSING）
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+# 用户同时有待处理和处理中的任务
+
+### ========================================
+### 边界测试
+### ========================================
+
+### 8. 无效token测试
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+Authorization: Bearer invalid_token
+
+### 9. 过期token测试
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+Authorization: Bearer expired_token
+
+### 10. 缺少token测试
+GET http://localhost:8080/replay/video/extract/pending-queue
+Content-Type: application/json
+
+### ========================================
+### 响应验证
+### ========================================
+
+### 期望的成功响应格式（有待处理任务）：
+# {
+#   "code": 200,
+#   "message": "success",
+#   "data": [
+#     {
+#       "id": 1001,
+#       "videoId": 123456789,
+#       "videoTitle": "美食制作教程",
+#       "userId": 1001,
+#       "tenantId": 1,
+#       "sourceType": 1,
+#       "sourceId": 1001,
+#       "extractStatus": 1,
+#       "extractTime": null,
+#       "analysisStatus": 0,
+#       "analysisTime": null,
+#       "createdDate": "2025-08-14 10:30:00",
+#       "updateDate": "2025-08-14 10:30:00",
+#       "extractContent": null,
+#       "extractErrorReason": null
+#     },
+#     {
+#       "id": 1002,
+#       "videoId": 123456790,
+#       "videoTitle": "旅游攻略分享",
+#       "userId": 1001,
+#       "tenantId": 1,
+#       "sourceType": 2,
+#       "sourceId": 1001,
+#       "extractStatus": 2,
+#       "extractTime": null,
+#       "analysisStatus": 0,
+#       "analysisTime": null,
+#       "createdDate": "2025-08-14 11:00:00",
+#       "updateDate": "2025-08-14 11:05:00",
+#       "extractContent": null,
+#       "extractErrorReason": null
+#     }
+#   ]
+# }
+
+### 期望的成功响应格式（无待处理任务）：
+# {
+#   "code": 200,
+#   "message": "success",
+#   "data": []
+# }
+
+### 期望的认证错误响应格式：
+# {
+#   "code": 401,
+#   "message": "Unauthorized",
+#   "data": null
+# }
+
+### ========================================
+### 测试数据准备
+### ========================================
+
+### 测试前需要准备的数据：
+# 1. 在tb_video_user_video表中插入不同状态的测试记录
+# 2. 确保有PENDING(1)和PROCESSING(2)状态的记录
+# 3. 确保有不同用户的记录用于权限测试
+# 4. 确保记录的is_deleted字段为0
+
+### SQL示例（MySQL）：
+# -- 插入PENDING状态的记录
+# INSERT INTO tb_video_user_video (id, video_id, user_id, tenant_id, source_type, video_title, source_id, extract_status, created_date, update_date, is_deleted)
+# VALUES (1001, 123456789, 1001, 1, 1, '待处理视频1', 1001, 1, '2025-08-14 10:30:00', '2025-08-14 10:30:00', 0);
+#
+# -- 插入PROCESSING状态的记录
+# INSERT INTO tb_video_user_video (id, video_id, user_id, tenant_id, source_type, video_title, source_id, extract_status, created_date, update_date, is_deleted)
+# VALUES (1002, 123456790, 1001, 1, 2, '处理中视频1', 1001, 2, '2025-08-14 11:00:00', '2025-08-14 11:05:00', 0);
+#
+# -- 插入COMPLETED状态的记录（不应该出现在结果中）
+# INSERT INTO tb_video_user_video (id, video_id, user_id, tenant_id, source_type, video_title, source_id, extract_status, created_date, update_date, is_deleted)
+# VALUES (1003, 123456791, 1001, 1, 1, '已完成视频1', 1001, 3, '2025-08-14 09:00:00', '2025-08-14 09:30:00', 0);
+#
+# -- 插入其他用户的记录（不应该出现在结果中）
+# INSERT INTO tb_video_user_video (id, video_id, user_id, tenant_id, source_type, video_title, source_id, extract_status, created_date, update_date, is_deleted)
+# VALUES (2001, 223456789, 2001, 1, 1, '其他用户视频', 2001, 1, '2025-08-14 12:00:00', '2025-08-14 12:00:00', 0);
+
+### ========================================
+### 性能测试
+### ========================================
+
+### 11. 并发查询测试
+# 模拟多个客户端同时查询待处理队列
+# 验证系统在并发情况下的性能表现
+
+### 12. 大数据量测试
+# 用户有大量（1000+）待处理任务时的查询性能
+# 验证查询响应时间和内存使用
+
+### ========================================
+### 业务场景测试
+### ========================================
+
+### 13. 客户端启动场景
+# 模拟客户端启动时加载待处理队列的场景
+# 验证返回数据的完整性和正确性
+
+### 14. 定期同步场景
+# 模拟客户端定期同步服务端待处理任务的场景
+# 验证增量数据的正确性
+
+### 15. 断线重连场景
+# 模拟客户端断线重连后恢复处理队列的场景
+# 验证数据一致性和任务不丢失
+
+### ========================================
+### 数据验证要点
+### ========================================
+
+### 验证要点：
+# 1. 只返回当前用户的记录（userId匹配）
+# 2. 只返回PENDING(1)和PROCESSING(2)状态的记录
+# 3. 不返回已删除的记录（is_deleted=0）
+# 4. 按创建时间升序排列（先创建的先处理）
+# 5. 返回的字段完整且正确
+# 6. 不包含文案内容（extractContent为null）
+# 7. 响应时间在合理范围内（<500ms）

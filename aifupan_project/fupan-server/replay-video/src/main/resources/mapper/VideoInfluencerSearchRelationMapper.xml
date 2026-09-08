@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.video.project.dao.VideoInfluencerSearchRelationDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jiuyu.replay.video.project.entity.VideoInfluencerSearchRelationEntity">
+        <id column="id" property="id"/>
+        <result column="snapshot_id" property="snapshotId"/>
+        <result column="influencer_id" property="influencerId"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="video_count" property="videoCount"/>
+        <result column="followers_count" property="followersCount"/>
+        <result column="is_processed" property="isProcessed"/>
+        <result column="created_date" property="createdDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , snapshot_id, influencer_id, sort_order, video_count, followers_count, is_processed, created_date, update_date, is_deleted
+    </sql>
+
+    <!-- 查询搜索历史记录 -->
+    <select id="queryHistoryRecord"
+            resultType="com.jiuyu.replay.video.project.entity.VideoInfluencerSearchRelationEntity">
+
+        SELECT
+        search_relation.*
+        FROM
+        tb_video_influencer_search_snapshot search_snapshot
+        LEFT JOIN tb_video_influencer_search_relation search_relation ON search_snapshot.id =
+        search_relation.snapshot_id
+        WHERE
+
+        <if test="tenantId != null">
+            search_snapshot.tenant_id = #{tenantId}
+        </if>
+        <if test="userId != null">
+            AND search_snapshot.user_id = #{userId}
+        </if>
+        <if test="snapshotId != null">
+            AND search_relation.snapshot_id = #{snapshotId}
+        </if>
+        <if test="queryTime != null">
+            AND search_snapshot.search_time >= #{queryTime}
+        </if>
+        AND search_snapshot.is_deleted = 0
+        AND search_relation.is_deleted = 0
+        ORDER BY
+        search_snapshot.search_time DESC,search_relation.sort_order
+    </select>
+
+</mapper>

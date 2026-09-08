@@ -1,0 +1,1193 @@
+@baseUrl = http://localhost:6626
+@token = 16fea12c85ee43dc88d87368de605e47
+@contentType = application/json
+
+### 1. 客户端推送直播业绩数据（首次推送 - 新增记录）
+POST {{baseUrl}}/api/governance/performance/video/clientPushVideo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "batchNumber": "BATCH_20260413_001",
+  "startTime": "2026-04-13 19:00:00",
+  "endTime": "2026-04-13 21:30:00",
+  "secUid": "MS4wLjABAAAA_test_sec_uid_12345",
+  "platform": 0,
+  "viewCount": 450,
+  "salesRevenue": 3800.50,
+  "refund": 100.00,
+  "investment": 480.00,
+  "refundQuantity": 1,
+  "payComboCnt": 25,
+  "netSales": 3700.50,
+  "refundRate": 0.04,
+  "roi": 7.92,
+  "thousandSales": 8445.56,
+  "exposureCount": 1200,
+  "followCount": 28,
+  "clickPaymentRate": 0.15,
+  "interactionRate": 0.08,
+  "maxOnline": 85,
+  "conversionRate": 5.56,
+  "uvValue": 8.45,
+  "followRate": 6.22,
+  "oceanEngineProcessList": [
+    {
+      "gatherDateTime": "2026-04-13 19:00:00",
+      "exposureCount": 150,
+      "viewCount": 50,
+      "onlineCount": 12,
+      "followCount": 4,
+      "salesRevenue": 380.00,
+      "refund": 0.00,
+      "investment": 100.00,
+      "refundQuantity": 0,
+      "payComboCnt": 3,
+      "clickPaymentRate": 0.12,
+      "interactionRate": 0.06,
+      "fansClubJoinUcnt": 2
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:00:30",
+      "exposureCount": 320,
+      "viewCount": 100,
+      "onlineCount": 25,
+      "followCount": 7,
+      "salesRevenue": 750.00,
+      "refund": 0.00,
+      "investment": 150.00,
+      "refundQuantity": 0,
+      "payComboCnt": 5,
+      "clickPaymentRate": 0.13,
+      "interactionRate": 0.07,
+      "fansClubJoinUcnt": 3
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:01:00",
+      "exposureCount": 480,
+      "viewCount": 150,
+      "onlineCount": 38,
+      "followCount": 10,
+      "salesRevenue": 1200.00,
+      "refund": 0.00,
+      "investment": 200.00,
+      "refundQuantity": 0,
+      "payComboCnt": 8,
+      "clickPaymentRate": 0.14,
+      "interactionRate": 0.07,
+      "fansClubJoinUcnt": 4
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:01:30",
+      "exposureCount": 650,
+      "viewCount": 220,
+      "onlineCount": 52,
+      "followCount": 15,
+      "salesRevenue": 1850.00,
+      "refund": 50.00,
+      "investment": 280.00,
+      "refundQuantity": 0,
+      "payComboCnt": 12,
+      "clickPaymentRate": 0.14,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 6
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:02:00",
+      "exposureCount": 850,
+      "viewCount": 300,
+      "onlineCount": 68,
+      "followCount": 20,
+      "salesRevenue": 2500.00,
+      "refund": 50.00,
+      "investment": 350.00,
+      "refundQuantity": 0,
+      "payComboCnt": 17,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 8
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:02:30",
+      "exposureCount": 1020,
+      "viewCount": 380,
+      "onlineCount": 78,
+      "followCount": 25,
+      "salesRevenue": 3200.00,
+      "refund": 100.00,
+      "investment": 420.00,
+      "refundQuantity": 1,
+      "payComboCnt": 21,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 11
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:03:00",
+      "exposureCount": 1200,
+      "viewCount": 450,
+      "onlineCount": 85,
+      "followCount": 28,
+      "salesRevenue": 3800.50,
+      "refund": 100.00,
+      "investment": 480.00,
+      "refundQuantity": 1,
+      "payComboCnt": 25,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 13
+    }
+  ],
+  "productList": [
+    {
+      "productId": "PROD_001",
+      "title": "测试商品-美妆护肤套装",
+      "imageUri": "https://example.com/images/product001.jpg",
+      "marketPrice": 199.00,
+      "productBindTime": "2026-04-13 19:05:00",
+      "productDownTime": null,
+      "explainCnt": 5,
+      "productShowUcnt": 520,
+      "productClickUcnt": 180,
+      "productShowClickUcntRatio": 0.3462,
+      "productShowPayUcntRatio": 0.0865,
+      "productClickPayUcntRatio": 0.2500,
+      "gpm": 3580.00,
+      "payAmt": 5980.00,
+      "avgMaxPayAmtMin": 1200.00,
+      "payComboCnt": 30,
+      "payCnt": 28,
+      "createCnt": 35,
+      "createPayUcntRatio": 0.8000,
+      "payDepositPreOrderCnt": 3,
+      "presaleDepayDeamt": 300.00,
+      "payDepositPreOrderAmt": 1500.00,
+      "refundCnt": 2,
+      "realRefundAmt": 398.00,
+      "refundRate": 0.0667,
+      "commodityProcessDataList": [
+        {
+          "dateTime": "2026-04-13 19:10:00",
+          "payComboCnt": 3,
+          "payAmt": 597.00
+        },
+        {
+          "dateTime": "2026-04-13 19:30:00",
+          "payComboCnt": 8,
+          "payAmt": 1592.00
+        },
+        {
+          "dateTime": "2026-04-13 20:00:00",
+          "payComboCnt": 15,
+          "payAmt": 2985.00
+        },
+        {
+          "dateTime": "2026-04-13 20:30:00",
+          "payComboCnt": 22,
+          "payAmt": 4378.00
+        },
+        {
+          "dateTime": "2026-04-13 21:00:00",
+          "payComboCnt": 27,
+          "payAmt": 5373.00
+        },
+        {
+          "dateTime": "2026-04-13 21:30:00",
+          "payComboCnt": 30,
+          "payAmt": 5980.00
+        }
+      ]
+    },
+    {
+      "productId": "PROD_002",
+      "title": "测试商品-零食大礼包",
+      "imageUri": "https://example.com/images/product002.jpg",
+      "marketPrice": 89.00,
+      "productBindTime": "2026-04-13 19:15:00",
+      "productDownTime": null,
+      "explainCnt": 3,
+      "productShowUcnt": 380,
+      "productClickUcnt": 120,
+      "productShowClickUcntRatio": 0.3158,
+      "productShowPayUcntRatio": 0.0526,
+      "productClickPayUcntRatio": 0.1667,
+      "gpm": 1850.00,
+      "payAmt": 2670.00,
+      "avgMaxPayAmtMin": 580.00,
+      "payComboCnt": 30,
+      "payCnt": 28,
+      "createCnt": 32,
+      "createPayUcntRatio": 0.8750,
+      "payDepositPreOrderCnt": 0,
+      "presaleDepayDeamt": 0.00,
+      "payDepositPreOrderAmt": 0.00,
+      "refundCnt": 1,
+      "realRefundAmt": 89.00,
+      "refundRate": 0.0333,
+      "commodityProcessDataList": [
+        {
+          "dateTime": "2026-04-13 19:20:00",
+          "payComboCnt": 5,
+          "payAmt": 445.00
+        },
+        {
+          "dateTime": "2026-04-13 19:50:00",
+          "payComboCnt": 12,
+          "payAmt": 1068.00
+        },
+        {
+          "dateTime": "2026-04-13 20:20:00",
+          "payComboCnt": 20,
+          "payAmt": 1780.00
+        },
+        {
+          "dateTime": "2026-04-13 20:50:00",
+          "payComboCnt": 26,
+          "payAmt": 2314.00
+        },
+        {
+          "dateTime": "2026-04-13 21:20:00",
+          "payComboCnt": 30,
+          "payAmt": 2670.00
+        }
+      ]
+    },
+    {
+      "productId": "PROD_003",
+      "title": "测试商品-家居收纳盒",
+      "imageUri": "https://example.com/images/product003.jpg",
+      "marketPrice": 59.00,
+      "productBindTime": "2026-04-13 19:30:00",
+      "productDownTime": "2026-04-13 21:00:00",
+      "explainCnt": 2,
+      "productShowUcnt": 250,
+      "productClickUcnt": 75,
+      "productShowClickUcntRatio": 0.3000,
+      "productShowPayUcntRatio": 0.0400,
+      "productClickPayUcntRatio": 0.1333,
+      "gpm": 920.00,
+      "payAmt": 2360.00,
+      "avgMaxPayAmtMin": 420.00,
+      "payComboCnt": 40,
+      "payCnt": 38,
+      "createCnt": 42,
+      "createPayUcntRatio": 0.9048,
+      "payDepositPreOrderCnt": 0,
+      "presaleDepayDeamt": 0.00,
+      "payDepositPreOrderAmt": 0.00,
+      "refundCnt": 2,
+      "realRefundAmt": 118.00,
+      "refundRate": 0.0500,
+      "commodityProcessDataList": [
+        {
+          "dateTime": "2026-04-13 19:40:00",
+          "payComboCnt": 8,
+          "payAmt": 472.00
+        },
+        {
+          "dateTime": "2026-04-13 20:10:00",
+          "payComboCnt": 18,
+          "payAmt": 1062.00
+        },
+        {
+          "dateTime": "2026-04-13 20:40:00",
+          "payComboCnt": 28,
+          "payAmt": 1652.00
+        },
+        {
+          "dateTime": "2026-04-13 20:55:00",
+          "payComboCnt": 40,
+          "payAmt": 2360.00
+        }
+      ]
+    }
+  ]
+}
+
+### 2. 客户端推送直播业绩数据（第二次推送 - 数据有变化，更新记录）
+POST {{baseUrl}}/api/governance/performance/video/clientPushVideo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "batchNumber": "BATCH_20260413_001",
+  "startTime": "2026-04-13 19:00:00",
+  "endTime": "2026-04-13 21:30:00",
+  "secUid": "MS4wLjABAAAA_test_sec_uid_12345",
+  "platform": 0,
+  "viewCount": 620,
+  "salesRevenue": 5300.00,
+  "refund": 200.00,
+  "investment": 620.00,
+  "refundQuantity": 2,
+  "payComboCnt": 36,
+  "netSales": 5100.00,
+  "refundRate": 0.06,
+  "roi": 8.55,
+  "thousandSales": 8548.39,
+  "exposureCount": 1800,
+  "followCount": 38,
+  "clickPaymentRate": 0.16,
+  "interactionRate": 0.09,
+  "maxOnline": 110,
+  "conversionRate": 5.81,
+  "uvValue": 8.55,
+  "followRate": 6.13,
+  "oceanEngineProcessList": [
+    {
+      "gatherDateTime": "2026-04-13 19:00:00",
+      "exposureCount": 150,
+      "viewCount": 50,
+      "onlineCount": 12,
+      "followCount": 4,
+      "salesRevenue": 380.00,
+      "refund": 0.00,
+      "investment": 100.00,
+      "refundQuantity": 0,
+      "payComboCnt": 3,
+      "clickPaymentRate": 0.12,
+      "interactionRate": 0.06,
+      "fansClubJoinUcnt": 2
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:00:30",
+      "exposureCount": 320,
+      "viewCount": 100,
+      "onlineCount": 25,
+      "followCount": 7,
+      "salesRevenue": 750.00,
+      "refund": 0.00,
+      "investment": 150.00,
+      "refundQuantity": 0,
+      "payComboCnt": 5,
+      "clickPaymentRate": 0.13,
+      "interactionRate": 0.07,
+      "fansClubJoinUcnt": 3
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:01:00",
+      "exposureCount": 480,
+      "viewCount": 150,
+      "onlineCount": 38,
+      "followCount": 10,
+      "salesRevenue": 1200.00,
+      "refund": 0.00,
+      "investment": 200.00,
+      "refundQuantity": 0,
+      "payComboCnt": 8,
+      "clickPaymentRate": 0.14,
+      "interactionRate": 0.07,
+      "fansClubJoinUcnt": 4
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:01:30",
+      "exposureCount": 650,
+      "viewCount": 220,
+      "onlineCount": 52,
+      "followCount": 15,
+      "salesRevenue": 1850.00,
+      "refund": 50.00,
+      "investment": 280.00,
+      "refundQuantity": 0,
+      "payComboCnt": 12,
+      "clickPaymentRate": 0.14,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 6
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:02:00",
+      "exposureCount": 850,
+      "viewCount": 300,
+      "onlineCount": 68,
+      "followCount": 20,
+      "salesRevenue": 2500.00,
+      "refund": 50.00,
+      "investment": 350.00,
+      "refundQuantity": 0,
+      "payComboCnt": 17,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 8
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:02:30",
+      "exposureCount": 1020,
+      "viewCount": 380,
+      "onlineCount": 78,
+      "followCount": 25,
+      "salesRevenue": 3200.00,
+      "refund": 100.00,
+      "investment": 420.00,
+      "refundQuantity": 1,
+      "payComboCnt": 21,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 11
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:03:00",
+      "exposureCount": 1200,
+      "viewCount": 450,
+      "onlineCount": 85,
+      "followCount": 28,
+      "salesRevenue": 3800.50,
+      "refund": 100.00,
+      "investment": 480.00,
+      "refundQuantity": 1,
+      "payComboCnt": 25,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 13
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:03:30",
+      "exposureCount": 1400,
+      "viewCount": 530,
+      "onlineCount": 95,
+      "followCount": 32,
+      "salesRevenue": 4500.00,
+      "refund": 150.00,
+      "investment": 550.00,
+      "refundQuantity": 1,
+      "payComboCnt": 30,
+      "clickPaymentRate": 0.16,
+      "interactionRate": 0.09,
+      "fansClubJoinUcnt": 16
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:04:00",
+      "exposureCount": 1800,
+      "viewCount": 620,
+      "onlineCount": 110,
+      "followCount": 38,
+      "salesRevenue": 5300.00,
+      "refund": 200.00,
+      "investment": 620.00,
+      "refundQuantity": 2,
+      "payComboCnt": 36,
+      "clickPaymentRate": 0.16,
+      "interactionRate": 0.09,
+      "fansClubJoinUcnt": 19
+    }
+  ],
+  "productList": [
+    {
+      "productId": "PROD_001",
+      "title": "测试商品-美妆护肤套装",
+      "imageUri": "https://example.com/images/product001.jpg",
+      "marketPrice": 199.00,
+      "productBindTime": "2026-04-13 19:05:00",
+      "productDownTime": null,
+      "explainCnt": 6,
+      "productShowUcnt": 680,
+      "productClickUcnt": 230,
+      "productShowClickUcntRatio": 0.3382,
+      "productShowPayUcntRatio": 0.1029,
+      "productClickPayUcntRatio": 0.3043,
+      "gpm": 4200.00,
+      "payAmt": 7182.00,
+      "avgMaxPayAmtMin": 1500.00,
+      "payComboCnt": 36,
+      "payCnt": 34,
+      "createCnt": 40,
+      "createPayUcntRatio": 0.8500,
+      "payDepositPreOrderCnt": 4,
+      "presaleDepayDeamt": 400.00,
+      "payDepositPreOrderAmt": 2000.00,
+      "refundCnt": 3,
+      "realRefundAmt": 597.00,
+      "refundRate": 0.0833,
+      "commodityProcessDataList": [
+        {
+          "dateTime": "2026-04-13 19:10:00",
+          "payComboCnt": 3,
+          "payAmt": 597.00
+        },
+        {
+          "dateTime": "2026-04-13 19:30:00",
+          "payComboCnt": 8,
+          "payAmt": 1592.00
+        },
+        {
+          "dateTime": "2026-04-13 20:00:00",
+          "payComboCnt": 15,
+          "payAmt": 2985.00
+        },
+        {
+          "dateTime": "2026-04-13 20:30:00",
+          "payComboCnt": 22,
+          "payAmt": 4378.00
+        },
+        {
+          "dateTime": "2026-04-13 21:00:00",
+          "payComboCnt": 27,
+          "payAmt": 5373.00
+        },
+        {
+          "dateTime": "2026-04-13 21:30:00",
+          "payComboCnt": 30,
+          "payAmt": 5980.00
+        },
+        {
+          "dateTime": "2026-04-13 22:00:00",
+          "payComboCnt": 36,
+          "payAmt": 7182.00
+        }
+      ]
+    },
+    {
+      "productId": "PROD_002",
+      "title": "测试商品-零食大礼包",
+      "imageUri": "https://example.com/images/product002.jpg",
+      "marketPrice": 89.00,
+      "productBindTime": "2026-04-13 19:15:00",
+      "productDownTime": null,
+      "explainCnt": 4,
+      "productShowUcnt": 450,
+      "productClickUcnt": 145,
+      "productShowClickUcntRatio": 0.3222,
+      "productShowPayUcntRatio": 0.0667,
+      "productClickPayUcntRatio": 0.2069,
+      "gpm": 2150.00,
+      "payAmt": 3560.00,
+      "avgMaxPayAmtMin": 720.00,
+      "payComboCnt": 40,
+      "payCnt": 38,
+      "createCnt": 42,
+      "createPayUcntRatio": 0.9048,
+      "payDepositPreOrderCnt": 2,
+      "presaleDepayDeamt": 178.00,
+      "payDepositPreOrderAmt": 890.00,
+      "refundCnt": 2,
+      "realRefundAmt": 178.00,
+      "refundRate": 0.0500,
+      "commodityProcessDataList": [
+        {
+          "dateTime": "2026-04-13 19:20:00",
+          "payComboCnt": 5,
+          "payAmt": 445.00
+        },
+        {
+          "dateTime": "2026-04-13 19:50:00",
+          "payComboCnt": 12,
+          "payAmt": 1068.00
+        },
+        {
+          "dateTime": "2026-04-13 20:20:00",
+          "payComboCnt": 20,
+          "payAmt": 1780.00
+        },
+        {
+          "dateTime": "2026-04-13 20:50:00",
+          "payComboCnt": 26,
+          "payAmt": 2314.00
+        },
+        {
+          "dateTime": "2026-04-13 21:20:00",
+          "payComboCnt": 30,
+          "payAmt": 2670.00
+        },
+        {
+          "dateTime": "2026-04-13 21:50:00",
+          "payComboCnt": 40,
+          "payAmt": 3560.00
+        }
+      ]
+    }
+  ]
+}
+
+### 3. 客户端推送直播业绩数据（第三次推送 - 数据无变化，仅更新过程数据）
+POST {{baseUrl}}/api/governance/performance/video/clientPushVideo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "batchNumber": "BATCH_20260413_001",
+  "startTime": "2026-04-13 19:00:00",
+  "endTime": "2026-04-13 21:30:00",
+  "secUid": "MS4wLjABAAAA_test_sec_uid_12345",
+  "platform": 0,
+  "viewCount": 780,
+  "salesRevenue": 6700.00,
+  "refund": 300.00,
+  "investment": 780.00,
+  "refundQuantity": 3,
+  "payComboCnt": 46,
+  "netSales": 6400.00,
+  "refundRate": 0.07,
+  "roi": 8.59,
+  "thousandSales": 8589.74,
+  "exposureCount": 2200,
+  "followCount": 50,
+  "clickPaymentRate": 0.17,
+  "interactionRate": 0.09,
+  "maxOnline": 125,
+  "conversionRate": 5.90,
+  "uvValue": 8.59,
+  "followRate": 6.41,
+  "oceanEngineProcessList": [
+    {
+      "gatherDateTime": "2026-04-13 19:03:00",
+      "exposureCount": 1200,
+      "viewCount": 450,
+      "onlineCount": 85,
+      "followCount": 28,
+      "salesRevenue": 3800.50,
+      "refund": 100.00,
+      "investment": 480.00,
+      "refundQuantity": 1,
+      "payComboCnt": 25,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 13
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:03:30",
+      "exposureCount": 1400,
+      "viewCount": 530,
+      "onlineCount": 95,
+      "followCount": 32,
+      "salesRevenue": 4500.00,
+      "refund": 150.00,
+      "investment": 550.00,
+      "refundQuantity": 1,
+      "payComboCnt": 30,
+      "clickPaymentRate": 0.16,
+      "interactionRate": 0.09,
+      "fansClubJoinUcnt": 16
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:04:00",
+      "exposureCount": 1800,
+      "viewCount": 620,
+      "onlineCount": 110,
+      "followCount": 38,
+      "salesRevenue": 5300.00,
+      "refund": 200.00,
+      "investment": 620.00,
+      "refundQuantity": 2,
+      "payComboCnt": 36,
+      "clickPaymentRate": 0.16,
+      "interactionRate": 0.09,
+      "fansClubJoinUcnt": 19
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:04:30",
+      "exposureCount": 2000,
+      "viewCount": 700,
+      "onlineCount": 120,
+      "followCount": 44,
+      "salesRevenue": 6000.00,
+      "refund": 250.00,
+      "investment": 700.00,
+      "refundQuantity": 2,
+      "payComboCnt": 41,
+      "clickPaymentRate": 0.17,
+      "interactionRate": 0.09,
+      "fansClubJoinUcnt": 22
+    },
+    {
+      "gatherDateTime": "2026-04-13 19:05:00",
+      "exposureCount": 2200,
+      "viewCount": 780,
+      "onlineCount": 125,
+      "followCount": 50,
+      "salesRevenue": 6700.00,
+      "refund": 300.00,
+      "investment": 780.00,
+      "refundQuantity": 3,
+      "payComboCnt": 46,
+      "clickPaymentRate": 0.17,
+      "interactionRate": 0.09,
+      "fansClubJoinUcnt": 25
+    }
+  ],
+  "productList": []
+}
+
+### 4. 客户端推送直播业绩数据（跨天场次 - 23:00~01:00）
+POST {{baseUrl}}/api/governance/performance/video/clientPushVideo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "batchNumber": "BATCH_20260416_002",
+  "startTime": "2026-04-16 23:00:00",
+  "endTime": "2026-04-17 01:30:00",
+  "secUid": "MS4wLjABAAAA_test_sec_uid_12345",
+  "platform": 0,
+  "viewCount": 520,
+  "salesRevenue": 4200.00,
+  "refund": 150.00,
+  "investment": 500.00,
+  "refundQuantity": 2,
+  "payComboCnt": 28,
+  "netSales": 4050.00,
+  "refundRate": 0.07,
+  "roi": 8.40,
+  "thousandSales": 8076.92,
+  "exposureCount": 1500,
+  "followCount": 35,
+  "clickPaymentRate": 0.16,
+  "interactionRate": 0.08,
+  "maxOnline": 95,
+  "conversionRate": 5.38,
+  "uvValue": 8.08,
+  "followRate": 6.73,
+  "oceanEngineProcessList": [
+    {
+      "gatherDateTime": "2026-04-16 23:00:00",
+      "exposureCount": 180,
+      "viewCount": 60,
+      "onlineCount": 15,
+      "followCount": 5,
+      "salesRevenue": 420.00,
+      "refund": 0.00,
+      "investment": 80.00,
+      "refundQuantity": 0,
+      "payComboCnt": 3,
+      "clickPaymentRate": 0.12,
+      "interactionRate": 0.06,
+      "fansClubJoinUcnt": 2
+    },
+    {
+      "gatherDateTime": "2026-04-16 23:00:30",
+      "exposureCount": 350,
+      "viewCount": 120,
+      "onlineCount": 30,
+      "followCount": 9,
+      "salesRevenue": 850.00,
+      "refund": 0.00,
+      "investment": 150.00,
+      "refundQuantity": 0,
+      "payComboCnt": 6,
+      "clickPaymentRate": 0.13,
+      "interactionRate": 0.07,
+      "fansClubJoinUcnt": 4
+    },
+    {
+      "gatherDateTime": "2026-04-16 23:01:00",
+      "exposureCount": 550,
+      "viewCount": 200,
+      "onlineCount": 48,
+      "followCount": 14,
+      "salesRevenue": 1500.00,
+      "refund": 0.00,
+      "investment": 250.00,
+      "refundQuantity": 0,
+      "payComboCnt": 10,
+      "clickPaymentRate": 0.14,
+      "interactionRate": 0.07,
+      "fansClubJoinUcnt": 6
+    },
+    {
+      "gatherDateTime": "2026-04-16 23:01:30",
+      "exposureCount": 750,
+      "viewCount": 280,
+      "onlineCount": 65,
+      "followCount": 18,
+      "salesRevenue": 2100.00,
+      "refund": 50.00,
+      "investment": 330.00,
+      "refundQuantity": 1,
+      "payComboCnt": 15,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 9
+    },
+    {
+      "gatherDateTime": "2026-04-16 23:02:00",
+      "exposureCount": 950,
+      "viewCount": 350,
+      "onlineCount": 80,
+      "followCount": 22,
+      "salesRevenue": 2800.00,
+      "refund": 100.00,
+      "investment": 400.00,
+      "refundQuantity": 1,
+      "payComboCnt": 19,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 12
+    },
+    {
+      "gatherDateTime": "2026-04-17 00:00:30",
+      "exposureCount": 1100,
+      "viewCount": 400,
+      "onlineCount": 88,
+      "followCount": 26,
+      "salesRevenue": 3200.00,
+      "refund": 100.00,
+      "investment": 430.00,
+      "refundQuantity": 1,
+      "payComboCnt": 22,
+      "clickPaymentRate": 0.15,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 15
+    },
+    {
+      "gatherDateTime": "2026-04-17 00:01:00",
+      "exposureCount": 1300,
+      "viewCount": 460,
+      "onlineCount": 92,
+      "followCount": 30,
+      "salesRevenue": 3700.00,
+      "refund": 150.00,
+      "investment": 470.00,
+      "refundQuantity": 2,
+      "payComboCnt": 25,
+      "clickPaymentRate": 0.16,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 18
+    },
+    {
+      "gatherDateTime": "2026-04-17 00:01:30",
+      "exposureCount": 1500,
+      "viewCount": 520,
+      "onlineCount": 95,
+      "followCount": 35,
+      "salesRevenue": 4200.00,
+      "refund": 150.00,
+      "investment": 500.00,
+      "refundQuantity": 2,
+      "payComboCnt": 28,
+      "clickPaymentRate": 0.16,
+      "interactionRate": 0.08,
+      "fansClubJoinUcnt": 20
+    }
+  ],
+  "productList": [
+    {
+      "productId": "PROD_004",
+      "title": "跨天测试商品-夜间护理套装",
+      "imageUri": "https://example.com/images/product004.jpg",
+      "marketPrice": 168.00,
+      "productBindTime": "2026-04-16 23:05:00",
+      "productDownTime": null,
+      "explainCnt": 4,
+      "productShowUcnt": 400,
+      "productClickUcnt": 140,
+      "productShowClickUcntRatio": 0.3500,
+      "productShowPayUcntRatio": 0.0750,
+      "productClickPayUcntRatio": 0.2143,
+      "gpm": 2800.00,
+      "payAmt": 4200.00,
+      "avgMaxPayAmtMin": 900.00,
+      "payComboCnt": 25,
+      "payCnt": 23,
+      "createCnt": 28,
+      "createPayUcntRatio": 0.8214,
+      "payDepositPreOrderCnt": 1,
+      "presaleDepayDeamt": 168.00,
+      "payDepositPreOrderAmt": 840.00,
+      "refundCnt": 2,
+      "realRefundAmt": 336.00,
+      "refundRate": 0.0800,
+      "commodityProcessDataList": [
+        {
+          "dateTime": "2026-04-16 23:10:00",
+          "payComboCnt": 4,
+          "payAmt": 672.00
+        },
+        {
+          "dateTime": "2026-04-16 23:30:00",
+          "payComboCnt": 10,
+          "payAmt": 1680.00
+        },
+        {
+          "dateTime": "2026-04-17 00:00:00",
+          "payComboCnt": 16,
+          "payAmt": 2688.00
+        },
+        {
+          "dateTime": "2026-04-17 00:30:00",
+          "payComboCnt": 21,
+          "payAmt": 3528.00
+        },
+        {
+          "dateTime": "2026-04-17 01:00:00",
+          "payComboCnt": 25,
+          "payAmt": 4200.00
+        }
+      ]
+    }
+  ]
+}
+
+
+
+### 1. 客户端推送直播业绩数据（首次推送 - 新增记录）-测试
+POST {{baseUrl}}/api/governance/performance/video/clientPushVideo
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "viewCount": 10491,
+  "salesRevenue": 1306.7,
+  "refund": 79.8,
+  "investment": 0.0,
+  "refundQuantity": 2,
+  "payComboCnt": 33,
+  "netSales": 1226.9,
+  "refundRate": 6.06,
+  "roi": null,
+  "thousandSales": 124.55,
+  "exposureCount": 196619,
+  "followCount": 247,
+  "clickPaymentRate": 48.53,
+  "interactionRate": 3.12,
+  "maxOnline": 74,
+  "conversionRate": 0.31,
+  "uvValue": 0.12,
+  "followRate": 2.35,
+  "batchNumber": "7634331485142567686",
+  "startTime": "2026-04-30 07:45:54",
+  "endTime": "2026-04-30 09:10:00",
+  "secUid": "MS4wLjABAAAABYa2yd-9BXCD9agZ9SAjTJFfbSgLnd6_NC6SJ1adhEk",
+  "platform": 0,
+  "oceanEngineProcessList": [
+    {
+      "gatherDateTime": "2026-04-30 09:01:00",
+      "viewCount": 10322,
+      "salesRevenue": 1187.0,
+      "refund": 79.8,
+      "investment": 0.0,
+      "fansClubJoinUcnt": 0,
+      "followCount": 246,
+      "payComboCnt": 30,
+      "refundQuantity": 2,
+      "exposureCount": 191456,
+      "onlineCount": 108,
+      "clickPaymentRate": 46.88,
+      "interactionRate": 3.08
+    },
+    {
+      "gatherDateTime": "2026-04-30 09:02:00",
+      "viewCount": 10341,
+      "salesRevenue": 1187.0,
+      "refund": 79.8,
+      "investment": 0.0,
+      "fansClubJoinUcnt": 0,
+      "followCount": 246,
+      "payComboCnt": 30,
+      "refundQuantity": 2,
+      "exposureCount": 191995,
+      "onlineCount": 107,
+      "clickPaymentRate": 46.88,
+      "interactionRate": 3.08
+    },
+    {
+      "gatherDateTime": "2026-04-30 09:03:00",
+      "viewCount": 10357,
+      "salesRevenue": 1187.0,
+      "refund": 79.8,
+      "investment": 0.0,
+      "fansClubJoinUcnt": 0,
+      "followCount": 246,
+      "payComboCnt": 30,
+      "refundQuantity": 2,
+      "exposureCount": 192558,
+      "onlineCount": 109,
+      "clickPaymentRate": 46.88,
+      "interactionRate": 3.09
+    },
+    {
+      "gatherDateTime": "2026-04-30 09:04:00",
+      "viewCount": 10369,
+      "salesRevenue": 1187.0,
+      "refund": 79.8,
+      "investment": 0.0,
+      "fansClubJoinUcnt": 0,
+      "followCount": 246,
+      "payComboCnt": 30,
+      "refundQuantity": 2,
+      "exposureCount": 193173,
+      "onlineCount": 116,
+      "clickPaymentRate": 46.88,
+      "interactionRate": 3.1
+    },
+    {
+      "gatherDateTime": "2026-04-30 09:05:00",
+      "viewCount": 10399,
+      "salesRevenue": 1187.0,
+      "refund": 79.8,
+      "investment": 0.0,
+      "fansClubJoinUcnt": 0,
+      "followCount": 246,
+      "payComboCnt": 30,
+      "refundQuantity": 2,
+      "exposureCount": 193839,
+      "onlineCount": 109,
+      "clickPaymentRate": 46.88,
+      "interactionRate": 3.09
+    },
+    {
+      "gatherDateTime": "2026-04-30 09:06:00",
+      "viewCount": 10413,
+      "salesRevenue": 1187.0,
+      "refund": 79.8,
+      "investment": 0.0,
+      "fansClubJoinUcnt": 0,
+      "followCount": 246,
+      "payComboCnt": 30,
+      "refundQuantity": 2,
+      "exposureCount": 194313,
+      "onlineCount": 103,
+      "clickPaymentRate": 46.15,
+      "interactionRate": 3.09
+    },
+    {
+      "gatherDateTime": "2026-04-30 09:08:00",
+      "viewCount": 10445,
+      "salesRevenue": 1266.8,
+      "refund": 79.8,
+      "investment": 0.0,
+      "fansClubJoinUcnt": 0,
+      "followCount": 246,
+      "payComboCnt": 32,
+      "refundQuantity": 2,
+      "exposureCount": 195418,
+      "onlineCount": 84,
+      "clickPaymentRate": 47.76,
+      "interactionRate": 3.12
+    },
+    {
+      "gatherDateTime": "2026-04-30 09:09:00",
+      "viewCount": 10469,
+      "salesRevenue": 1266.8,
+      "refund": 79.8,
+      "investment": 0.0,
+      "fansClubJoinUcnt": 0,
+      "followCount": 246,
+      "payComboCnt": 32,
+      "refundQuantity": 2,
+      "exposureCount": 196004,
+      "onlineCount": 86,
+      "clickPaymentRate": 47.76,
+      "interactionRate": 3.11
+    },
+    {
+      "gatherDateTime": "2026-04-30 09:10:00",
+      "viewCount": 10491,
+      "salesRevenue": 1306.7,
+      "refund": 79.8,
+      "investment": 0.0,
+      "fansClubJoinUcnt": 0,
+      "followCount": 247,
+      "payComboCnt": 33,
+      "refundQuantity": 2,
+      "exposureCount": 196619,
+      "onlineCount": 74,
+      "clickPaymentRate": 48.53,
+      "interactionRate": 3.12
+    }
+  ],
+  "productList": [
+    {
+      "batchNumber": null,
+      "productId": "3767121942352626067",
+      "title": "【鲸启】驾考通关技巧科目1234全科技巧 ·考场500题真人视频纸质版",
+      "imageUri": "https://p26-item.ecombdimg.com/img/ecom-shop-material/png_m_52e5c4b986ee8e252427482b80e736d6_sx_538748_www800-800~tplv-5mmsx3fupr-resize:200:200.jpeg",
+      "marketPrice": 39.9,
+      "productBindTime": "2026-04-30 08:28:04",
+      "productDownTime": null,
+      "explainCnt": 1,
+      "productShowUcnt": 905,
+      "productClickUcnt": 68,
+      "productShowClickUcntRatio": 7.51,
+      "productShowPayUcntRatio": 3.65,
+      "productClickPayUcntRatio": 48.53,
+      "gpm": 220.32,
+      "payAmt": 1306.7,
+      "avgMaxPayAmtMin": 508.7,
+      "payComboCnt": 33,
+      "payCnt": 33,
+      "createCnt": 41,
+      "createPayUcntRatio": 80.49,
+      "payDepositPreOrderCnt": 0,
+      "presaleDepayDeamt": 0.0,
+      "payDepositPreOrderAmt": 0.0,
+      "refundCnt": 2,
+      "realRefundAmt": 79.8,
+      "refundRate": 6.11,
+      "commodityProcessDataList": [
+        {
+          "dateTime": "2026-04-30 09:01:00",
+          "payComboCnt": 30,
+          "payAmt": 1187.0,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        },
+        {
+          "dateTime": "2026-04-30 09:02:00",
+          "payComboCnt": 30,
+          "payAmt": 1187.0,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        },
+        {
+          "dateTime": "2026-04-30 09:03:00",
+          "payComboCnt": 30,
+          "payAmt": 1187.0,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        },
+        {
+          "dateTime": "2026-04-30 09:04:00",
+          "payComboCnt": 30,
+          "payAmt": 1187.0,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        },
+        {
+          "dateTime": "2026-04-30 09:05:00",
+          "payComboCnt": 30,
+          "payAmt": 1187.0,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        },
+        {
+          "dateTime": "2026-04-30 09:06:00",
+          "payComboCnt": 30,
+          "payAmt": 1187.0,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        },
+        {
+          "dateTime": "2026-04-30 09:07:00",
+          "payComboCnt": 31,
+          "payAmt": 1226.9,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        },
+        {
+          "dateTime": "2026-04-30 09:08:00",
+          "payComboCnt": 32,
+          "payAmt": 1266.8,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        },
+        {
+          "dateTime": "2026-04-30 09:09:00",
+          "payComboCnt": 32,
+          "payAmt": 1266.8,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        },
+        {
+          "dateTime": "2026-04-30 09:10:00",
+          "payComboCnt": 33,
+          "payAmt": 1306.7,
+          "refundCnt": 2,
+          "realRefundAmt": 79.8
+        }
+      ]
+    }
+  ],
+  "averageOnlineNum": 74,
+  "overallCostRoi": null,
+  "netTransactionRoi": null,
+  "averageResidenceTime": 66,
+  "customerUnitPrice": 39.6
+}

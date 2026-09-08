@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiuyu.replay.words.repository.dao.AnchorUrlDetailsDao">
+
+    <select id="secUidListByKeywordStatus" resultType="java.lang.String">
+        SELECT DISTINCT au.sec_uid
+        FROM tb_anchor_url au
+                 JOIN tb_anchor_url_details aud ON aud.sec_uid = au.sec_uid
+                 JOIN tb_anchor_video av ON av.sec_uid = au.sec_uid
+        WHERE aud.keyword_status = 0
+          AND av.analysis_status = 2
+          AND av.is_deleted = 0
+          AND av.duration >= #{duration}
+        LIMIT #{limit}
+    </select>
+</mapper>

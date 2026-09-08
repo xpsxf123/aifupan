@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuyu.replay.order.repository.dao.UserPropertyTypeDao">
+    
+    <update id="clearUserPrivateProperty">
+        <!-- 批量根据 propertyId + userId + code 作为数据匹配逻辑 把quantity设置为0-->
+        update tb_user_property_type
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="use_quantity = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when user_id = #{item.userId} and commodity_type_code = #{item.commodityTypeCode} and property_id = #{item.propertyId} then 0
+                </foreach>
+            </trim>
+        </trim>
+        where
+        property_id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item.propertyId}
+        </foreach>
+        and
+        user_id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item.userId}
+        </foreach>
+        and is_deleted = 0
+    </update>
+    
+    <select id="getUserPropertyRemainingMap" resultType="com.jiuyu.replay.order.entity.UserPropertyTypeEntity">
+        select p.user_id, sum(t.total_quantity - t.use_quantity) as total_quantity from tb_user_property as p
+               join tb_user_property_type as t on p.id = t.property_id
+        where p.user_id in
+        <foreach item="item" index="index" collection="userIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and p.is_deleted = 0 and p.is_use = 1 and p.type = 0
+        and t.commodity_type_code = #{commodityCode}
+        and t.is_deleted = 0
+      group by p.user_id
+    </select>
+</mapper>

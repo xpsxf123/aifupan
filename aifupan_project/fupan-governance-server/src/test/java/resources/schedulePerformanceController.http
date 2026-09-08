@@ -1,0 +1,456 @@
+@baseUrl = http://localhost:6626
+@token = 5WjXS4B7acCZ6r6w6x7Fng2eOfkzMQ0k92irBvb9oxprOcp2Yy42UuZGNhRdD5+nv1SZ8G3uuw4dPODVFswnJfVAzQkoeAzbIINZyxuE/i1AzpdtvULGJqUR9F4ySGoG4g5YY3MkVTcjr5G8tEjR2wXSTDk8stkeJywGNrdvAwx77CP3oBAK8HeRKgUSOlSbujZDrvh9ypgOfJfSiUpsYLOXCoeICRYTHpt1AIJ6v5bUYxNubSxwMqf1Wc0lxrAMLewgyfTPxurM7p7j0aShuuxzNNxrPqC8tS5gB17IKIcGdwP04v/3KR5REiSjt5fZxjsEAIqkmjgJWeb1ajdiVMM0aENCXDBjsDvY90X9PP2/RHgYAyuyzPJ8FHr4jQNjeLlsfQhtk+vsvDrKp36xrsWoN9NpcCm6KT7c+xXW3VoCpdijZzRZbV58AnzP53FqMac/ZRvUJKTRZt8xsEyJD2VqLS/ADj4vNMBbWegevkAxc29F9VcgjsDV8y+cwqBVHxi4yTw4E7CLGWJN1+UhYdACPYmq3x5aXTWKJQ2zN8o=
+@contentType = application/json
+
+### 1. 直播间业绩分页列表（基础查询）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 2. 直播间业绩分页列表（按平台筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "platform": 0,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 3. 直播间业绩分页列表（按主播账号模糊搜索）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "anchorNumber": "douyin",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 4. 直播间业绩分页列表（按主播名称模糊搜索）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "anchorName": "主播",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 5. 直播间业绩分页列表（按账号状态筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "accountStatus": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 6. 直播间业绩分页列表（按分公司筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "companyId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 7. 直播间业绩分页列表（按部门筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "companyId": 1,
+  "deptId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 8. 直播间业绩分页列表（按小组筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "companyId": 1,
+  "deptId": 1,
+  "teamId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 9. 直播间业绩分页列表（按管理员筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "managerUserId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 10. 直播间业绩分页列表（组合条件筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageLiveRoomPerformance
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "platform": 0,
+  "anchorName": "主播",
+  "accountStatus": 1,
+  "companyId": 1,
+  "deptId": 1,
+  "teamId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 11. 排班业绩分页查询（基础查询）
+POST {{baseUrl}}/api/governance/performance/live-room/pageQuerySchedule
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 12. 排班业绩分页查询（按时间范围筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageQuerySchedule
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startTime": "2023-07-01 00:00:00",
+  "endTime": "2023-07-07 23:59:59",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 13. 排班业绩分页查询（按主播名称模糊搜索）
+POST {{baseUrl}}/api/governance/performance/live-room/pageQuerySchedule
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "anchorName": "主播",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 14. 排班业绩分页查询（按直播间ID筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageQuerySchedule
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "liveRoomId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 15. 排班业绩分页查询（组合条件筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/pageQuerySchedule
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startTime": "2023-07-01 00:00:00",
+  "endTime": "2023-07-07 23:59:59",
+  "anchorName": "主播",
+  "liveRoomId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 16. 按天维度统计排班业绩（基础查询）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 17. 按天维度统计排班业绩（按时间范围筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "startTime": "2023-07-01 00:00:00",
+  "endTime": "2023-07-07 23:59:59",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 18. 按天维度统计排班业绩（按主播名称筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "anchorName": "主播",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 19. 按天维度统计排班业绩（按直播间ID筛选）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "liveRoomId": 1,
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 20. 按天维度统计排班业绩（按日期排序）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "sortField": "statsDate",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 21. 按天维度统计排班业绩（按场次数量排序）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "sortField": "scheduleCount",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 22. 按天维度统计排班业绩（按直播时长排序）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "sortField": "liveDurationMinutes",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 23. 按天维度统计排班业绩（按场观排序）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "sortField": "viewCount",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 24. 按天维度统计排班业绩（按销售额排序）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "sortField": "salesRevenue",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 25. 按天维度统计排班业绩（按ROI排序）
+POST {{baseUrl}}/api/governance/performance/live-room/dailyStats
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "sortField": "roi",
+  "sortOrder": "DESC",
+  "pageNum": 1,
+  "pageSize": 10
+}
+
+### 26. 单个班次业绩详情查询
+GET {{baseUrl}}/api/governance/performance/live-room/schedulePerformance/2038906421914857473
+Content-Type: {{contentType}}
+token: {{token}}
+
+### 27. 班次业绩新增
+POST {{baseUrl}}/api/governance/performance/live-room/schedulePerformanceSave
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "liveRoomId": 2037350079618584588,
+  "startTime": "2023-07-01 09:00:00",
+  "endTime": "2023-07-01 12:00:00",
+  "secUid": "MS4wLjABAAAAPcK-qoOXJfxJhlDOvltBxQfczwfEIP_xJL7FFXQ2k4B",
+  "staffList": [
+    {
+      "positionId": 1,
+      "positionName": "主播",
+      "employeeId": 1,
+      "employeeName": "张三"
+    },
+    {
+      "positionId": 2,
+      "positionName": "助播",
+      "employeeId": 2,
+      "employeeName": "李四"
+    }
+  ],
+  "performanceData": {
+    "viewCount": {
+      "value": 10000,
+      "imageUrl": "https://example.com/view.jpg",
+      "modified": false
+    },
+    "salesRevenue": {
+      "value": 50000.00,
+      "imageUrl": "https://example.com/sales.jpg",
+      "modified": false
+    },
+    "refund": {
+      "value": 2000.00,
+      "imageUrl": null,
+      "modified": false
+    },
+    "investment": {
+      "value": 5000.00,
+      "imageUrl": null,
+      "modified": false
+    },
+    "netSales": {
+      "value": 43000.00,
+      "imageUrl": null,
+      "modified": false
+    },
+    "roi": {
+      "value": 8.6,
+      "imageUrl": null,
+      "modified": false
+    }
+  }
+}
+
+### 28. 班次业绩修改
+POST {{baseUrl}}/api/governance/performance/live-room/schedulePerformanceSave
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "id": 2038906421914857473,
+  "liveRoomId": 2037350079618584588,
+  "startTime": "2023-07-01 10:00:00",
+  "endTime": "2023-07-01 14:00:00",
+  "secUid": "MS4wLjABAAAAPcK-qoOXJfxJhlDOvltBxQfczwfEIP_xJL7FFXQ2k4B",
+  "staffList": [
+    {
+      "positionId": 1,
+      "positionName": "主播",
+      "employeeId": 1,
+      "employeeName": "张三"
+    }
+  ],
+  "performanceData": {
+    "viewCount": {
+      "value": 15000,
+      "imageUrl": "https://example.com/view_new.jpg",
+      "modified": true
+    },
+    "salesRevenue": {
+      "value": 80000.00,
+      "imageUrl": "https://example.com/sales_new.jpg",
+      "modified": true
+    },
+    "refund": {
+      "value": 3000.00,
+      "imageUrl": null,
+      "modified": false
+    },
+    "investment": {
+      "value": 8000.00,
+      "imageUrl": null,
+      "modified": false
+    },
+    "netSales": {
+      "value": 69000.00,
+      "imageUrl": null,
+      "modified": false
+    },
+    "roi": {
+      "value": 8.63,
+      "imageUrl": null,
+      "modified": false
+    }
+  }
+}
+
+### 29. 班次业绩新增（基于排班ID）
+POST {{baseUrl}}/api/governance/performance/live-room/schedulePerformanceSave
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "scheduleId": 1,
+  "liveRoomId": 1,
+  "staffList": [
+    {
+      "positionId": 1,
+      "positionName": "主播",
+      "employeeId": 1,
+      "employeeName": "张三"
+    }
+  ],
+  "performanceData": {
+    "viewCount": {
+      "value": 20000
+    },
+    "salesRevenue": {
+      "value": 100000.00
+    }
+  }
+}
+
+### 30. 班次业绩新增（缺少必填参数-测试校验）
+POST {{baseUrl}}/api/governance/performance/live-room/schedulePerformanceSave
+Content-Type: {{contentType}}
+token: {{token}}
+
+{
+  "liveRoomId": 1,
+  "staffList": []
+}
+
+### 31. 删除班次业绩
+DELETE {{baseUrl}}/api/governance/performance/live-room/2038906421914857473
+Content-Type: {{contentType}}
+token: {{token}}
+
+### 32. 删除班次业绩（不存在的ID）
+DELETE {{baseUrl}}/api/governance/performance/live-room/999999999999999999
+Content-Type: {{contentType}}
+token: {{token}}
