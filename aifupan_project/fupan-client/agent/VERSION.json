@@ -1,0 +1,7 @@
+{
+  "agent_name": "前端智能体",
+  "current_version": "2026.05.06",
+  "version_scheme": "date",
+  "notes": "Use versions/ for patch-based upgrades. Prefer self_skills before skills when implementing features."
+}
+

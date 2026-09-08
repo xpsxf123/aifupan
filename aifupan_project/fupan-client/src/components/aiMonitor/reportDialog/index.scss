@@ -1,0 +1,47 @@
+.aiMonitorReportHeader{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: #F7F7F7;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  flex: none;
+}
+
+.aiMonitorReportHeaderItem{
+  font-size: 12px;
+  color: #333;
+}
+
+.aiMonitorReportContent{
+  flex: 1;
+  height: auto;
+  min-height: 240px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+.aiMonitorReportText{
+  font-size: 12px;
+  line-height: 18px;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+.aiMonitorReportFooter{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  flex: none;
+}
+
+.aiMonitorReportFooterActions{
+  margin-left: auto;
+}
+

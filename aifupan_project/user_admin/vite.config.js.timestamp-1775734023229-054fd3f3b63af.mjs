@@ -1,0 +1,32 @@
+// vite.config.js
+import { defineConfig } from "file:///C:/Users/JY/Desktop/code/user_admin/node_modules/.pnpm/vite@5.4.21_@types+node@25.5.0_sass@1.98.0/node_modules/vite/dist/node/index.js";
+import vue from "file:///C:/Users/JY/Desktop/code/user_admin/node_modules/.pnpm/@vitejs+plugin-vue@5.2.4_vi_df5301387c1ba6e9e5b0ab80a43681f3/node_modules/@vitejs/plugin-vue/dist/index.mjs";
+import path from "path";
+import { createSvgIconsPlugin } from "file:///C:/Users/JY/Desktop/code/user_admin/node_modules/.pnpm/vite-plugin-svg-icons@2.0.1_74553053dc2841dc708ac0857b4feb11/node_modules/vite-plugin-svg-icons/dist/index.mjs";
+var __vite_injected_original_dirname = "C:\\Users\\JY\\Desktop\\code\\user_admin";
+var vite_config_default = defineConfig({
+  plugins: [
+    vue(),
+    createSvgIconsPlugin({
+      // 需要自动导入的 svg 文件目录
+      iconDirs: [path.resolve(process.cwd(), "src/assets/icons/menu")],
+      // 执行icon name的格式（可自行修改）
+      symbolId: "icon-[dir]-[name]"
+      // 更多配置请参考：https://github.com/vbenjs/vite-plugin-svg-icons/blob/HEAD/README.zh_CN.md
+    })
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__vite_injected_original_dirname, "src")
+    }
+  },
+  server: {
+    port: 3e3,
+    open: false,
+    cors: true
+  }
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcuanMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCJDOlxcXFxVc2Vyc1xcXFxKWVxcXFxEZXNrdG9wXFxcXGNvZGVcXFxcdXNlcl9hZG1pblwiO2NvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9maWxlbmFtZSA9IFwiQzpcXFxcVXNlcnNcXFxcSllcXFxcRGVza3RvcFxcXFxjb2RlXFxcXHVzZXJfYWRtaW5cXFxcdml0ZS5jb25maWcuanNcIjtjb25zdCBfX3ZpdGVfaW5qZWN0ZWRfb3JpZ2luYWxfaW1wb3J0X21ldGFfdXJsID0gXCJmaWxlOi8vL0M6L1VzZXJzL0pZL0Rlc2t0b3AvY29kZS91c2VyX2FkbWluL3ZpdGUuY29uZmlnLmpzXCI7aW1wb3J0IHsgZGVmaW5lQ29uZmlnIH0gZnJvbSAndml0ZSdcclxuaW1wb3J0IHZ1ZSBmcm9tICdAdml0ZWpzL3BsdWdpbi12dWUnXHJcbmltcG9ydCBwYXRoIGZyb20gJ3BhdGgnXHJcbmltcG9ydCB7IGNyZWF0ZVN2Z0ljb25zUGx1Z2luIH0gZnJvbSAndml0ZS1wbHVnaW4tc3ZnLWljb25zJyAvLyB2aXRlLXBsdWdpbi1zdmctaWNvbnMgXHU3NTI4XHU0RThFXHU4MUVBXHU1MkE4XHU1QkZDXHU1MTY1IHN2ZyBcdTU2RkVcdTY4MDdcclxuXHJcbi8vIGh0dHBzOi8vdml0ZWpzLmRldi9jb25maWcvXHJcbmV4cG9ydCBkZWZhdWx0IGRlZmluZUNvbmZpZyh7XHJcbiAgcGx1Z2luczogW1xyXG4gICAgdnVlKCksXHJcbiAgICBjcmVhdGVTdmdJY29uc1BsdWdpbih7XHJcbiAgICAgIC8vIFx1OTcwMFx1ODk4MVx1ODFFQVx1NTJBOFx1NUJGQ1x1NTE2NVx1NzY4NCBzdmcgXHU2NTg3XHU0RUY2XHU3NkVFXHU1RjU1XHJcbiAgICAgIGljb25EaXJzOiBbcGF0aC5yZXNvbHZlKHByb2Nlc3MuY3dkKCksICdzcmMvYXNzZXRzL2ljb25zL21lbnUnKV0sXHJcbiAgICAgIC8vIFx1NjI2N1x1ODg0Q2ljb24gbmFtZVx1NzY4NFx1NjgzQ1x1NUYwRlx1RkYwOFx1NTNFRlx1ODFFQVx1ODg0Q1x1NEZFRVx1NjUzOVx1RkYwOVxyXG4gICAgICBzeW1ib2xJZDogJ2ljb24tW2Rpcl0tW25hbWVdJ1xyXG4gICAgICAvLyBcdTY2RjRcdTU5MUFcdTkxNERcdTdGNkVcdThCRjdcdTUzQzJcdTgwMDNcdUZGMUFodHRwczovL2dpdGh1Yi5jb20vdmJlbmpzL3ZpdGUtcGx1Z2luLXN2Zy1pY29ucy9ibG9iL0hFQUQvUkVBRE1FLnpoX0NOLm1kXHJcbiAgICB9KVxyXG4gIF0sXHJcbiAgcmVzb2x2ZToge1xyXG4gICAgYWxpYXM6IHtcclxuICAgICAgJ0AnOiBwYXRoLnJlc29sdmUoX19kaXJuYW1lLCAnc3JjJylcclxuICAgIH1cclxuICB9LFxyXG4gIHNlcnZlcjoge1xyXG4gICAgcG9ydDogMzAwMCxcclxuICAgIG9wZW46IGZhbHNlLFxyXG4gICAgY29yczogdHJ1ZVxyXG4gIH1cclxufSlcclxuIl0sCiAgIm1hcHBpbmdzIjogIjtBQUF1UyxTQUFTLG9CQUFvQjtBQUNwVSxPQUFPLFNBQVM7QUFDaEIsT0FBTyxVQUFVO0FBQ2pCLFNBQVMsNEJBQTRCO0FBSHJDLElBQU0sbUNBQW1DO0FBTXpDLElBQU8sc0JBQVEsYUFBYTtBQUFBLEVBQzFCLFNBQVM7QUFBQSxJQUNQLElBQUk7QUFBQSxJQUNKLHFCQUFxQjtBQUFBO0FBQUEsTUFFbkIsVUFBVSxDQUFDLEtBQUssUUFBUSxRQUFRLElBQUksR0FBRyx1QkFBdUIsQ0FBQztBQUFBO0FBQUEsTUFFL0QsVUFBVTtBQUFBO0FBQUEsSUFFWixDQUFDO0FBQUEsRUFDSDtBQUFBLEVBQ0EsU0FBUztBQUFBLElBQ1AsT0FBTztBQUFBLE1BQ0wsS0FBSyxLQUFLLFFBQVEsa0NBQVcsS0FBSztBQUFBLElBQ3BDO0FBQUEsRUFDRjtBQUFBLEVBQ0EsUUFBUTtBQUFBLElBQ04sTUFBTTtBQUFBLElBQ04sTUFBTTtBQUFBLElBQ04sTUFBTTtBQUFBLEVBQ1I7QUFDRixDQUFDOyIsCiAgIm5hbWVzIjogW10KfQo=

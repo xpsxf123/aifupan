@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0",
+  "canonical": {
+    "rootDir": "agnet",
+    "bootstrap": "agnet/BOOTSTRAP.md",
+    "coreFiles": [
+      "agnet/AGENT.md",
+      "agnet/TOOLS.md",
+      "agnet/MEMORY.md",
+      "agnet/INDEX.md",
+      "agnet/POLICIES.md",
+      "agnet/CHANGE_LOG.md"
+    ],
+    "knowledge": {
+      "wikiRoot": "agnet/wiki",
+      "skillsRoot": "agnet/skills",
+      "selfSkillsRoot": "agnet/self_skills"
+    }
+  },
+  "adapterContract": {
+    "must": [
+      "Entry bridge must inline a small set of critical rules (not path-only mapping).",
+      "Entry bridge must point to canonical bootstrap.",
+      "Adapter must not store long-lived business knowledge outside canonical root."
+    ],
+    "should": [
+      "If supported, load a rules directory for always-on constraints.",
+      "If supported, add SessionStart hook for bootstrap re-injection.",
+      "If supported, add PostToolUse hook for doc-maintenance checks."
+    ]
+  },
+  "adapters": {
+    "claude-code": {
+      "entryFiles": ["CLAUDE.md", ".claude/CLAUDE.md"],
+      "rulesDir": ".claude/rules",
+      "hooksConfig": ".claude/settings.json",
+      "hooks": {
+        "SessionStart": "inject bootstrap summary",
+        "PostToolUse": "doc maintenance check"
+      }
+    },
+    "trae": {
+      "entryDir": ".trae",
+      "rulesDir": ".trae/rules",
+      "note": "Trae reads its rules layer; keep canonical source in agnet/ and only mirror essential entry docs as needed."
+    }
+  }
+}
+

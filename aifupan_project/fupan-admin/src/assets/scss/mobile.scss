@@ -1,0 +1,33 @@
+.mobile-dialog-innner-custom.el-dialog.is-fullscreen{
+  overflow-y: hidden;
+}
+.mobile-dialog-innner-custom.el-dialog .el-dialog__footer {
+  position: fixed;
+  bottom: 5px;
+  right: 10px;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  z-index: 999;
+}
+.mobile-dialog-innner-custom .el-dialog__body {
+  padding: 10px 20px !important;
+}
+.mobile-dialog-innner-custom .upgrade-form {
+  padding: 10px !important;
+}
+.mobile-dialog-innner-custom .my-div {
+  max-height: calc(100vh - 56px) !important;
+  overflow-y: auto;
+}
+.mobile-dialog-innner-custom .el-input {
+  max-width: 500px !important;
+} 
+
+.mobile-dialog-innner-custom .el-select {
+   max-width: 400px !important;
+} 
+
+.mobile-dialog-innner-custom .el-input {
+   max-width: 400px !important;
+} 

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{TITLE}}</title>
+  <style>
+    html, body { height: 100%; margin: 0; background: #f5f7fa; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    .page { height: 100%; display: flex; flex-direction: column; }
+    header { padding: 12px 16px; background: #fff; border-bottom: 1px solid #ebeef5; font-weight: 600; }
+    main { flex: 1; overflow: auto; padding: 16px; }
+    #mindmap { background: #fff; border: 1px solid #ebeef5; border-radius: 8px; padding: 16px; height: 600px; }
+    .error { color: #f56c6c; background: #fff; padding: 12px; border: 1px solid #fbc4c4; border-radius: 6px; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header>{{TITLE}}</header>
+    <main>
+      <div id="mindmap"></div>
+      <template id="mm-source">{{MERMAID_CODE}}</template>
+    </main>
+  </div>
+  <script>
+    (function(){
+      function unwrap(code){
+        if(!code) return '';
+        const fence = code.match(/```mermaid[\s\S]*?```/);
+        if(fence){
+          return fence[0].replace(/^```mermaid\s*/,'').replace(/```\s*$/,'');
+        }
+        return code;
+      }
+      const src = document.getElementById('mm-source').innerHTML;
+      const mm = unwrap(src).trim();
+      const fit = {{FIT}};
+      const theme = '{{THEME}}';
+      const heightMode = '{{HEIGHT_MODE}}';
+      const fixedHeight = {{FIXED_HEIGHT}};
+      mermaid.initialize({ startOnLoad: false, theme: theme, themeVariables: {}, securityLevel: 'loose' });
+      const container = document.getElementById('mindmap');
+      const headerEl = document.querySelector('header');
+
+      function setContainerSize(){
+        if(heightMode === 'viewport'){
+          const headerH = headerEl ? headerEl.offsetHeight : 0;
+          const padding = 16 * 2; // main padding top+bottom
+          const available = Math.max(300, window.innerHeight - headerH - padding - 16); // minus inner card margin
+          container.style.height = available + 'px';
+        } else {
+          container.style.height = (fixedHeight && fixedHeight > 0 ? fixedHeight : 800) + 'px';
+        }
+      }
+      window.addEventListener('resize', setContainerSize);
+      setContainerSize();
+      mermaid.render('mm-1', mm)
+        .then(({svg})=>{
+          container.innerHTML = svg;
+          const svgEl = container.querySelector('svg');
+          if(svgEl){
+            if(fit){
+              svgEl.removeAttribute('height');
+              svgEl.style.width = '100%';
+              svgEl.style.height = '100%';
+              svgEl.style.maxWidth = '100%';
+              svgEl.style.maxHeight = '100%';
+              svgEl.setAttribute('preserveAspectRatio','xMinYMin meet');
+            }
+          }
+          setContainerSize();
+        })
+        .catch(err=>{
+          container.innerHTML = '<div class="error">思维导图渲染失败：'+ (err && err.message ? err.message : err) +'</div>';
+          console.error(err);
+        });
+    })();
+  </script>
+  </body>
+</html>

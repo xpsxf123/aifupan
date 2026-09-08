@@ -1,0 +1,102 @@
+
+@import './var.scss';
+
+/* 改变主题色变量 */
+// $--color-primary: #11bb8d;
+// $--color-primary: #1787f0;
+// $--color-primary: var(--color-main);
+
+
+
+// $--color-primary-light-1: darken(var(--color-main),10%);
+// $--color-primary-light-2: darken(var(--color-main),20%);
+// $--color-primary-light-3: darken(var(--color-main),30%);
+// $--color-primary-light-4: darken(var(--color-main),40%);
+// $--color-primary-light-5: darken(var(--color-main),50%);
+// $--color-primary-light-6: darken(var(--color-main),60%);
+// $--color-primary-light-7: darken(var(--color-main),70%);
+// $--color-primary-light-8: darken(var(--color-main),80%);
+// $--color-primary-light-9: darken(var(--color-main),90%);
+// $--color-success-light: mix($--color-white, $--color-success, 80%) !default;
+// $--color-warning-light: mix($--color-white, $--color-warning, 80%) !default;
+// $--color-danger-light: mix($--color-white, $--color-danger, 80%) !default;
+// $--color-info-light: mix($--color-white, $--color-info, 80%) !default;
+
+// $--color-success-lighter: mix($--color-white, $--color-success, 90%) !default;
+// $--color-warning-lighter: mix($--color-white, $--color-warning, 90%) !default;
+// $--color-danger-lighter: mix($--color-white, $--color-danger, 90%) !default;
+// $--color-info-lighter: mix($--color-white, $--color-info, 90%) !default;
+
+// $--slider-button-hover-color: mix($--color-primary, black, 97%) !default;
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index";
+
+.el-button--default.is-plain {
+    border-color: $--color-primary;
+    color: $--color-primary;
+    background-color: $--color-white;
+
+    &:hover,
+    &:focus {
+        border-color: $--color-primary;
+        background-color: $--color-primary-light-9;
+        color: $--color-primary;
+    }
+}
+
+.el-button--success.is-plain {
+    border-color: $--color-success;
+    color:  $--color-success;
+    background-color: $--color-white;
+
+    &:hover,
+    &:focus {
+        border-color:  $--color-success;;
+        background-color: $--color-success-lighter;
+        color:  $--color-success;
+    }
+}
+
+.el-button--info.is-plain {
+    border-color: $--color-info;
+    color:  $--color-info;
+    background-color: $--color-white;
+
+    &:hover,
+    &:focus {
+        border-color:  $--color-info;
+        background-color: $--color-info-lighter;
+        color:  $--color-info;
+    }
+}
+
+.el-button--warning.is-plain {
+    border-color: $--color-warning;
+    color: $--color-warning;
+    background-color: $--color-white;
+
+    &:hover,
+    &:focus {
+        border-color: $--color-warning;
+        background-color: $--color-warning-lighter;
+        color: $--color-warning;
+    }
+}
+
+.el-button--danger.is-plain {
+    border-color: $--color-danger;
+    color: $--color-danger;
+    background-color: $--color-white;
+
+    &:hover,
+    &:focus {
+        border-color: $--color-danger;
+        background-color: $--color-danger-lighter;
+        color: $--color-danger;
+    }
+}
+
+

@@ -1,0 +1,8 @@
+﻿{
+  "agent_name": "Trae 智能体接入层",
+  "current_version": "2026.05.06",
+  "version_scheme": "date",
+  "agent_model_root": "前端智能体",
+  "notes": "Rules are duplicated into .trae/rules for Trae discovery; skills/wiki are mapped via .trae/* indexes to keep single source of truth under agent/."
+}
+

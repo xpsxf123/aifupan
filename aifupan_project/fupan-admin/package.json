@@ -1,0 +1,48 @@
+{
+  "name": "new-pupan-pc",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite -m development --host",
+    "dev:test": "vite -m test --host",
+    "build": "vite build -m development",
+    "build:production": "vite build -m production",
+    "build:release": "vite build -m release",
+    "build:test": "vite build -m test",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "@fingerprintjs/fingerprintjs": "^4.6.2",
+    "axios": "^1.11.0",
+    "big.js": "^7.0.1",
+    "cos-js-sdk-v5": "^1.10.1",
+    "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.18",
+    "element-plus": "^2.11.1",
+    "lodash": "^4.17.21",
+    "mitt": "^3.0.1",
+    "nprogress": "^0.2.0",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.5.0",
+    "vue": "^3.5.18",
+    "vue-router": "4",
+    "wangeditor": "4",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "fast-glob": "^3.3.3",
+    "less": "^4.4.1",
+    "sass-embedded": "^1.92.0",
+    "unplugin-auto-import": "^0.17.8",
+    "unplugin-vue-components": "^0.27.4",
+    "vite": "^7.0.6",
+    "vite-plugin-svg-icons": "^2.0.1",
+    "vite-plugin-vue-devtools": "^8.0.0"
+  }
+}

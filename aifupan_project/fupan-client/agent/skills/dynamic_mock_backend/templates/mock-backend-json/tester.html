@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>mock-backend-json tester</title>
+    <style>
+      :root { color-scheme: light; }
+      body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f6f7fb; }
+      .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+      .card { background: #fff; border: 1px solid #e8eaf2; border-radius: 12px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,.04); }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .rowMain { display: grid; grid-template-columns: 1fr; gap: 12px; }
+      label { display: block; font-size: 12px; color: #586074; margin-bottom: 6px; }
+      input, select, textarea { width: 100%; box-sizing: border-box; padding: 10px 10px; border-radius: 10px; border: 1px solid #d7dbea; outline: none; font-size: 14px; }
+      textarea { min-height: 180px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+      .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      button { padding: 10px 12px; border: 1px solid #d7dbea; background: #fff; border-radius: 10px; cursor: pointer; }
+      button.primary { background: #335cff; color: #fff; border-color: #335cff; }
+      button.danger { background: #ff3b30; color: #fff; border-color: #ff3b30; }
+      .hint { font-size: 12px; color: #7a839a; }
+      pre { margin: 0; white-space: pre-wrap; word-break: break-word; background: #0b1020; color: #e6e8f2; padding: 12px; border-radius: 12px; min-height: 240px; max-height: 420px; overflow: auto; }
+      .mt { margin-top: 12px; }
+      .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+      .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+      .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+      .tab { padding: 8px 10px; border: 1px solid #d7dbea; border-radius: 999px; background: #fff; cursor: pointer; font-size: 13px; }
+      .tab.active { background: #335cff; border-color: #335cff; color: #fff; }
+      .hidden { display: none !important; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border-bottom: 1px solid #eef0f7; padding: 10px 8px; text-align: left; font-size: 13px; vertical-align: top; }
+      th { color: #586074; font-weight: 600; background: #fafbff; }
+      td code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; }
+      .tableWrap { overflow: auto; border: 1px solid #e8eaf2; border-radius: 12px; max-height: 420px; }
+      thead th { position: sticky; top: 0; z-index: 1; }
+      .pill { padding: 6px 10px; border-radius: 999px; background: #f1f4ff; color: #335cff; font-size: 12px; border: 1px solid #dfe6ff; }
+      .right { margin-left: auto; }
+      .tableBar button { padding: 6px 10px; border-radius: 9px; font-size: 12px; }
+      .tableBar input, .tableBar select { padding: 6px 8px; border-radius: 9px; font-size: 12px; width: auto; }
+      .tableBar label.hint { font-size: 12px; }
+      .tableBar .right.bar { flex-wrap: nowrap; }
+      .tableBar #pageInput { width: 90px; }
+      .tableBar #autoSeedCount { width: 110px; }
+      .tableBar #pageSize { width: 110px; }
+      .modalOverlay { position: fixed; inset: 0; background: rgba(10, 14, 28, .48); display: flex; align-items: center; justify-content: center; padding: 16px; }
+      .modal { width: min(860px, 100%); background: #fff; border: 1px solid #e8eaf2; border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.18); padding: 14px; }
+      .modalTitle { font-weight: 650; }
+      .modalMsg { color: #586074; font-size: 13px; line-height: 1.5; }
+      .modalTextarea { min-height: 220px; }
+      @media (max-width: 900px) {
+        .row, .grid3, .grid4 { grid-template-columns: 1fr; }
+        .tableWrap { max-height: 320px; }
+        pre { max-height: 320px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <div class="row">
+          <div>
+            <label>Base URL</label>
+            <input id="baseUrl" value="http://localhost:3100" />
+          </div>
+          <div>
+            <label>Token（除匿名接口外必填）</label>
+            <input id="token" placeholder="按 mock 鉴权规则填写" />
+          </div>
+        </div>
+        <div class="grid4 mt">
+          <div>
+            <label>Method</label>
+            <select id="method">
+              <option>GET</option>
+              <option selected>POST</option>
+            </select>
+          </div>
+          <div>
+            <label>搜索（中文/路径）</label>
+            <input id="endpointSearch" placeholder="例如：用户 / /api/user/page / option" />
+          </div>
+          <div>
+            <label>接口中文</label>
+            <select id="endpointName"></select>
+          </div>
+          <div>
+            <label>Path</label>
+            <select id="endpointPath"></select>
+          </div>
+        </div>
+        <div class="bar mt">
+          <button class="primary" id="sendBtn">发送请求</button>
+          <button id="beautifyBtn">格式化 JSON</button>
+          <button class="danger" id="resetBtn">重置 Body</button>
+          <span class="pill" id="selectedMeta"></span>
+          <div class="right tabs">
+            <button class="tab active" id="tabCode">Code</button>
+            <button class="tab" id="tabTable">Table</button>
+          </div>
+        </div>
+        <div class="rowMain mt">
+          <div>
+            <label>Body（POST 用；GET 忽略）</label>
+            <textarea id="body"></textarea>
+            <div class="hint mt">
+              约定：`page/limit` 分页；`id` 用于 detail/update/delete；校验失败返回 code=2001。
+            </div>
+          </div>
+          <div>
+            <label>响应</label>
+            <div id="viewCode">
+              <pre id="out"></pre>
+            </div>
+            <div id="viewTable" class="hidden">
+              <div class="bar tableBar">
+                <button id="tableAddBtn">添加</button>
+                <button id="tableAutoSeedBtn">自动生成</button>
+                <button id="tableRefreshBtn">刷新</button>
+                <input id="autoSeedCount" type="number" min="1" max="200" step="1" style="width: 110px;" value="10" />
+                <div class="right bar">
+                  <label class="hint" style="margin:0;">Page</label>
+                  <button id="pagePrevBtn">上一页</button>
+                  <input id="pageInput" style="width: 90px;" />
+                  <button id="pageNextBtn">下一页</button>
+                  <label class="hint" style="margin:0;">Size</label>
+                  <select id="pageSize">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mt tableWrap">
+                <table>
+                  <thead><tr id="tableHead"></tr></thead>
+                  <tbody id="tableBody"></tbody>
+                </table>
+              </div>
+              <div class="hint mt" id="tableHint"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt">
+        <div class="bar">
+          <strong>提示</strong>
+        </div>
+        <div class="hint mt">
+          该页面是通用调试模板：接口清单与关联字段映射应由生成器注入（见页面内 testerConfig）。
+        </div>
+      </div>
+    </div>
+
+    <div id="modalOverlay" class="modalOverlay hidden" role="dialog" aria-modal="true">
+      <div class="modal">
+        <div class="bar">
+          <div class="modalTitle" id="modalTitle"></div>
+          <div class="right bar">
+            <button id="modalCancelBtn">取消</button>
+            <button class="primary" id="modalOkBtn">确定</button>
+          </div>
+        </div>
+        <div class="mt modalMsg" id="modalMsg"></div>
+        <div class="mt" id="modalTextareaWrap">
+          <label>JSON</label>
+          <textarea id="modalTextarea" class="modalTextarea"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <script type="application/json" id="testerConfig">
+      {"endpoints":[],"relations":{}}
+    </script>
+
+    <script>
+      const testerConfigEl = document.getElementById("testerConfig");
+      const testerConfig = (() => {
+        try { return JSON.parse(String(testerConfigEl?.textContent || "").trim() || "{}"); } catch { return {}; }
+      })();
+      const endpoints = Array.isArray(testerConfig.endpoints) ? testerConfig.endpoints : [];
+      const relations = testerConfig && typeof testerConfig === "object" && testerConfig.relations && typeof testerConfig.relations === "object"
+        ? testerConfig.relations
+        : {};
+
+      const elBaseUrl = document.getElementById("baseUrl");
+      const elToken = document.getElementById("token");
+      const elMethod = document.getElementById("method");
+      const elEndpointSearch = document.getElementById("endpointSearch");
+      const elEndpointName = document.getElementById("endpointName");
+      const elEndpointPath = document.getElementById("endpointPath");
+      const elBody = document.getElementById("body");
+      const elOut = document.getElementById("out");
+      const elSelectedMeta = document.getElementById("selectedMeta");
+
+      const elTabCode = document.getElementById("tabCode");
+      const elTabTable = document.getElementById("tabTable");
+      const elViewCode = document.getElementById("viewCode");
+      const elViewTable = document.getElementById("viewTable");
+      const elTableHead = document.getElementById("tableHead");
+      const elTableBody = document.getElementById("tableBody");
+      const elTableHint = document.getElementById("tableHint");
+      const elTableAddBtn = document.getElementById("tableAddBtn");
+      const elTableAutoSeedBtn = document.getElementById("tableAutoSeedBtn");
+      const elTableRefreshBtn = document.getElementById("tableRefreshBtn");
+      const elAutoSeedCount = document.getElementById("autoSeedCount");
+      const elPagePrevBtn = document.getElementById("pagePrevBtn");
+      const elPageNextBtn = document.getElementById("pageNextBtn");
+      const elPageInput = document.getElementById("pageInput");
+      const elPageSize = document.getElementById("pageSize");
+      const elModalOverlay = document.getElementById("modalOverlay");
+      const elModalTitle = document.getElementById("modalTitle");
+      const elModalMsg = document.getElementById("modalMsg");
+      const elModalTextareaWrap = document.getElementById("modalTextareaWrap");
+      const elModalTextarea = document.getElementById("modalTextarea");
+      const elModalCancelBtn = document.getElementById("modalCancelBtn");
+      const elModalOkBtn = document.getElementById("modalOkBtn");
+
+      const state = {
+        viewMode: "code",
+        selectedKey: null,
+        last: { endpoint: null, method: null, path: null, body: null, response: null }
+      };
+
+      const keyOf = (ep) => `${ep.method} ${ep.path}`;
+      const modalState = { mode: null, resolve: null };
+
+      const setOut = (obj) => {
+        elOut.textContent = typeof obj === "string" ? obj : JSON.stringify(obj, null, 2);
+      };
+
+      const safeJsonStringify = (v) => {
+        try { return JSON.stringify(v, null, 2); } catch { return String(v); }
+      };
+
+      const closeModal = (result) => {
+        elModalOverlay.classList.add("hidden");
+        const r = modalState.resolve;
+        modalState.mode = null;
+        modalState.resolve = null;
+        if (r) r(result);
+      };
+
+      const openJsonModal = (title, jsonText) => {
+        modalState.mode = "json";
+        elModalTitle.textContent = title || "编辑";
+        elModalMsg.textContent = "";
+        elModalTextareaWrap.classList.remove("hidden");
+        elModalTextarea.value = jsonText || "";
+        elModalOverlay.classList.remove("hidden");
+        elModalTextarea.focus();
+        return new Promise((resolve) => {
+          modalState.resolve = resolve;
+        });
+      };
+
+      const openConfirmModal = (title, message) => {
+        modalState.mode = "confirm";
+        elModalTitle.textContent = title || "确认";
+        elModalMsg.textContent = message || "";
+        elModalTextareaWrap.classList.add("hidden");
+        elModalOverlay.classList.remove("hidden");
+        return new Promise((resolve) => {
+          modalState.resolve = resolve;
+        });
+      };
+
+      elModalCancelBtn.addEventListener("click", () => closeModal(false));
+      elModalOkBtn.addEventListener("click", () => {
+        if (modalState.mode === "json") closeModal(elModalTextarea.value);
+        else closeModal(true);
+      });
+      elModalOverlay.addEventListener("click", (e) => {
+        if (e.target === elModalOverlay) closeModal(false);
+      });
+      document.addEventListener("keydown", (e) => {
+        if (elModalOverlay.classList.contains("hidden")) return;
+        if (e.key === "Escape") closeModal(false);
+      });
+
+      const setViewMode = (mode) => {
+        state.viewMode = mode;
+        if (mode === "code") {
+          elTabCode.classList.add("active");
+          elTabTable.classList.remove("active");
+          elViewCode.classList.remove("hidden");
+          elViewTable.classList.add("hidden");
+        } else {
+          elTabCode.classList.remove("active");
+          elTabTable.classList.add("active");
+          elViewCode.classList.add("hidden");
+          elViewTable.classList.remove("hidden");
+          renderTableFromLast();
+        }
+      };
+
+      const normalizeSearch = (s) => String(s || "").trim().toLowerCase();
+
+      const getFilteredEndpoints = () => {
+        const m = elMethod.value;
+        const q = normalizeSearch(elEndpointSearch.value);
+        return endpoints
+          .filter((x) => x.method === m)
+          .filter((x) => {
+            if (!q) return true;
+            return normalizeSearch(x.name).includes(q) || normalizeSearch(x.path).includes(q);
+          });
+      };
+
+      const fillFromEndpoint = (ep) => {
+        elBody.value = ep.body ? safeJsonStringify(ep.body) : "";
+        elSelectedMeta.textContent = ep.name ? ep.name : "";
+      };
+
+      const syncSelectsByKey = (k) => {
+        state.selectedKey = k;
+        elEndpointName.value = k;
+        elEndpointPath.value = k;
+        const ep = endpoints.find((x) => keyOf(x) === k) || null;
+        if (ep) fillFromEndpoint(ep);
+      };
+
+      const reloadEndpointOptions = (keepSelected = true) => {
+        const list = getFilteredEndpoints();
+        const prev = keepSelected ? state.selectedKey : null;
+
+        elEndpointName.innerHTML = "";
+        elEndpointPath.innerHTML = "";
+
+        for (const ep of list) {
+          const k = keyOf(ep);
+          const optName = document.createElement("option");
+          optName.value = k;
+          optName.textContent = ep.name || ep.path;
+          elEndpointName.appendChild(optName);
+
+          const optPath = document.createElement("option");
+          optPath.value = k;
+          optPath.textContent = ep.path;
+          elEndpointPath.appendChild(optPath);
+        }
+
+        const target = prev && list.some((x) => keyOf(x) === prev) ? prev : (list[0] ? keyOf(list[0]) : null);
+        if (target) syncSelectsByKey(target);
+      };
+
+      const getSelectedEndpoint = () => {
+        if (!state.selectedKey) return null;
+        return endpoints.find((x) => keyOf(x) === state.selectedKey) || null;
+      };
+
+      const doFetch = async (method, path, body) => {
+        const base = elBaseUrl.value.replace(/\/+$/, "");
+        const url = base + path;
+        const headers = { "Accept": "application/json" };
+        const token = elToken.value.trim();
+        if (token) headers["Token"] = token;
+        if (method === "POST") headers["Content-Type"] = "application/json";
+
+        const resp = await fetch(url, {
+          method,
+          headers,
+          body: method === "POST" ? JSON.stringify(body ?? null) : undefined
+        });
+        const text = await resp.text();
+        try { return JSON.parse(text); } catch { return { httpStatus: resp.status, raw: text }; }
+      };
+
+      const parseBodyEditor = () => {
+        const raw = elBody.value.trim();
+        if (!raw) return null;
+        return JSON.parse(raw);
+      };
+
+      const optionCache = new Map();
+      const getOptionKeys = async (optionPath) => {
+        const token = elToken.value.trim();
+        if (!token) return [];
+        if (optionCache.has(optionPath)) return optionCache.get(optionPath);
+        const resp = await doFetch("GET", optionPath, null);
+        const list = Array.isArray(resp?.data) ? resp.data : [];
+        const keys = list.map((x) => x?.key).filter((x) => typeof x === "number" || typeof x === "string").map((x) => Number(x)).filter((x) => Number.isFinite(x));
+        optionCache.set(optionPath, keys);
+        return keys;
+      };
+
+      const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const randPick = (arr) => (arr && arr.length ? arr[randInt(0, arr.length - 1)] : null);
+      const randStr = (len = 6) => {
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+        let s = "";
+        for (let i = 0; i < len; i++) s += chars[randInt(0, chars.length - 1)];
+        return s;
+      };
+      const randCnName = () => {
+        const a = ["新", "优", "智", "云", "星", "极", "晨", "航", "盛", "快", "蓝", "金", "绿", "东", "西", "南", "北"];
+        const b = ["联", "创", "达", "科", "信", "源", "辰", "腾", "航", "服", "贸", "商", "控", "数", "慧", "链"];
+        const c = ["有限公司", "科技", "集团", "中心", "部门", "小组", "团队", "菜单", "角色"];
+        return `${randPick(a)}${randPick(b)}${randPick(c)}`;
+      };
+      const randMobile = () => `1${randPick(["3","5","6","7","8","9"])}${randInt(100000000, 999999999)}`;
+      const randEmail = () => `${randStr(6).toLowerCase()}@example.com`;
+      const randStaffNo = () => `${randPick(["A","B","S","T"])}${randInt(100, 999)}`;
+
+      const relationOptionPathOf = (field) => {
+        const v = relations[field];
+        if (typeof v === "string" && v.trim()) return v.trim();
+        if (v && typeof v === "object" && typeof v.path === "string" && v.path.trim()) return v.path.trim();
+        return null;
+      };
+
+      const isPlainObject = (v) => !!v && typeof v === "object" && !Array.isArray(v);
+
+      const buildAutoPayload = async (template) => {
+        if (!isPlainObject(template)) return template;
+        const out = Array.isArray(template) ? [] : {};
+        for (const [k, v] of Object.entries(template)) {
+          if (k === "id") continue;
+
+          if (k.endsWith("Ids") || Array.isArray(v)) {
+            const optPath = relationOptionPathOf(k);
+            if (optPath) {
+              const keys = await getOptionKeys(optPath);
+              if (!keys.length) throw new Error(`缺少可用关联数据：${k}（请先创建对应资源）`);
+              const n = randInt(0, Math.min(3, keys.length));
+              const picked = [];
+              for (let i = 0; i < n; i++) picked.push(randPick(keys));
+              out[k] = Array.from(new Set(picked.filter((x) => x !== null)));
+            } else {
+              out[k] = [];
+            }
+            continue;
+          }
+
+          if (k.endsWith("Id") || k === "parentId") {
+            const optPath = relationOptionPathOf(k);
+            if (optPath) {
+              const keys = await getOptionKeys(optPath);
+              if (!keys.length) throw new Error(`缺少可用关联数据：${k}（请先创建对应资源）`);
+              out[k] = randPick(keys);
+            } else {
+              out[k] = typeof v === "number" ? 0 : null;
+            }
+            continue;
+          }
+
+          if (typeof v === "string") {
+            if (k.toLowerCase().includes("email")) out[k] = randEmail();
+            else if (k.toLowerCase().includes("mobile")) out[k] = randMobile();
+            else if (k.toLowerCase().includes("staffnumber")) out[k] = randStaffNo();
+            else if (k.toLowerCase().includes("name")) out[k] = randCnName();
+            else out[k] = randStr(Math.max(6, v.length || 6));
+            continue;
+          }
+
+          if (typeof v === "number") {
+            if (k.toLowerCase().includes("sort")) out[k] = randInt(1, 99);
+            else if (k.toLowerCase().includes("type")) out[k] = randInt(0, 2);
+            else out[k] = randInt(0, 9999);
+            continue;
+          }
+
+          if (typeof v === "boolean") {
+            out[k] = Math.random() > 0.5;
+            continue;
+          }
+
+          if (isPlainObject(v)) {
+            out[k] = await buildAutoPayload(v);
+            continue;
+          }
+
+          out[k] = v;
+        }
+        return out;
+      };
+
+      const autoSeed = async () => {
+        const token = elToken.value.trim();
+        if (!token) {
+          setOut({ error: "请先填写 Token（非空）再生成数据" });
+          return;
+        }
+        const ep = state.last.endpoint || getSelectedEndpoint();
+        const base = getCrudBaseFromEndpoint(ep);
+        const epAdd = base ? findCrudEndpoint(base, "add") : null;
+        if (!epAdd) {
+          setOut({ error: "当前接口不是分页/list，或找不到同资源的 add 接口，无法自动生成" });
+          return;
+        }
+        const countRaw = Number(elAutoSeedCount.value);
+        const count = Number.isFinite(countRaw) ? Math.max(1, Math.min(200, Math.trunc(countRaw))) : 10;
+
+        try {
+          optionCache.clear();
+          let okCount = 0;
+          for (let i = 0; i < count; i++) {
+            const payload = await buildAutoPayload(epAdd.body ?? {});
+            const resp = await doFetch("POST", epAdd.path, payload);
+            if (resp && resp.code === 0) okCount += 1;
+            setOut({ progress: `${okCount}/${count}`, last: resp });
+          }
+          syncSelectsByKey(keyOf(ep));
+          elBody.value = safeJsonStringify(state.last.body ?? ep.body ?? null);
+          await sendCurrent();
+          setOut({ done: true, created: okCount, tip: "已生成并刷新列表，可打开 data/db.json 观察真实落盘" });
+        } catch (e) {
+          setOut({ error: String(e && e.message ? e.message : e) });
+        }
+      };
+
+      const sendCurrent = async () => {
+        const ep = getSelectedEndpoint();
+        if (!ep) return;
+        const method = ep.method;
+        const path = ep.path;
+        let body = null;
+        if (method === "POST") body = parseBodyEditor();
+
+        setOut({ loading: true });
+        state.last = { endpoint: ep, method, path, body, response: null };
+        const data = await doFetch(method, path, body);
+        state.last.response = data;
+        setOut(data);
+        if (state.viewMode === "table") renderTableFromLast();
+      };
+
+      const formatCell = (v) => {
+        if (v === null || v === undefined) return "";
+        if (typeof v === "string") return v;
+        if (typeof v === "number" || typeof v === "boolean") return String(v);
+        try { return JSON.stringify(v); } catch { return String(v); }
+      };
+
+      const getTableData = (resp) => {
+        if (!resp || typeof resp !== "object") return { rows: [], page: null };
+        if (Array.isArray(resp.data)) return { rows: resp.data, page: null };
+        const d = resp.data;
+        if (d && typeof d === "object" && Array.isArray(d.list)) return { rows: d.list, page: d };
+        return { rows: [], page: null };
+      };
+
+      const findCrudEndpoint = (base, action) => {
+        const targetPath = `${base}/${action}`;
+        return endpoints.find((x) => x.method === "POST" && x.path === targetPath) || null;
+      };
+
+      const getCrudBaseFromEndpoint = (ep) => {
+        if (!ep) return null;
+        const m = ep.path.match(/^(.*)\/(page|list)(\?.*)?$/);
+        if (m) return m[1];
+        return null;
+      };
+
+      const refreshList = async () => {
+        if (!state.last.endpoint) return;
+        const ep = state.last.endpoint;
+        if (ep.method !== "POST") return;
+        if (!/(\/page|\/list)(\?.*)?$/.test(ep.path)) return;
+        syncSelectsByKey(keyOf(ep));
+        elBody.value = safeJsonStringify(state.last.body ?? ep.body ?? null);
+        await sendCurrent();
+      };
+
+      const updatePagingInputs = (pageData) => {
+        if (!pageData) {
+          elPageInput.value = "";
+          return;
+        }
+        elPageInput.value = String(pageData.currPage ?? "");
+        const sz = String(pageData.pageSize ?? "");
+        if (sz && Array.from(elPageSize.options).some((o) => o.value === sz)) elPageSize.value = sz;
+      };
+
+      const renderTableFromLast = () => {
+        const resp = state.last.response;
+        const ep = state.last.endpoint;
+
+        elTableHead.innerHTML = "";
+        elTableBody.innerHTML = "";
+        elTableHint.textContent = "";
+
+        if (!resp || typeof resp !== "object") {
+          elTableHint.textContent = "暂无可展示数据";
+          return;
+        }
+
+        const { rows, page } = getTableData(resp);
+        updatePagingInputs(page);
+
+        if (!rows || rows.length === 0) {
+          elTableHint.textContent = "暂无可展示数据（当前响应不是数组或 PageData.list）";
+          return;
+        }
+
+        const keys = Array.from(
+          rows.reduce((s, r) => {
+            if (r && typeof r === "object") Object.keys(r).forEach((k) => s.add(k));
+            return s;
+          }, new Set())
+        );
+
+        const hasId = keys.includes("id");
+        if (hasId) {
+          keys.splice(keys.indexOf("id"), 1);
+          keys.unshift("id");
+        }
+
+        const thAct = document.createElement("th");
+        thAct.textContent = "操作";
+        elTableHead.appendChild(thAct);
+        for (const k of keys) {
+          const th = document.createElement("th");
+          th.textContent = k;
+          elTableHead.appendChild(th);
+        }
+
+        const base = getCrudBaseFromEndpoint(ep);
+        const epAdd = base ? findCrudEndpoint(base, "add") : null;
+        const epUpdate = base ? findCrudEndpoint(base, "update") : null;
+        const epDelete = base ? findCrudEndpoint(base, "delete") : null;
+
+        elTableAddBtn.disabled = !epAdd;
+
+        for (const r of rows) {
+          const tr = document.createElement("tr");
+          const tdAct = document.createElement("td");
+          const bar = document.createElement("div");
+          bar.className = "bar";
+
+          const btnEdit = document.createElement("button");
+          btnEdit.textContent = "修改";
+          btnEdit.disabled = !epUpdate || !r || r.id === undefined || r.id === null;
+          btnEdit.addEventListener("click", async () => {
+            if (!epUpdate) return;
+            const raw = await openJsonModal("修改（将调用 update 接口）", safeJsonStringify({ ...r }));
+            if (!raw) return;
+            const payload = JSON.parse(raw);
+            const out = await doFetch("POST", epUpdate.path, payload);
+            state.last.response = out;
+            setOut(out);
+            await refreshList();
+          });
+
+          const btnDel = document.createElement("button");
+          btnDel.textContent = "删除";
+          btnDel.disabled = !epDelete || !r || r.id === undefined || r.id === null;
+          btnDel.addEventListener("click", async () => {
+            if (!epDelete) return;
+            const ok = await openConfirmModal("确认删除", `确认删除 id=${r.id} ?`);
+            if (!ok) return;
+            const out = await doFetch("POST", epDelete.path, { id: r.id });
+            state.last.response = out;
+            setOut(out);
+            await refreshList();
+          });
+
+          bar.appendChild(btnEdit);
+          bar.appendChild(btnDel);
+          tdAct.appendChild(bar);
+          tr.appendChild(tdAct);
+
+          for (const k of keys) {
+            const td = document.createElement("td");
+            const v = r ? r[k] : "";
+            if (typeof v === "object" && v !== null) {
+              const c = document.createElement("code");
+              c.textContent = formatCell(v);
+              td.appendChild(c);
+            } else {
+              td.textContent = formatCell(v);
+            }
+            tr.appendChild(td);
+          }
+          elTableBody.appendChild(tr);
+        }
+
+        if (page) {
+          elTableHint.textContent = `currPage=${page.currPage} pageSize=${page.pageSize} totalCount=${page.totalCount} totalPage=${page.totalPage}`;
+        } else {
+          elTableHint.textContent = `rows=${rows.length}`;
+        }
+      };
+
+      document.getElementById("sendBtn").addEventListener("click", async () => {
+        try {
+          await sendCurrent();
+        } catch (e) {
+          setOut({ error: String(e && e.message ? e.message : e) });
+        }
+      });
+
+      document.getElementById("beautifyBtn").addEventListener("click", () => {
+        const raw = elBody.value.trim();
+        if (!raw) return;
+        const obj = JSON.parse(raw);
+        elBody.value = JSON.stringify(obj, null, 2);
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        const ep = getSelectedEndpoint();
+        if (!ep) return;
+        fillFromEndpoint(ep);
+      });
+
+      elTabCode.addEventListener("click", () => setViewMode("code"));
+      elTabTable.addEventListener("click", () => setViewMode("table"));
+
+      elMethod.addEventListener("change", () => reloadEndpointOptions(false));
+      elEndpointSearch.addEventListener("input", () => reloadEndpointOptions(true));
+      elEndpointName.addEventListener("change", () => syncSelectsByKey(elEndpointName.value));
+      elEndpointPath.addEventListener("change", () => syncSelectsByKey(elEndpointPath.value));
+
+      elTableAddBtn.addEventListener("click", async () => {
+        try {
+          const ep = state.last.endpoint || getSelectedEndpoint();
+          const base = getCrudBaseFromEndpoint(ep);
+          const epAdd = base ? findCrudEndpoint(base, "add") : null;
+          if (!epAdd) return;
+          const raw = await openJsonModal("新增（将调用 add 接口）", safeJsonStringify(epAdd.body ?? {}));
+          if (!raw) return;
+          const payload = JSON.parse(raw);
+          const out = await doFetch("POST", epAdd.path, payload);
+          state.last.response = out;
+          setOut(out);
+          await refreshList();
+        } catch (e) {
+          setOut({ error: String(e && e.message ? e.message : e) });
+        }
+      });
+
+      elTableAutoSeedBtn.addEventListener("click", async () => {
+        await autoSeed();
+      });
+
+      elTableRefreshBtn.addEventListener("click", async () => {
+        try {
+          await refreshList();
+        } catch (e) {
+          setOut({ error: String(e && e.message ? e.message : e) });
+        }
+      });
+
+      elPagePrevBtn.addEventListener("click", async () => {
+        if (!state.last.endpoint) return;
+        syncSelectsByKey(keyOf(state.last.endpoint));
+        const b = state.last.body && typeof state.last.body === "object" ? { ...state.last.body } : {};
+        const curr = Number(b.page || 1);
+        b.page = Math.max(1, curr - 1);
+        b.limit = Number(b.limit || elPageSize.value || 10);
+        elBody.value = safeJsonStringify(b);
+        await sendCurrent();
+      });
+
+      elPageNextBtn.addEventListener("click", async () => {
+        if (!state.last.endpoint) return;
+        syncSelectsByKey(keyOf(state.last.endpoint));
+        const b = state.last.body && typeof state.last.body === "object" ? { ...state.last.body } : {};
+        const curr = Number(b.page || 1);
+        b.page = curr + 1;
+        b.limit = Number(b.limit || elPageSize.value || 10);
+        elBody.value = safeJsonStringify(b);
+        await sendCurrent();
+      });
+
+      elPageSize.addEventListener("change", async () => {
+        if (!state.last.endpoint) return;
+        syncSelectsByKey(keyOf(state.last.endpoint));
+        const b = state.last.body && typeof state.last.body === "object" ? { ...state.last.body } : {};
+        b.page = Number(b.page || 1);
+        b.limit = Number(elPageSize.value || 10);
+        elBody.value = safeJsonStringify(b);
+        await sendCurrent();
+      });
+
+      elPageInput.addEventListener("change", async () => {
+        if (!state.last.endpoint) return;
+        syncSelectsByKey(keyOf(state.last.endpoint));
+        const n = Number(elPageInput.value);
+        if (!Number.isFinite(n) || n < 1) return;
+        const b = state.last.body && typeof state.last.body === "object" ? { ...state.last.body } : {};
+        b.page = Math.trunc(n);
+        b.limit = Number(b.limit || elPageSize.value || 10);
+        elBody.value = safeJsonStringify(b);
+        await sendCurrent();
+      });
+
+      reloadEndpointOptions(false);
+      setOut({ tip: "请先启动 mock 服务，再在此页发送请求。", now: new Date().toISOString() });
+    </script>
+  </body>
+</html>

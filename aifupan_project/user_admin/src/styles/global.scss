@@ -1,0 +1,98 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+/*弹窗样式*/
+.common-dialog {
+  padding: 0 !important;
+  border-radius: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  .el-dialog__header {
+    padding: 13px 30px;
+    background-color: #f4f9ff;
+
+    .dialog-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #151719;
+    }
+  }
+
+  .el-dialog__body {
+    padding: 20px;
+  }
+
+  .common-dialog-content {
+    display: flex;
+    justify-content: center;
+  }
+
+  .el-dialog__footer {
+    padding: 20px;
+  }
+}
+
+/* 抽屉底部header样式*/
+.common-drawer-header-style {
+  padding: 11px 30px;
+  margin-bottom: 0;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+/* 抽屉body样式 */
+.common-drawer-body-style {
+  padding: 20px 30px;
+}
+
+/*抽屉底部footer样式*/
+.common-drawer-footer-style {
+  padding: 10px 10px 40px 36px;
+  text-align: start;
+}
+
+/*输入框样式更改圆角*/
+.rounded .el-input__wrapper {
+  border-radius: 50px;
+}
+
+/*el-table 表头行背景*/
+.common-table-header-bg {
+  background-color: #fbfbfb !important;
+}
+
+/*margin-bottom 设置为 0*/
+.margin-bottom-0 {
+  margin-bottom: 0 !important;
+}
+
+.rounded .el-select__wrapper {
+  border-radius: 50px;
+}
+.rounded .el-range-editor.el-input__wrapper {
+  border-radius: 50px;
+}
+
+.rounded.el-range-editor.el-input__wrapper {
+  border-radius: 50px;
+}
+/* 只取消 plain 按钮的背景色，保留其他样式 */
+.el-button.is-plain {
+  --el-button-bg-color: transparent;
+}

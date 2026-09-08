@@ -1,0 +1,168 @@
+.dialog-warpper > .el-dialog__body {
+  background-color: rgba($color: #eee, $alpha: .4);
+  padding: 15px;
+}
+
+.el-form--inline .el-form-item {
+  margin-right: 10px !important;
+}
+
+.el-descriptions {
+  .el-select {
+    width: 100%;
+  }
+
+  .el-date-editor {
+    width: 100%;
+  }
+
+  .el-form-item {
+    margin-bottom: 0;
+  }
+
+  .el-input-number {
+    width: 100%;
+  }
+
+  // 必填标识
+  .requireSyb {
+    color: red;
+    margin-right: 2px;
+    font-size: 18px;
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// 文本超出一行隐藏
+.text-clamp1 {
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+// 文本超出两行隐藏
+.text-clamp2 {
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+///* 覆盖所有 el-tooltip 的样式 */
+.el-tooltip {
+  max-width: 650px;
+  line-height: 1.5;
+}
+
+/* 可选：统一滚动条样式（兼容Chrome/Firefox/Edge） */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+
+.el-upload-list__item {
+  text-align: center;
+
+  .el-upload-list__item-thumbnail {
+    max-width: 100%;
+  }
+}
+
+.el-popper.el-tooltip.icon-popper {
+  width: 450px !important;
+  overflow: hidden;
+  background-color: #26282E;
+  border: none;
+}
+
+.toolbar {
+  margin-bottom: 10px;
+}
+
+// 表头行样式
+.my-header-row {
+  color: #333333;
+  font-weight: bold;
+}
+
+// 分页样式
+.el-pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.el-dialog {
+  border-radius: 5px !important; /* 无圆角 */
+  box-shadow: none;
+  padding: 0 !important;
+  background: #fff;
+  overflow: hidden;
+  /* header 顶部深色背景 */
+  .el-dialog__header {
+    padding: 10px 16px;
+    margin: 0;
+    background: #304156; /* 深蓝灰 */
+    border-bottom: 1px solid #ddd;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+    .el-dialog__title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff; /* 白色标题 */
+    }
+
+    .el-dialog__headerbtn {
+      top: -2px;
+      right: 0;
+
+      .el-dialog__close {
+        color: #fff; /* 白色关闭按钮 */
+        font-size: 16px;
+
+        &:hover {
+          color: #eee;
+        }
+      }
+    }
+  }
+
+  /* body 主体 */
+  .el-dialog__body {
+    padding: 20px 24px;
+    font-size: 14px;
+    color: #333;
+  }
+
+  /* footer 底部区域 */
+  .el-dialog__footer {
+    padding: 12px 16px;
+    border-top: 1px solid #eee;
+    background: #f5f7fa;
+    text-align: right;
+
+    .el-button {
+      min-width: 80px;
+      font-size: 13px;
+      border-radius: 0;
+    }
+  }
+}
+
+.el-collapse-item__content {
+  padding-bottom: 0 !important;
+}

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>确认删除视频</title>
+    <style>
+        /* 全局重置 & 背景 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        /* 遮罩层 — 模拟半透明背景 */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+            z-index: 999;
+        }
+
+        /* 主对话框 — 完全复刻图片风格 */
+        .modal {
+            width: 520px;
+            max-width: 92vw;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.20);
+            overflow: hidden;
+            padding: 32px 32px 28px;
+            animation: modalFadeIn 0.25s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.96) translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* ----- 标题 ----- */
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1d2129;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ----- 描述文字 ----- */
+        .modal-desc {
+            font-size: 14px;
+            color: #4e5a6b;
+            line-height: 1.6;
+            margin-bottom: 18px;
+            letter-spacing: 0.2px;
+        }
+
+        /* ----- 输入框提示 ----- */
+        .input-label {
+            font-size: 14px;
+            color: #4e5a6b;
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: 0.2px;
+        }
+
+        .input-label .highlight {
+            color: #165dff;
+            font-weight: 500;
+        }
+
+        /* ----- 输入框 ----- */
+        .input-field {
+            width: 100%;
+            height: 44px;
+            padding: 0 16px;
+            font-size: 14px;
+            color: #1d2129;
+            background: #f7f8fa;
+            border: 1px solid #e5e6eb;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field::placeholder {
+            color: #a9aeb8;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        .input-field:focus {
+            border-color: #165dff;
+            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.12);
+            background: #ffffff;
+        }
+
+        /* ----- 按钮区域 ----- */
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        /* 通用按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+            letter-spacing: 0.3px;
+            user-select: none;
+            white-space: nowrap;
+            background: #ffffff;
+            color: #1d2129;
+            border-color: #d9d9d9;
+        }
+
+        .btn:hover {
+            background: #f7f8fa;
+            border-color: #c9cdd4;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        /* 取消按钮 — 灰色边框 */
+        .btn-cancel {
+            background: #ffffff;
+            color: #1d2129;
+            border-color: #d9d9d9;
+        }
+
+        .btn-cancel:hover {
+            background: #f2f3f5;
+            border-color: #c9cdd4;
+        }
+
+        /* 确定按钮 — 主色蓝 */
+        .btn-primary {
+            background: #165dff;
+            color: #ffffff;
+            border-color: #165dff;
+        }
+
+        .btn-primary:hover {
+            background: #0e4fd9;
+            border-color: #0e4fd9;
+            box-shadow: 0 4px 12px rgba(22, 93, 255, 0.30);
+        }
+
+        .btn-primary:active {
+            background: #0a44b8;
+            border-color: #0a44b8;
+        }
+
+        /* 按钮禁用态（用于演示交互，输入正确才启用） */
+        .btn-primary.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none !important;
+            pointer-events: none;
+        }
+
+        /* 小屏适配 */
+        @media (max-width: 480px) {
+            .modal {
+                padding: 24px 20px 20px;
+            }
+
+            .modal-title {
+                font-size: 18px;
+            }
+
+            .modal-actions {
+                flex-direction: column-reverse;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+                height: 44px;
+                padding: 0 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 遮罩 + 对话框 -->
+    <div class="overlay" id="overlay">
+        <div class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+
+            <!-- 标题 -->
+            <h2 class="modal-title" id="modalTitle">确认删除视频？</h2>
+
+            <!-- 描述 -->
+            <p class="modal-desc">删除后，视频无法恢复</p>
+
+            <!-- 输入框提示 -->
+            <label class="input-label" for="confirmInput">
+                请输入<span class="highlight">“确认删除”</span>四个字，以完成配置！
+            </label>
+
+            <!-- 输入框 -->
+            <input
+            type="text"
+            class="input-field"
+            id="confirmInput"
+            placeholder="请输入“确认删除”"
+            autocomplete="off"
+            spellcheck="false"
+            />
+
+            <!-- 按钮组 -->
+            <div class="modal-actions">
+                <button class="btn btn-cancel" id="cancelBtn">取消</button>
+                <button class="btn btn-primary disabled" id="confirmBtn">确定</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const input = document.getElementById('confirmInput');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const overlay = document.getElementById('overlay');
+
+            // 期望文本
+            const TARGET_TEXT = '确认删除';
+
+            // 更新确定按钮状态
+            function updateConfirmButton() {
+                const value = input.value.trim();
+                const isMatch = value === TARGET_TEXT;
+
+                if (isMatch) {
+                    confirmBtn.classList.remove('disabled');
+                    confirmBtn.disabled = false;
+                } else {
+                    confirmBtn.classList.add('disabled');
+                    confirmBtn.disabled = true;
+                }
+            }
+
+            // 输入监听
+            input.addEventListener('input', updateConfirmButton);
+
+            // 回车键快捷确认（仅当按钮可用时）
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!confirmBtn.disabled) {
+                        handleConfirm();
+                    }
+                }
+            });
+
+            // 确定操作
+            function handleConfirm() {
+                // 模拟真实删除确认 —— 弹窗提示，然后关闭对话框
+                alert('✅ 已确认删除视频（演示交互）');
+                closeModal();
+            }
+
+            // 取消操作
+            function handleCancel() {
+                alert('❌ 已取消删除');
+                closeModal();
+            }
+
+            // 关闭对话框（移除遮罩）
+            function closeModal() {
+                if (overlay && overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+            }
+
+            // 绑定按钮事件
+            confirmBtn.addEventListener('click', function(e) {
+                if (!confirmBtn.disabled) {
+                    handleConfirm();
+                }
+            });
+
+            cancelBtn.addEventListener('click', handleCancel);
+
+            // 点击遮罩空白区域也可关闭（符合大多数弹窗习惯）
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    handleCancel();
+                }
+            });
+
+            // 初始化：按钮默认禁用
+            confirmBtn.disabled = true;
+
+            // 自动聚焦输入框
+            setTimeout(() => {
+                input.focus();
+            }, 150);
+
+            // 额外：ESC 键关闭
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') {
+                    // 如果当前对话框还存在
+                    if (document.body.contains(overlay)) {
+                        handleCancel();
+                        document.removeEventListener('keydown', escHandler);
+                    }
+                }
+            });
+
+            console.log('✅ 弹窗已加载 — 请输入 “确认删除” 启用确定按钮');
+        })();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,671 @@
+export const permissionSeed = [
+  {
+    id: 1,
+    parentId: 0,
+    name: '我的排班和业绩',
+    url: '/my-schedule-performance',
+    type: 2,
+    sort: 1,
+    permissionCode: '',
+    children: [
+      {
+        id: 101,
+        parentId: 1,
+        name: '个人排班',
+        url: '/my-schedule-performance/schedule',
+        type: 0,
+        sort: 1,
+        permissionCode: 'my:schedule:list',
+        children: []
+      },
+      {
+        id: 102,
+        parentId: 1,
+        name: '个人业绩',
+        url: '/my-schedule-performance/performance',
+        type: 0,
+        sort: 2,
+        permissionCode: 'my:performance:list',
+        children: []
+      },
+      {
+        id: 103,
+        parentId: 1,
+        name: '个人资料',
+        url: '/my-schedule-performance/profile',
+        type: 0,
+        sort: 3,
+        permissionCode: 'my:profile:page',
+        children: []
+      }
+    ]
+  },
+  {
+    id: 2,
+    parentId: 0,
+    name: '业绩汇总',
+    url: '/performance-summary',
+    type: 2,
+    sort: 2,
+    permissionCode: '',
+    children: [
+      {
+        id: 201,
+        parentId: 2,
+        name: '集团业绩罗盘',
+        url: '/performance-summary/group-compass',
+        type: 0,
+        sort: 1,
+        permissionCode: 'performance:summary:group-compass:page',
+        children: []
+      },
+      {
+        id: 202,
+        parentId: 2,
+        name: '各分公司业绩',
+        url: '/performance-summary/branch-performance',
+        type: 0,
+        sort: 2,
+        permissionCode: 'performance:summary:branch-performance:list',
+        children: []
+      },
+      {
+        id: 203,
+        parentId: 2,
+        name: '各部门业绩',
+        url: '/performance-summary/department-performance',
+        type: 0,
+        sort: 3,
+        permissionCode: 'performance:summary:department-performance:list',
+        children: []
+      },
+      {
+        id: 204,
+        parentId: 2,
+        name: '各小组业绩',
+        url: '/performance-summary/team-performance',
+        type: 0,
+        sort: 4,
+        permissionCode: 'performance:summary:team-performance:list',
+        children: []
+      },
+      {
+        id: 205,
+        parentId: 2,
+        name: '各直播间业绩',
+        url: '/performance-summary/live-room-performance',
+        type: 0,
+        sort: 5,
+        permissionCode: 'performance:summary:live-room-performance:list',
+        children: []
+      }
+    ]
+  },
+  {
+    id: 3,
+    parentId: 0,
+    name: '商品排行榜',
+    url: '/product-ranking',
+    type: 2,
+    sort: 3,
+    children: [
+      {
+        id: 301,
+        parentId: 3,
+        name: '商品排行榜',
+        url: '/product-ranking/index',
+        type: 0,
+        sort: 1,
+        permissionCode: 'product:ranking:list',
+        children: [
+          {
+            id: 301001,
+            parentId: 301,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'product:ranking:add',
+            children: []
+          },
+          {
+            id: 301002,
+            parentId: 301,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'product:ranking:update',
+            children: []
+          },
+          {
+            id: 301003,
+            parentId: 301,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'product:ranking:delete',
+            children: []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 4,
+    parentId: 0,
+    name: '直播间排班',
+    url: '/live-room-ranking',
+    type: 2,
+    sort: 4,
+    permissionCode: '',
+    children: [
+      {
+        id: 401,
+        parentId: 4,
+        name: '直播间排班',
+        url: '/live-room-ranking/index',
+        type: 0,
+        sort: 1,
+        permissionCode: 'room:schedule:list',
+        children: [
+          {
+            id: 40101,
+            parentId: 401,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'room:schedule:add',
+            children: []
+          },
+          {
+            id: 40102,
+            parentId: 401,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'room:schedule:update',
+            children: []
+          },
+          {
+            id: 40103,
+            parentId: 401,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'room:schedule:delete',
+            children: []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 5,
+    parentId: 0,
+    name: '直播间业绩',
+    url: '/live-room-performance',
+    type: 2,
+    sort: 5,
+    permissionCode: '',
+    children: [
+      {
+        id: 501,
+        parentId: 5,
+        name: '直播间业绩',
+        url: '/live-room-performance/index',
+        type: 0,
+        sort: 1,
+        permissionCode: 'room:performance:list',
+        children: [
+          {
+            id: 50101,
+            parentId: 501,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'room:performance:add',
+            children: []
+          },
+          {
+            id: 50102,
+            parentId: 501,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'room:performance:update',
+            children: []
+          },
+          {
+            id: 50103,
+            parentId: 501,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'room:performance:delete',
+            children: []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 6,
+    parentId: 0,
+    name: '人员业绩和排班',
+    url: '/staff-management',
+    type: 2,
+    sort: 6,
+    permissionCode: '',
+    children: [
+      {
+        id: 601,
+        parentId: 6,
+        name: '人员业绩',
+        url: '/staff-management/performance',
+        type: 0,
+        sort: 1,
+        permissionCode: 'sys:employee:performance:list',
+        children: [
+          {
+            id: 60101,
+            parentId: 601,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'sys:employee:performance:add',
+            children: []
+          },
+          {
+            id: 60102,
+            parentId: 601,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'sys:employee:performance:update',
+            children: []
+          },
+          {
+            id: 60103,
+            parentId: 601,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'sys:employee:performance:delete',
+            children: []
+          }
+        ]
+      },
+      {
+        id: 603,
+        parentId: 6,
+        name: '人员排班',
+        url: '/staff-management/schedule',
+        type: 0,
+        sort: 3,
+        permissionCode: 'sys:employee:schedule:list',
+        children: [
+          {
+            id: 60301,
+            parentId: 603,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'sys:employee:schedule:add',
+            children: []
+          },
+          {
+            id: 60302,
+            parentId: 603,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'sys:employee:schedule:update',
+            children: []
+          },
+          {
+            id: 60303,
+            parentId: 603,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'sys:employee:schedule:delete',
+            children: []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 7,
+    parentId: 0,
+    name: '部门和人员',
+    url: '/department-staff',
+    type: 2,
+    sort: 7,
+    permissionCode: '',
+    children: [
+      {
+        id: 701,
+        parentId: 7,
+        name: '人员',
+        url: '/department-staff/staff',
+        type: 0,
+        sort: 1,
+        permissionCode: 'sys:employee:manage:list',
+        children: [
+          {
+            id: 70101,
+            parentId: 701,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'sys:employee:manage:add',
+            children: []
+          },
+          {
+            id: 70102,
+            parentId: 701,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'sys:employee:manage:update',
+            children: []
+          },
+          {
+            id: 70103,
+            parentId: 701,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'sys:employee:manage:delete',
+            children: []
+          }
+        ]
+      },
+      {
+        id: 702,
+        parentId: 7,
+        name: '直播间',
+        url: '/department-staff/live-room',
+        type: 0,
+        sort: 2,
+        permissionCode: 'room:mgmt:list',
+        children: [
+          {
+            id: 70201,
+            parentId: 702,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'room:mgmt:add',
+            children: []
+          },
+          {
+            id: 70202,
+            parentId: 702,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'room:mgmt:update',
+            children: []
+          },
+          {
+            id: 70203,
+            parentId: 702,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'room:mgmt:delete',
+            children: []
+          }
+        ]
+      },
+      {
+        id: 703,
+        parentId: 7,
+        name: '小组',
+        url: '/department-staff/team',
+        type: 0,
+        sort: 3,
+        permissionCode: 'org:team:manage:list',
+        children: [
+          {
+            id: 70301,
+            parentId: 703,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'org:team:manage:add',
+            children: []
+          },
+          {
+            id: 70302,
+            parentId: 703,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'org:team:manage:update',
+            children: []
+          },
+          {
+            id: 70303,
+            parentId: 703,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'org:team:manage:delete',
+            children: []
+          }
+        ]
+      },
+      {
+        id: 704,
+        parentId: 7,
+        name: '部门',
+        url: '/department-staff/department',
+        type: 0,
+        sort: 4,
+        permissionCode: 'org:dept:manage:list',
+        children: [
+          {
+            id: 70401,
+            parentId: 704,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'org:dept:manage:add',
+            children: []
+          },
+          {
+            id: 70402,
+            parentId: 704,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'org:dept:manage:update',
+            children: []
+          },
+          {
+            id: 70403,
+            parentId: 704,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'org:dept:manage:delete',
+            children: []
+          }
+        ]
+      },
+      {
+        id: 705,
+        parentId: 7,
+        name: '子公司',
+        url: '/department-staff/subsidiary',
+        type: 0,
+        sort: 5,
+        permissionCode: 'org:sub-company:manage:list',
+        children: [
+          {
+            id: 70501,
+            parentId: 705,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'org:sub-company:manage:add',
+            children: []
+          },
+          {
+            id: 70502,
+            parentId: 705,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'org:sub-company:manage:update',
+            children: []
+          },
+          {
+            id: 70503,
+            parentId: 705,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'org:sub-company:manage:delete',
+            children: []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 8,
+    parentId: 0,
+    name: '基础设置',
+    url: '/basic-settings',
+    type: 2,
+    sort: 8,
+    permissionCode: '',
+    children: [
+      {
+        id: 801,
+        parentId: 8,
+        name: '岗位',
+        url: '/basic-settings/position',
+        type: 0,
+        sort: 1,
+        permissionCode: 'org:position:list',
+        children: [
+          {
+            id: 80101,
+            parentId: 801,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'org:position:add',
+            children: []
+          },
+          {
+            id: 80102,
+            parentId: 801,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'org:position:update',
+            children: []
+          },
+          {
+            id: 80103,
+            parentId: 801,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'org:position:delete',
+            children: []
+          }
+        ]
+      },
+      {
+        id: 802,
+        parentId: 8,
+        name: '角色管理',
+        url: '/basic-settings/role',
+        type: 0,
+        sort: 2,
+        permissionCode: 'sys:role:page',
+        children: [
+          {
+            id: 80201,
+            parentId: 802,
+            name: '新增',
+            url: '',
+            type: 1,
+            sort: 1,
+            permissionCode: 'sys:role:add',
+            children: []
+          },
+          {
+            id: 80202,
+            parentId: 802,
+            name: '修改',
+            url: '',
+            type: 1,
+            sort: 2,
+            permissionCode: 'sys:role:update',
+            children: []
+          },
+          {
+            id: 80203,
+            parentId: 802,
+            name: '删除',
+            url: '',
+            type: 1,
+            sort: 3,
+            permissionCode: 'sys:role:delete',
+            children: []
+          },
+          {
+            id: 80204,
+            parentId: 802,
+            name: '分配菜单',
+            url: '',
+            type: 1,
+            sort: 4,
+            permissionCode: 'sys:role:assign-menu',
+            children: []
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+@import './var.scss';
+@import './function.scss';
+
+
+@include marginPaddingAllClass($mgPdMap);
+
+@include setColorClass($colorMap);
+
+@include setFontsClass($fontMap);
+
+@include setBroder($borderMap, $borderColor);

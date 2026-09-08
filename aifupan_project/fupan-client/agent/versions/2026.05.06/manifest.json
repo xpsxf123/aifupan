@@ -1,0 +1,20 @@
+{
+  "version": "2026.05.06",
+  "agent_name": "前端智能体",
+  "type": "patch",
+  "summary": "存量项目接入 + self_skills 优先复用 + 组件抽取规则与技能文档补齐",
+  "apply_mode": "copy_payload_over_agent_root",
+  "files": [
+    "skills/project_scaffolder/SKILLS.md",
+    "skills/component_abstractor/SKILLS.md",
+    "TOOLS.md",
+    "wiki/岗位-工作流.md"
+  ],
+  "requires_manual_merge": [],
+  "review_points": [
+    "确认 TOOLS.md 的复用优先级为 self_skills→skills→新建",
+    "确认 岗位-工作流.md 含“项目接入/抽取复用/WAL双写回”步骤",
+    "确认两份 skills 文档 Inputs/Outputs/Hard Rules 已明确"
+  ]
+}
+

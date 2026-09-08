@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="icon" href="static/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon" />
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+    <% if (process.env.VUE_APP_LA_ID) { %>
+    <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
+    <script>
+		LA.init({
+			id: "<%= process.env.VUE_APP_LA_ID %>",
+			ck: "<%= process.env.VUE_APP_LA_CK %>",
+			autoTrack: true,
+			hashMode: true
+		})
+    </script>
+    <% } %>
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "<%= htmlWebpackPlugin.options.BAIDU_HM_SRC %>";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+  <script type="text/plain" data-comment="隐藏备注"><%= htmlWebpackPlugin.options.buildInfo %></script>
+  <script>
+    window.SITE_CONFIG = {
+      backApiURL: '<%= htmlWebpackPlugin.options.BCAK_API_URL %>',
+      clientApiURL: '<%= htmlWebpackPlugin.options.CLIENT_API_URL %>',
+      env:'<%= htmlWebpackPlugin.options.ENV %>',
+      website: '<%= htmlWebpackPlugin.options.BUILD_TARGET %>',
+    };
+    // 跳转地址
+    window.SITE_CONFIG['storeState'] = {};                  // vuex本地储存初始化状态（用于不刷新页面的情况下，也能重置初始化项目中所有状态）
+  </script>
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
+        Please enable it to continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+
+</html>

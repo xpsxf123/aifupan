@@ -1,0 +1,23 @@
+{
+  "项目名称": "{project_name}",
+  "分析时间": "{date}",
+  "接口清单": [
+    {
+      "接口ID": "{api_id}",
+      "接口名称": "{api_name}",
+      "接口用途": "{api_purpose}",
+      "调用页面": ["{page_id}"],
+      "HTTP方法": "GET",
+      "接口路径": "{path}",
+      "请求参数": [
+        {"参数名": "{name}", "参数位置": "query|path|body", "参数类型": "{type}", "是否必填": false, "默认值": null, "说明": "{desc}"}
+      ],
+      "响应数据格式": {
+        "成功响应": {"code": 200, "message": "success", "data": "{data_shape}"},
+        "失败响应": {"code": "{err_code}", "message": "{err_msg}"}
+      },
+      "关联数据实体": "{entity_code}"
+    }
+  ]
+}
+

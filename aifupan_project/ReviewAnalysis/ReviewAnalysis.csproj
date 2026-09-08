@@ -1,0 +1,1461 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\Microsoft.ML.OnnxRuntime.DirectML.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.props" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.DirectML.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.props')" />
+  <Import Project="packages\OpenCvSharp4.runtime.win.4.11.0.20250507\build\netstandard\OpenCvSharp4.runtime.win.props" Condition="Exists('packages\OpenCvSharp4.runtime.win.4.11.0.20250507\build\netstandard\OpenCvSharp4.runtime.win.props')" />
+  <Import Project="packages\CefSharp.Common.135.0.170\build\CefSharp.Common.props" Condition="Exists('packages\CefSharp.Common.135.0.170\build\CefSharp.Common.props')" />
+  <Import Project="packages\chromiumembeddedframework.runtime.win-x86.135.0.17\build\chromiumembeddedframework.runtime.win-x86.props" Condition="Exists('packages\chromiumembeddedframework.runtime.win-x86.135.0.17\build\chromiumembeddedframework.runtime.win-x86.props')" />
+  <Import Project="packages\chromiumembeddedframework.runtime.win-x64.135.0.17\build\chromiumembeddedframework.runtime.win-x64.props" Condition="Exists('packages\chromiumembeddedframework.runtime.win-x64.135.0.17\build\chromiumembeddedframework.runtime.win-x64.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C6DA4671-C160-43DB-AA31-5EA15AD332DB}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ReviewAnalysis</RootNamespace>
+    <AssemblyName>ReviewAnalysis</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favilogo1.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\Debug\</OutputPath>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Acornima, Version=1.2.0.0, Culture=neutral, PublicKeyToken=496b38436bb9edeb, processorArchitecture=MSIL">
+      <HintPath>packages\Acornima.1.2.0\lib\net462\Acornima.dll</HintPath>
+    </Reference>
+    <Reference Include="AngleSharp, Version=1.3.0.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
+      <HintPath>packages\AngleSharp.1.3.0\lib\net472\AngleSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="CefSharp, Version=135.0.170.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>packages\CefSharp.Common.135.0.170\lib\net462\CefSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="CefSharp.Core, Version=135.0.170.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>packages\CefSharp.Common.135.0.170\lib\net462\CefSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CefSharp.WinForms, Version=135.0.170.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>packages\CefSharp.WinForms.135.0.170\lib\net462\CefSharp.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="COSXML, Version=5.4.40.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Tencent.QCloud.Cos.Sdk.5.4.40\lib\net45\COSXML.dll</HintPath>
+    </Reference>
+    <Reference Include="EmbedIO, Version=3.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\EmbedIO.3.5.2\lib\netstandard2.0\EmbedIO.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Jint, Version=4.4.1.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>packages\Jint.4.4.1\lib\net462\Jint.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaInfo.Wrapper, Version=21.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MediaInfo.Wrapper.21.9.3\lib\net45\MediaInfo.Wrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.WebUtilities, Version=2.3.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNetCore.WebUtilities.2.3.0\lib\netstandard2.0\Microsoft.AspNetCore.WebUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.TimeProvider, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Bcl.TimeProvider.8.0.0\lib\net462\Microsoft.Bcl.TimeProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Caching.Abstractions.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Memory, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Caching.Memory.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Caching.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Configuration.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Configuration.Abstractions.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Configuration.Binder.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.DependencyInjection.2.1.0\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.1.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Http, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Http.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Logging.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Options.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Primitives.8.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ML.OnnxRuntime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=f27f157f0a5b7bb6, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.ML.OnnxRuntime.Managed.1.17.3\lib\netstandard2.0\Microsoft.ML.OnnxRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Net.Http.Headers, Version=2.3.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Net.Http.Headers.2.3.0\lib\netstandard2.0\Microsoft.Net.Http.Headers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Playwright, Version=1.29.0.0, Culture=neutral, PublicKeyToken=db12f80f85d8ba23, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Playwright.1.29.0\lib\netstandard2.0\Microsoft.Playwright.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <HintPath>packages\OpenCvSharp4.4.11.0.20250507\lib\netstandard2.0\OpenCvSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="Polly, Version=8.0.0.0, Culture=neutral, PublicKeyToken=c8a3ffc3f8f825cc, processorArchitecture=MSIL">
+      <HintPath>packages\Polly.8.6.5\lib\net472\Polly.dll</HintPath>
+    </Reference>
+    <Reference Include="Polly.Core, Version=8.0.0.0, Culture=neutral, PublicKeyToken=c8a3ffc3f8f825cc, processorArchitecture=MSIL">
+      <HintPath>packages\Polly.Core.8.6.5\lib\net472\Polly.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="Qiniu, Version=8.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Qiniu.8.6.0\lib\netstandard2.0\Qiniu.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=112.1.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>packages\RestSharp.112.1.0\lib\net471\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Doc, Version=13.11.5.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>packages\Spire.Doc.13.11.5\lib\net40\Spire.Doc.dll</HintPath>
+    </Reference>
+    <Reference Include="Swan.Lite, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Unosquare.Swan.Lite.3.1.0\lib\net461\Swan.Lite.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.CodeDom, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.CodeDom.9.0.0\lib\net462\System.CodeDom.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>packages\System.Data.SQLite.EF6.1.0.111.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>packages\System.Data.SQLite.Linq.1.0.118.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Diagnostics.DiagnosticSource.4.7.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.4.3.1\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Text.Encoding.CodePages, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Encoding.CodePages.8.0.0\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=8.0.0.5, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Text.Json.8.0.5\lib\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TencentCloudAsr, Version=3.0.1137.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\TencentCloudSDK.Asr.3.0.1137\lib\net45\TencentCloudAsr.dll</HintPath>
+    </Reference>
+    <Reference Include="TencentCloudCommon, Version=3.0.1137.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\TencentCloudSDK.Common.3.0.1137\lib\net45\TencentCloudCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="Ude, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\UDE.CSharp.1.1.0\lib\Ude.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Ai\AiAutoTimer.cs" />
+    <Compile Include="Ai\AiFactory.cs" />
+    <Compile Include="Ai\IAiChatService.cs" />
+    <Compile Include="Ai\AiUtils.cs" />
+    <Compile Include="Ai\Ask.cs" />
+    <Compile Include="Ai\auto\CorrectAiContentAuto.cs" />
+    <Compile Include="Ai\auto\HtmlAuto.cs" />
+    <Compile Include="Ai\config\CopyOnWriteList.cs" />
+    <Compile Include="Ai\DiagnosisAskType.cs" />
+    <Compile Include="Ai\auto\DiagnosisAuto.cs" />
+    <Compile Include="Ai\impl\AbstractAsk.cs" />
+    <Compile Include="Ai\impl\AbstractSentence.cs" />
+    <Compile Include="Ai\impl\BarrageSentence.cs" />
+    <Compile Include="Ai\impl\ChatCompletionsAsk.cs" />
+    <Compile Include="Ai\impl\DeepSeekAsk.cs" />
+    <Compile Include="Ai\impl\DeepSeekChatService.cs" />
+    <Compile Include="Ai\impl\DoubaoChatService.cs" />
+    <Compile Include="Ai\impl\diagnosis\AbstractDiagnosis.cs" />
+    <Compile Include="Ai\impl\diagnosis\BarrageDiagnosis.cs" />
+    <Compile Include="Ai\impl\diagnosis\OperationDiagnosis.cs" />
+    <Compile Include="Ai\impl\FileSentence.cs" />
+    <Compile Include="Ai\impl\ScreenshotContrastSentence.cs" />
+    <Compile Include="Ai\impl\ScreenshotFileSentence.cs" />
+    <Compile Include="Ai\impl\ScreenshotVideoSentence.cs" />
+    <Compile Include="Ai\impl\SyncContrastSentence.cs" />
+    <Compile Include="Ai\impl\VideoSentence.cs" />
+    <Compile Include="Ai\impl\VideoSentenceOld.cs" />
+    <Compile Include="Ai\impl\ViewingConfuseSentence.cs" />
+    <Compile Include="Ai\impl\ViewingContrastSentence.cs" />
+    <Compile Include="Ai\Model\AiAutoTimerDto.cs" />
+    <Compile Include="Ai\Model\AiTempTokenDto.cs" />
+    <Compile Include="Ai\Model\AudioaAlysesStatisticsDto.cs" />
+    <Compile Include="Ai\Model\CompletionsDto.cs" />
+    <Compile Include="Ai\Model\ConversationDto.cs" />
+    <Compile Include="Ai\Model\DouBaoChatStreamDto.cs" />
+    <Compile Include="Ai\Model\DouBaoCreateContextDto.cs" />
+    <Compile Include="Ai\Model\HtmlStatusDto.cs" />
+    <Compile Include="Ai\Model\JuliangStatisticsDto.cs" />
+    <Compile Include="Ai\Model\PagedResult .cs" />
+    <Compile Include="Ai\SentenceMark.cs" />
+    <Compile Include="Ai\auto\VideoContentAuto.cs" />
+    <Compile Include="Ai\utols\CommonSentenceUtils.cs" />
+    <Compile Include="anchorLive\AnchorLiveAuthStatusEnum.cs" />
+    <Compile Include="anchorLive\AnchorLiveCookieDto.cs" />
+    <Compile Include="anchorLive\AnchorLiveDataApi.cs" />
+    <Compile Include="anchorLive\AnchorLiveDataCollectionManager.cs" />
+    <Compile Include="anchorLive\AnchorLiveDataHandle.cs" />
+    <Compile Include="anchorLive\AnchorLiveDataPoller.cs" />
+    <Compile Include="anchorLive\AnchorLiveForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="anchorLive\AnchorLiveUtils.cs" />
+    <Compile Include="api\governance\ClientPushVideoData.cs" />
+    <Compile Include="api\SceneSliceApi.cs" />
+    <Compile Include="api\TimeApi.cs" />
+    <Compile Include="Bll\SceneSliceBll.cs" />
+    <Compile Include="bo\system\UserConfig.cs" />
+    <Compile Include="douyin\DouyinAuthForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="douyin\DouyinAuthUtils.cs" />
+    <Compile Include="api\AiContentCorrectionConfigApi.cs" />
+    <Compile Include="api\AiRelatedApi.cs" />
+    <Compile Include="api\AiTokenUseRecordApi.cs" />
+    <Compile Include="api\AnchorApi.cs" />
+    <Compile Include="api\AsrApi.cs" />
+    <Compile Include="api\BarrageApi.cs" />
+    <Compile Include="api\BlessBagApi.cs" />
+    <Compile Include="api\ClientAiFavApi.cs" />
+    <Compile Include="api\ClientLogApi.cs" />
+    <Compile Include="api\ConstrastApi.cs" />
+    <Compile Include="api\CueWordsApi.cs" />
+    <Compile Include="api\DataScreenshotApi.cs" />
+    <Compile Include="api\DataViewingApi.cs" />
+    <Compile Include="api\DiagnosisApi.cs" />
+    <Compile Include="api\HotSearchApi.cs" />
+    <Compile Include="api\OceanEngineDataApi.cs" />
+    <Compile Include="api\OrderApi.cs" />
+    <Compile Include="api\ProxyApi.cs" />
+    <Compile Include="api\ShortVideoApi.cs" />
+    <Compile Include="api\SystemApi.cs" />
+    <Compile Include="api\TradeApi.cs" />
+    <Compile Include="api\UploadFileApi.cs" />
+    <Compile Include="api\GovernanceApi.cs" />
+    <Compile Include="api\UserApi.cs" />
+    <Compile Include="api\UserPropertyApi.cs" />
+    <Compile Include="api\VideoApi.cs" />
+    <Compile Include="api\VideoContentApi.cs" />
+    <Compile Include="api\VideoSliceApi.cs" />
+    <Compile Include="api\WordApi.cs" />
+    <Compile Include="Dto\PromptAssemblyResultDto.cs" />
+    <Compile Include="juliangApi\JuliangApiDataApi.cs" />
+    <Compile Include="juliangApi\JuliangApiDataCollectionManager.cs" />
+    <Compile Include="juliangApi\JuliangApiDataHandle.cs" />
+    <Compile Include="juliangApi\JuliangApiDataPoller.cs" />
+    <Compile Include="life\LifeAuthStatusEnum.cs" />
+    <Compile Include="life\LifeAccountResolver.cs" />
+    <Compile Include="life\LifeCookieDto.cs" />
+    <Compile Include="life\LifeCookieFileDto.cs" />
+    <Compile Include="life\LifeDataApi.cs" />
+    <Compile Include="life\LifeDataCollectionManager.cs" />
+    <Compile Include="life\LifeDataHandle.cs" />
+    <Compile Include="life\LifeDataPoller.cs" />
+    <Compile Include="life\LifeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="life\LifeForm.Designer.cs">
+      <DependentUpon>LifeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="life\LifeUtils.cs" />
+    <Compile Include="plugins\dataPullers\BaseDataPuller.cs" />
+    <Compile Include="plugins\dataPullers\JuliangedDataPuller.cs" />
+    <Compile Include="plugins\dataPullers\QianchuanDataPuller.cs" />
+    <Compile Include="plugins\dataPullers\EnterpriseDataPuller.cs" />
+    <Compile Include="plugins\dataPullers\LifeDataPuller.cs" />
+    <Compile Include="plugins\dataPullers\AnchorLiveDataPuller.cs" />
+    <Compile Include="AppContext.cs" />
+    <Compile Include="Asr\AnchorUrlEntity.cs" />
+    <Compile Include="Asr\ASRHttpUtils.cs" />
+    <Compile Include="Asr\ASRResultEntity.cs" />
+    <Compile Include="Asr\ASRResultErrorEntity.cs" />
+    <Compile Include="Asr\AsrAccelerateSignal.cs" />
+    <Compile Include="Asr\AsrUtils.cs" />
+    <Compile Include="Asr\ASRWordEntity.cs" />
+    <Compile Include="Asr\IASREngine.cs" />
+    <Compile Include="Asr\TencentASREngine.cs" />
+    <Compile Include="Asr\CompositeASREngine.cs" />
+    <Compile Include="Asr\AsrEngineFactory.cs" />
+    <Compile Include="Asr\AsrConsumerType.cs" />
+    <Compile Include="Asr\AnalysisSource.cs" />
+    <Compile Include="Asr\AsrLanguageCode.cs" />
+    <Compile Include="Asr\AudioTempTokenEntity.cs" />
+    <Compile Include="Asr\CheckSurplusEntity.cs" />
+    <Compile Include="Attributes\HttpMethodAttribute.cs" />
+    <Compile Include="Attributes\RestAsyncControllerAttribute.cs" />
+    <Compile Include="BackgroundWork\DetectionBackgroundManager.cs" />
+    <Compile Include="BackgroundWork\FristPageIni.cs" />
+    <Compile Include="BeanCache\MethodAsyncCache.cs" />
+    <Compile Include="Bll\Anchor\AnchorInfoWebClient.cs" />
+    <Compile Include="Bll\Anchor\AnchorOnlineWebClient.cs" />
+    <Compile Include="Bll\Anchor\DouyinLiveParser.cs" />
+    <Compile Include="Bll\Anchor\KuaiShouAnchorBll.cs" />
+    <Compile Include="Bll\Anchor\WeChatChannelsAnchorBll.cs" />
+    <Compile Include="Bll\DashboardBll.cs" />
+    <Compile Include="Bll\DiagnosisBll.cs" />
+    <Compile Include="Bll\ShortVideoBll.cs" />
+    <Compile Include="Bll\SystemBll.cs" />
+    <Compile Include="Bll\WordDocumentBll.cs" />
+    <Compile Include="bo\ai\AiRecommendTradeBo.cs" />
+    <Compile Include="bo\ai\ConversationPageBo.cs" />
+    <Compile Include="bo\analysis\WordListItemBo.cs" />
+    <Compile Include="bo\analysis\WordsMarkParagraphBo.cs" />
+    <Compile Include="bo\anchor\AddOrUpdateAnchorBo.cs" />
+    <Compile Include="bo\anchor\AnchorListBo.cs" />
+    <Compile Include="bo\BasicSettingsBo.cs" />
+    <Compile Include="bo\ProductDetailsBo.cs" />
+    <Compile Include="bo\blessBag\BlessBagBo.cs" />
+    <Compile Include="bo\diagnosis\GetDiagnosisBo.cs" />
+    <Compile Include="bo\diagnosis\SaveDiagnosisBo.cs" />
+    <Compile Include="bo\governance\PullProductBo.cs" />
+    <Compile Include="bo\shortVideo\CaptureInfluencerInfoBo.cs" />
+    <Compile Include="bo\shortVideo\ImmediatelyLocalVideoBo.cs" />
+    <Compile Include="bo\shortVideo\InfluencerSearchBo.cs" />
+    <Compile Include="bo\shortVideo\InfluencerSearchInfoBo.cs" />
+    <Compile Include="bo\shortVideo\ReExtractBo.cs" />
+    <Compile Include="bo\shortVideo\SyncInfluencerInfoBo.cs" />
+    <Compile Include="bo\shortVideo\SyncInfluencerVideoBo.cs" />
+    <Compile Include="bo\shortVideo\VideoExtractBo.cs" />
+    <Compile Include="bo\shortVideo\VideoHotSearchBo.cs" />
+    <Compile Include="bo\shortVideo\VideoHotSearchSyncDataBo.cs" />
+    <Compile Include="bo\shortVideo\VideoHotSubscriptionAddBo.cs" />
+    <Compile Include="bo\shortVideo\VideoInfluencerSubscribeBo.cs" />
+    <Compile Include="bo\sliceVideo\SaveSliceCorrelationDataBo.cs" />
+    <Compile Include="bo\system\HtmlPrintPDFBo.cs" />
+    <Compile Include="bo\system\OpenUrlBo.cs" />
+    <Compile Include="bo\uploadFile\CommitUploadFileBo.cs" />
+    <Compile Include="bo\uploadFile\RenameFileBo.cs" />
+    <Compile Include="bo\uploadFile\UploadTxtFileByWordBo.cs" />
+    <Compile Include="bo\video\AddFileSliceBo.cs" />
+    <Compile Include="bo\video\AddVideoSliceBo.cs" />
+    <Compile Include="bo\video\GenerateVideoContentBo.cs" />
+    <Compile Include="bo\video\RenameVideoBo.cs" />
+    <Compile Include="bo\video\UpdateVideoSizeDurationBo.cs" />
+    <Compile Include="CefSubprocessMonitor.cs" />
+    <Compile Include="Controller\AnchorVideoAsyncController.cs" />
+    <Compile Include="Controller\ConfigAsyncController.cs" />
+    <Compile Include="Controller\DiagnosisController.cs" />
+    <Compile Include="Controller\ShortVideoController.cs" />
+    <Compile Include="Controller\SystemController.cs" />
+    <Compile Include="Controller\TestController.cs" />
+    <Compile Include="DataCache\AnchorScheduleCacheManager.cs" />
+    <Compile Include="DataCache\Mp4ConvertQueueManager.cs" />
+    <Compile Include="Controller\UserPropertyAsyncController.cs" />
+    <Compile Include="DataCache\VideoCacheManager.cs" />
+    <Compile Include="DataCache\WebsocketProxyCacheManager.cs" />
+    <Compile Include="Dto\AnchorBaseInfoDto.cs" />
+    <Compile Include="Dto\anchor\UpdateAnchorUserDto.cs" />
+    <Compile Include="entity\anchor\AnchorEntity.cs" />
+    <Compile Include="entity\uploadFile\UploadFileEntity.cs" />
+    <Compile Include="entity\video\VideoEntity.cs" />
+    <Compile Include="entity\video\VideoSliceEntity.cs" />
+    <Compile Include="enumeration\anchor\JuliangAuthStatusEnum.cs" />
+    <Compile Include="enumeration\juliang\JuliangDataKeyTypeEnum.cs" />
+    <Compile Include="enums\CommonEnum.cs" />
+    <Compile Include="enums\CommonConstant.cs" />
+    <Compile Include="Global\ServerConfig.cs" />
+    <Compile Include="juliang\api\FlowOrderSourceApi.cs" />
+    <Compile Include="juliang\api\ViolationApi.cs" />
+    <Compile Include="juliang\CefRequestContextManager.cs" />
+    <Compile Include="juliang\CookieDto.cs" />
+    <Compile Include="juliang\CookiePersistenceHelper.cs" />
+    <Compile Include="HttpServer\HttpListenerAsyncServer.cs" />
+    <Compile Include="juliang\entity\JuliangFlowSourceEntity.cs" />
+    <Compile Include="juliang\entity\JuliangGatherDataEntity.cs" />
+    <Compile Include="juliang\entity\JuliangRealTimeDataQueueEntity.cs" />
+    <Compile Include="juliang\entity\JuliangViolationEntity.cs" />
+    <Compile Include="juliang\entity\JuliangViolationDetailEntity.cs" />
+    <Compile Include="juliang\entity\JuliangUserPortraitEntity.cs" />
+    <Compile Include="juliang\entity\JuliangUserPortraitItemEntity.cs" />
+    <Compile Include="juliang\JuliangCefInitializer.cs" />
+    <Compile Include="juliang\JuliangReachData.cs" />
+    <Compile Include="juliang\LiveScreenProductHelper.cs" />
+    <Compile Include="juliang\ProductOverallTrendHelper.cs" />
+    <Compile Include="juliang\ProductPaymentHelper.cs" />
+    <Compile Include="juliang\SignatureHelper.cs" />
+    <Compile Include="juliang\JuliangReachDataConfig.cs" />
+    <Compile Include="juliang\JuliangReachDataManager.cs" />
+    <Compile Include="juliang\resourceHandle\CustomResourceHandler.cs" />
+    <Compile Include="juliang\resourceHandle\CustomResourceRequestHandler.cs" />
+    <Compile Include="juliang\resourceHandle\CustomResponseFilter.cs" />
+    <Compile Include="juliang\resourceHandle\CustomResponseFilterManager.cs" />
+    <Compile Include="juliang\resourceHandle\DataCollectEventArgs.cs" />
+    <Compile Include="juliang\entity\JuliangRealTimeDataEntity.cs" />
+    <Compile Include="juliang\JuliangDataHandle.cs" />
+    <Compile Include="juliang\JuliangForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="juliang\JuliangForm.Designer.cs">
+      <DependentUpon>JuliangForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="juliang\JuliangUtils.cs" />
+    <Compile Include="juliang\StaticData.cs" />
+    <Compile Include="LogConsole\LogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogConsole\LogForm.Designer.cs">
+      <DependentUpon>LogForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LogConsole\LogModel.cs" />
+    <Compile Include="LogConsole\LogService.cs" />
+    <Compile Include="Model\AnchorSchedule.cs" />
+    <Compile Include="plugins\utils\PathUtils.cs" />
+    <Compile Include="qianchuan\CookieDto.cs" />
+    <Compile Include="qianchuan\CookiePersistenceHelper.cs" />
+    <Compile Include="qianchuan\QianchuanDataApi.cs" />
+    <Compile Include="qianchuan\QianchuanDataCollectionManager.cs" />
+    <Compile Include="qianchuan\QianchuanDataHandle.cs" />
+    <Compile Include="qianchuan\QianchuanDataPoller.cs" />
+    <Compile Include="qianchuan\QianchuanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="qianchuan\QianchuanForm.Designer.cs">
+      <DependentUpon>QianchuanForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="qianchuan\QianchuanUtils.cs" />
+    <Compile Include="enterprise\EnterpriseAuthStatusEnum.cs" />
+    <Compile Include="enterprise\EnterpriseCookieDto.cs" />
+    <Compile Include="enterprise\EnterpriseDataApi.cs" />
+    <Compile Include="enterprise\EnterpriseDataCollectionManager.cs" />
+    <Compile Include="enterprise\EnterpriseDataHandle.cs" />
+    <Compile Include="enterprise\EnterpriseDataPoller.cs" />
+    <Compile Include="enterprise\EnterpriseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="enterprise\EnterpriseForm.Designer.cs">
+      <DependentUpon>EnterpriseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="enterprise\EnterpriseUtils.cs" />
+    <Compile Include="enterprise\entity\EnterpriseGatherDataEntity.cs" />
+    <Compile Include="ShortVideo\DouYin\BrowserEnvironments.cs" />
+    <Compile Include="ShortVideo\DouYin\DouYinDeveloperOpen.cs" />
+    <Compile Include="ShortVideo\DouYin\DouyinSpider.cs" />
+    <Compile Include="ShortVideo\DouYin\DouYinUtils.cs" />
+    <Compile Include="ShortVideo\DouYin\dto\DouyinUser.cs" />
+    <Compile Include="ShortVideo\DouYin\dto\DouYinVideoInfo.cs" />
+    <Compile Include="ShortVideo\DouYin\dto\JuLiangUserAuthorInfo.cs" />
+    <Compile Include="ShortVideo\DouYin\dto\JuLiangUserInfoDto.cs" />
+    <Compile Include="ShortVideo\DouYin\SearchVideo.cs" />
+    <Compile Include="ShortVideo\DouYin\SearchVideo3.cs" />
+    <Compile Include="ShortVideo\DouYin\SearchVideo2.cs" />
+    <Compile Include="ShortVideo\DouYin\SearchVideoByAweme.cs" />
+    <Compile Include="ShortVideo\DouYin\BlessBagSessionId.cs" />
+    <Compile Include="ShortVideo\DouYin\SearchVideoByH5.cs" />
+    <Compile Include="ShortVideo\DouYin\SearchVideoByH5HttpClient.cs" />
+    <Compile Include="ShortVideo\DouYin\SearchVideoByPc.cs" />
+    <Compile Include="ShortVideo\DouYin\SearchVideoByPc2.cs" />
+    <Compile Include="ShortVideo\DouYin\VideoUrlAnalysisUtils.cs" />
+    <Compile Include="ShortVideo\Enums\ShortVideoEnums.cs" />
+    <Compile Include="ShortVideo\HotSearchApiConfig.cs" />
+    <Compile Include="ShortVideo\HotSearchHandle.cs" />
+    <Compile Include="ShortVideo\InfluencerHandle.cs" />
+    <Compile Include="ShortVideo\MobileUaHelper.cs" />
+    <Compile Include="ShortVideo\Model\HotSearchModel.cs" />
+    <Compile Include="ShortVideo\Model\InfluencerModel.cs" />
+    <Compile Include="ShortVideo\Model\VideoDetailModel.cs" />
+    <Compile Include="ShortVideo\Servier\impl\ShortVideoDouYinService.cs" />
+    <Compile Include="ShortVideo\Servier\ShortVideoService.cs" />
+    <Compile Include="ShortVideo\DouYin\SessionId.cs" />
+    <Compile Include="ShortVideo\Model\VideoModel.cs" />
+    <Compile Include="ShortVideo\ShortVideoHandle.cs" />
+    <Compile Include="ShortVideo\ShortVideoProxy.cs" />
+    <Compile Include="ShortVideo\ShortVideoUtils.cs" />
+    <Compile Include="SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SplashScreen.Designer.cs">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="upload\ClientUploadFile.cs" />
+    <Compile Include="upload\MultiImgToGeneratePDF.cs" />
+    <Compile Include="upload\UploadUtils.cs" />
+    <Compile Include="Utils\AddFirewall.cs" />
+    <Compile Include="Utils\AesCbcUtils.cs" />
+    <Compile Include="Utils\AESHelper.cs" />
+    <Compile Include="Utils\AnalysisUtils.cs" />
+    <Compile Include="Utils\ComputerInfoCollector.cs" />
+    <Compile Include="Utils\CustomLifeSpanHandler.cs" />
+    <Compile Include="Utils\DouyinUtils.cs" />
+    <Compile Include="Utils\DebugLog.cs" />
+    <Compile Include="Utils\DownloadFileUtil.cs" />
+    <Compile Include="Utils\M3u8SegmentTimingInfo.cs" />
+    <Compile Include="Utils\AsyncLock.cs" />
+    <Compile Include="Utils\HtmlToPdfUtil.cs" />
+    <Compile Include="Utils\HttpAsyncUtils.cs" />
+    <Compile Include="Utils\HttpUtils.cs" />
+    <Compile Include="Utils\KuaishouUtils.cs" />
+    <Compile Include="Asr\MyCallableTask.cs" />
+    <Compile Include="Asr\QiNiuHttpUtils.cs" />
+    <Compile Include="Asr\RecordNeedsWordVo.cs" />
+    <Compile Include="Asr\ReplayHttpUtils.cs" />
+    <Compile Include="Asr\SentenceMarkVo.cs" />
+    <Compile Include="Asr\SyncVideoAnalysisBo.cs" />
+    <Compile Include="Asr\TencentCosUtils.cs" />
+    <Compile Include="Asr\UserPropertyEntity.cs" />
+    <Compile Include="Asr\UserPropertyHttpUtils.cs" />
+    <Compile Include="Asr\UserVo.cs" />
+    <Compile Include="Asr\VersionUpdateVo.cs" />
+    <Compile Include="Asr\WordListItemVo.cs" />
+    <Compile Include="Asr\WordsMarkVo.cs" />
+    <Compile Include="Asr\Local\HardwareProbe.cs" />
+    <Compile Include="Asr\Local\OfflineModel.cs" />
+    <Compile Include="Asr\Local\ModelManager.cs" />
+    <Compile Include="Asr\Local\WavFrontend.cs" />
+    <Compile Include="Asr\Local\SenseVoiceSmallEngine.cs" />
+    <Compile Include="Asr\Local\GpuProbe.cs" />
+    <Compile Include="Asr\Local\Vad\VadSegment.cs" />
+    <Compile Include="Asr\Local\Vad\IVadEngine.cs" />
+    <Compile Include="Asr\Local\Vad\FsmnVadEngineStub.cs" />
+    <Compile Include="Asr\Local\Vad\SmartSlicer.cs" />
+    <Compile Include="Attributes\HttpGetAttribute.cs" />
+    <Compile Include="Attributes\HttpPostAttribute.cs" />
+    <Compile Include="Attributes\RestControllerAttribute.cs" />
+    <Compile Include="BeanCache\ControllerMethod.cs" />
+    <Compile Include="BeanCache\HttpReponse.cs" />
+    <Compile Include="BeanCache\MethodCache.cs" />
+    <Compile Include="Bll\AiRelatedBll.cs" />
+    <Compile Include="Bll\AnchorVideoBll.cs" />
+    <Compile Include="Bll\VideoPull\IVideoPuller.cs" />
+    <Compile Include="Bll\VideoPull\VideoPullResult.cs" />
+    <Compile Include="Bll\VideoPull\Juliang\JuliangVideoDownloader.cs" />
+    <Compile Include="Bll\VideoPull\Juliang\LiveCommentPuller.cs" />
+    <Compile Include="Bll\VideoPull\Juliang\LiveOnlineTrendPuller.cs" />
+    <Compile Include="Bll\VideoPull\Juliang\JuliangVideoPuller.cs" />
+    <Compile Include="Bll\VideoPull\Models\LiveSessionInfo.cs" />
+    <Compile Include="Bll\VideoPull\Models\VideoSegmentInfo.cs" />
+    <Compile Include="Bll\VideoPull\VideoPullManager.cs" />
+    <Compile Include="Bll\Anchor\AnchorBll.cs" />
+    <Compile Include="Bll\Anchor\AnchorRecordBll.cs" />
+    <Compile Include="Bll\Anchor\DouYinAnchorBll.cs" />
+    <Compile Include="Bll\Anchor\Entity\DouYinAnchorInfoEntity.cs" />
+    <Compile Include="Bll\Anchor\Entity\DouYinIsOnlieResultEntity.cs" />
+    <Compile Include="Bll\CommonBll.cs" />
+    <Compile Include="Bll\VideoViewershipNumBll.cs" />
+    <Compile Include="Bll\TotalOnlineNumBll.cs" />
+    <Compile Include="Bll\OnlineNumBll.cs" />
+    <Compile Include="Bll\OperationAnchorBll.cs" />
+    <Compile Include="Bll\UploadFileBll.cs" />
+    <Compile Include="Bll\VideoContrastBll.cs" />
+    <Compile Include="bo\ai\HistoryParagraphBo.cs" />
+    <Compile Include="bo\ai\historyParagraphListBo.cs" />
+    <Compile Include="bo\ai\StructurePageBo.cs" />
+    <Compile Include="bo\ai\StructureUpdateBo.cs" />
+    <Compile Include="Controller\AiRelatedController.cs" />
+    <Compile Include="Controller\ContrastController.cs" />
+    <Compile Include="Controller\ExportFileController.cs" />
+    <Compile Include="Controller\SyncDataController.cs" />
+    <Compile Include="Controller\UploadFileController.cs" />
+    <Compile Include="Controller\UserPropertyController.cs" />
+    <Compile Include="DataCache\AiRelatedCacheManager.cs" />
+    <Compile Include="DataCache\TotalOnlineNumCacheManager.cs" />
+    <Compile Include="DataCache\OnlineNumCacheManager.cs" />
+    <Compile Include="DataCache\AnchorCacheManager.cs" />
+    <Compile Include="DataCache\VideoViewershipNumCacheManager.cs" />
+    <Compile Include="Db\SQLiteHelperUploadFileRecord.cs" />
+    <Compile Include="Db\SQLiteHelperVideoRecord.cs" />
+    <Compile Include="Db\SQLiteHelperOnlineNumNew.cs" />
+    <Compile Include="Db\SQLiteHelperVideoViewershipNum.cs" />
+    <Compile Include="Db\SQLiteHelperTotalOnlineNum.cs" />
+    <Compile Include="Db\SQLiteHelperOnlineNum.cs" />
+    <Compile Include="Db\SQLiteHelperUploadFileAnalysis.cs" />
+    <Compile Include="Db\SQLiteHelperVideoContrast.cs" />
+    <Compile Include="Db\SQLiteHelperUploadFileAudio.cs" />
+    <Compile Include="Db\SQLiteHelperUploadFile.cs" />
+    <Compile Include="Db\SQLiteHelperAudioAnalysis.cs" />
+    <Compile Include="Db\SQLiteHelperAudio.cs" />
+    <Compile Include="Dto\AddAnchorDto.cs" />
+    <Compile Include="Dto\AIRelatedCacheDto.cs" />
+    <Compile Include="Dto\AnchorPageDto.cs" />
+    <Compile Include="Dto\AskRequestDto.cs" />
+    <Compile Include="Dto\AskResponseDto.cs" />
+    <Compile Include="Dto\OnlineChartDto.cs" />
+    <Compile Include="Dto\SentenceMarkContrastDto.cs" />
+    <Compile Include="Dto\SentenceMarkDto.cs" />
+    <Compile Include="Dto\UploadFileDto.cs" />
+    <Compile Include="Dto\UploadFilePageQueryDto.cs" />
+    <Compile Include="Dto\VideoContrastDto.cs" />
+    <Compile Include="Dto\VideoContrastPageQueryDto.cs" />
+    <Compile Include="Global\Constant.cs" />
+    <Compile Include="Model\UploadFileRecord.cs" />
+    <Compile Include="Model\VideoRecord.cs" />
+    <Compile Include="Model\OnlineNumNew.cs" />
+    <Compile Include="Model\TotalOnlineNum.cs" />
+    <Compile Include="Model\OnlineNum.cs" />
+    <Compile Include="Model\UploadFile.cs" />
+    <Compile Include="Model\UploadFileAlysis.cs" />
+    <Compile Include="Model\UploadFileAudio.cs" />
+    <Compile Include="Model\VideoContrast.cs" />
+    <Compile Include="Model\VideoViewershipNum.cs" />
+    <Compile Include="Utils\DouyinHttpClient.cs" />
+    <Compile Include="Utils\FrontNotice.cs" />
+    <Compile Include="Utils\kuaishou\KuaiShouCaptchaUtils.cs" />
+    <Compile Include="Utils\kuaishou\KuaiShouGetStreamClient.cs" />
+    <Compile Include="Utils\kuaishou\KuaiShouRequestClient.cs" />
+    <Compile Include="Utils\KvHelper.cs" />
+    <Compile Include="Utils\MD5Utils.cs" />
+    <Compile Include="Utils\NoticeTest.cs" />
+    <Compile Include="Utils\OssUtils.cs" />
+    <Compile Include="Utils\PopupWindowManager.cs" />
+    <Compile Include="Utils\SystemStatusTimer.cs" />
+    <Compile Include="Utils\WebSocketProcessUtils.cs" />
+    <Compile Include="Utils\ProxyIPUtils.cs" />
+    <Compile Include="Utils\SignatureHeaders.cs" />
+    <Compile Include="Utils\StringEncryptor.cs" />
+    <Compile Include="Utils\SystemSleep.cs" />
+    <Compile Include="Utils\ScreenUtils.cs" />
+    <Compile Include="Utils\TimeUtils.cs" />
+    <Compile Include="vo\ai\AiAnalyzeTradePromptVo.cs" />
+    <Compile Include="vo\ai\AiRecommendTradeVo.cs" />
+    <Compile Include="vo\ai\AiModelVo.cs" />
+    <Compile Include="Utils\DouyinWebClientUtils.cs" />
+    <Compile Include="Utils\WinInetHelper.cs" />
+    <Compile Include="vo\ai\AiTokenUseRecordVo.cs" />
+    <Compile Include="vo\ai\ConversationPage.cs" />
+    <Compile Include="vo\ai\ConversationVo.cs" />
+    <Compile Include="vo\ai\DanMuVo.cs" />
+    <Compile Include="vo\ai\ExtractPromptVo.cs" />
+    <Compile Include="vo\ai\ModelConfigVo.cs" />
+    <Compile Include="vo\ai\SceneSliceStatusVo.cs" />
+    <Compile Include="vo\ai\VideoDataViewingConfuseVo.cs" />
+    <Compile Include="vo\anchor\AiAnchorInfoVo.cs" />
+    <Compile Include="vo\anchor\AnchorUrlInfoVo.cs" />
+    <Compile Include="vo\anchor\AnchorYesterdayRecordItemVo.cs" />
+    <Compile Include="vo\anchor\AnchorYesterdayRecordVo.cs" />
+    <Compile Include="vo\anchor\CurrentMonitoringPositionVo.cs" />
+    <Compile Include="vo\anchor\OpenMonitoringPositionVo.cs" />
+    <Compile Include="vo\anchor\AuthUsageVo.cs" />
+    <Compile Include="vo\anchor\PullVideoDataRequest.cs" />
+    <Compile Include="vo\barrage\BarrageDataVo.cs" />
+    <Compile Include="vo\common\BasicSettingsBaseDto.cs" />
+    <Compile Include="vo\config\AccountPasswordVo.cs" />
+    <Compile Include="vo\config\ClientVersionConfigVo.cs" />
+    <Compile Include="vo\config\SetTokenVo.cs" />
+    <Compile Include="vo\contrast\ContrastVo.cs" />
+    <Compile Include="vo\cueWords\CueWordsVo.cs" />
+    <Compile Include="vo\dataScreenshot\DataScreenshotVo.cs" />
+    <Compile Include="vo\diagnosis\AiDiagnosisCueVo.cs" />
+    <Compile Include="vo\diagnosis\DiagnosisCueVo.cs" />
+    <Compile Include="vo\diagnosis\GenerateReportVo.cs" />
+    <Compile Include="vo\hotSearch\HotSearchEmailAccountVo.cs" />
+    <Compile Include="vo\hotSearch\ReportFailureVo.cs" />
+    <Compile Include="vo\oceanEngineData\OceanEngineDataVo.cs" />
+    <Compile Include="vo\oceanEngineData\VideoDataViewingConfuseVo.cs" />
+    <Compile Include="vo\proxyIP\ProxyIpVo.cs" />
+    <Compile Include="vo\shortVideo\LocalVideoInfoVo.cs" />
+    <Compile Include="vo\shortVideo\UserInfluencerSubscriptionVo.cs" />
+    <Compile Include="vo\shortVideo\VideoHotSearchVideoInfoVo.cs" />
+    <Compile Include="vo\shortVideo\VideoInfluencerInfoVo.cs" />
+    <Compile Include="vo\shortVideo\VideoInfoVo.cs" />
+    <Compile Include="vo\shortVideo\VideoUserHotSubscriptionAllVo.cs" />
+    <Compile Include="vo\shortVideo\VideoUserHotSubscriptionVo.cs" />
+    <Compile Include="vo\shortVideo\VideoUserVideoVo.cs" />
+    <Compile Include="vo\SignUploadUrlVo.cs" />
+    <Compile Include="vo\socketCollectMessage\SocketCollectMessageVo.cs" />
+    <Compile Include="vo\system\DictDataListVo.cs" />
+    <Compile Include="vo\system\SystemKvVo.cs" />
+    <Compile Include="vo\uploadFile\UploadFileDetailVo.cs" />
+    <Compile Include="vo\video\AnchorVideoDetailVo.cs" />
+    <Compile Include="vo\video\BasicSettingsVo.cs" />
+    <Compile Include="vo\video\DataDiagnosisConfigVo.cs" />
+    <Compile Include="vo\video\ToGeneratedVo.cs" />
+    <Compile Include="vo\video\AnchorVideoFileAllVo.cs" />
+    <Compile Include="vo\video\ExportVideoContentVo.cs" />
+    <Compile Include="vo\video\VideoContentVo.cs" />
+    <Compile Include="vo\video\VideoInfoVo.cs" />
+    <Compile Include="vo\user\UserInfoVo.cs" />
+    <Compile Include="vo\user\UserVo.cs" />
+    <Compile Include="Websocket\BlessBag.cs" />
+    <Compile Include="Websocket\Entity\WebsocketEntity.cs" />
+    <Compile Include="Websocket\Entity\WebsocketSaveEntity.cs" />
+    <Compile Include="Websocket\Entity\WebsocketUtilsEntity.cs" />
+    <Compile Include="Websocket\socketAddress\browser\models\BrowserModels.cs" />
+    <Compile Include="Websocket\socketAddress\browser\WebsocketPage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Websocket\socketAddress\browser\WebsocketPage.Designer.cs">
+      <DependentUpon>WebsocketPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Update\UpdateInfo.cs" />
+    <Compile Include="vo\AnalysisResultTxtVo.cs" />
+    <Compile Include="Utils\CustomException.cs" />
+    <Compile Include="Utils\DateUtils.cs" />
+    <Compile Include="Utils\LogServerUtils.cs" />
+    <Compile Include="Utils\ServerTimeUtils.cs" />
+    <Compile Include="Utils\SystemUtils.cs" />
+    <Compile Include="Utils\CppRecordUtils.cs" />
+    <Compile Include="Utils\VideoUtils.cs" />
+    <Compile Include="Utils\AudioUtils.cs" />
+    <Compile Include="Bll\ConfigBll.cs" />
+    <Compile Include="CommonCache.cs" />
+    <Compile Include="Controller\AnchorInfoController.cs" />
+    <Compile Include="Controller\AnchorVideoController.cs" />
+    <Compile Include="Controller\ConfigController.cs" />
+    <Compile Include="Controller\FormController.cs" />
+    <Compile Include="Db\DataTableToEntityMapper.cs" />
+    <Compile Include="Db\SQLiteHelper.cs" />
+    <Compile Include="Dto\AnchorDto.cs" />
+    <Compile Include="Dto\AnchorVideoDto.cs" />
+    <Compile Include="Dto\AnchorVideoPageQueryDto.cs" />
+    <Compile Include="Dto\PageDto.cs" />
+    <Compile Include="Dto\TcpDto.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HttpServer\HttpListenerServer.cs" />
+    <Compile Include="HttpServer\HttpProc.cs" />
+    <Compile Include="HttpServer\HttpResourceFileServer.cs" />
+    <Compile Include="Model\AnchorInfo.cs" />
+    <Compile Include="Model\AnchorVideo.cs" />
+    <Compile Include="Model\Audio.cs" />
+    <Compile Include="Model\AudioaAlysis.cs" />
+    <Compile Include="Model\Config.cs" />
+    <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\RecordLogs.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Bll\VedioModels\DouYinModel.cs" />
+    <Compile Include="Utils\DbUtils.cs" />
+    <Compile Include="Utils\DefenderExclusionsManager.cs" />
+    <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="Utils\FormUtils.cs" />
+    <Compile Include="Utils\WindowsUtils.cs" />
+    <Compile Include="Websocket\socketAddress\browser\clsWEB.cs" />
+    <Compile Include="Websocket\socketAddress\SocketAddressInit.cs" />
+    <Compile Include="Websocket\utils\WebsocketUtils.cs" />
+    <Compile Include="Websocket\WebsocketConnection.cs" />
+    <Compile Include="Websocket\WebsocketDataHandle.cs" />
+    <Compile Include="Utils\ZipUtils.cs" />
+    <Compile Include="vo\ai\HistoryParagraphVo.cs" />
+    <Compile Include="bo\ai\StructureReqBo.cs" />
+    <Compile Include="vo\ai\StructurePageVo.cs" />
+    <Compile Include="vo\AnalysisResultCruxTypeVo.cs" />
+    <Compile Include="vo\AnalysisResultVo.cs" />
+    <Compile Include="vo\AnchorInfoVo.cs" />
+    <Compile Include="vo\AnchorVideoInfoVo.cs" />
+    <Compile Include="vo\CloudAnalysisVo.cs" />
+    <Compile Include="vo\CloudContrastAnalysisVo.cs" />
+    <Compile Include="vo\CloudContrastInfoVo.cs" />
+    <Compile Include="vo\CruxTypeInfoVo.cs" />
+    <Compile Include="vo\CruxTypeVo.cs" />
+    <Compile Include="vo\OnlineAnalysisItemVo.cs" />
+    <Compile Include="vo\OnlineNumServerVo.cs" />
+    <Compile Include="vo\OnlineNumVo.cs" />
+    <Compile Include="vo\PageResult.cs" />
+    <Compile Include="vo\ProductInfoVo.cs" />
+    <Compile Include="vo\trade\TradeVo.cs" />
+    <Compile Include="vo\uploadFile\CheckTxtFileAnalysisPropertyVo.cs" />
+    <Compile Include="vo\VideoWordNumVo.cs" />
+    <Compile Include="vo\WordsTabVo.cs" />
+    <Compile Include="WeChatChannels\Authorization\WeChatChannelsAuthorizationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WeChatChannels\Authorization\WeChatChannelsAuthorizationForm.Designer.cs">
+      <DependentUpon>WeChatChannelsAuthorizationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WeChatChannels\Common\ResponseResult.cs" />
+    <Compile Include="WeChatChannels\Common\WeChatChannelsAccount.cs" />
+    <Compile Include="WeChatChannels\Common\WeChatChannelsBusinessInfo.cs" />
+    <Compile Include="WeChatChannels\Common\WeChatChannelsLiveStream.cs" />
+    <Compile Include="WeChatChannels\Models\WeChatChannelsDashboardModel.cs" />
+    <Compile Include="WeChatChannels\Models\WeChatChannelsServiceTokenModel.cs" />
+    <Compile Include="WeChatChannels\Models\AuthorizationResultModel.cs" />
+    <Compile Include="WeChatChannels\Models\LiveHeartbeatModel.cs" />
+    <Compile Include="WeChatChannels\Models\LiveStatusModel.cs" />
+    <Compile Include="WeChatChannels\Services\WeChatChannelsDashboardService.cs" />
+    <Compile Include="WeChatChannels\Services\WeChatChannelsSerivce.cs" />
+    <Compile Include="WeChatChannels\Utils\WeChatChannelsHttpUtils.cs" />
+    <Compile Include="WeChatChannels\Utils\WeChatChannelsServiceSignatureUtil.cs" />
+    <Compile Include="WeChatChannels\Utils\WeChatChannelsServiceToken.cs" />
+    <Compile Include="WeChatChannels\Utils\WeChatChannelsUtils.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="juliang\JuliangForm.resx">
+      <DependentUpon>JuliangForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogConsole\LogForm.resx">
+      <DependentUpon>LogForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Websocket\socketAddress\browser\WebsocketPage.resx">
+      <DependentUpon>WebsocketPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WeChatChannels\Authorization\WeChatChannelsAuthorizationForm.resx">
+      <DependentUpon>WeChatChannelsAuthorizationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="anchorLive\README.md" />
+    <None Include="app.manifest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\sqlinit.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="initconfig.json" />
+    <None Include="script\bdms.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\.links\d1173171cfef5f1be72ca5d3f7d52415647dabf0" />
+    <None Include="ms-playwright\chromium-1041\chrome-win\109.0.5414.46.manifest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\chrome_100_percent.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\chrome_200_percent.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\First Run">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\icudtl.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\af.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\am.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ar-XB.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ar.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\bg.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\bn.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ca.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\cs.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\da.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\de.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\el.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\en-GB.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\en-US.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\en-XA.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\es-419.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\es.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\et.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\fa.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\fi.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\fil.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\fr.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\gu.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\he.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\hi.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\hr.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\hu.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\id.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\it.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ja.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\kn.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ko.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\lt.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\lv.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ml.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\mr.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ms.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\nb.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\nl.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\pl.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\pt-BR.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\pt-PT.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ro.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ru.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\sk.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\sl.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\sr.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\sv.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\sw.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ta.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\te.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\th.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\tr.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\uk.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\ur.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\vi.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\zh-CN.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\locales\zh-TW.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\MEIPreload\manifest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\MEIPreload\preloaded_data.pb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\resources.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\v8_context_snapshot.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="ms-playwright\chromium-1041\chrome-win\vk_swiftshader_icd.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="script\AddExclusion.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="script\currentVersion">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="script\run_end.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="updateExe\ReviewAnalysisUpdate.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="favilogo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="favilogo1.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libbz2-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libgcc_s_seh-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libiconv-2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="liblzma-5.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="librecord.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <!-- ORT / DirectML native dll：存在才拷（Condition Exists），缺失不阻断构建。
+         有文件 → 拷到输出供本地 SVS 使用（onnxruntime.dll 为 SVS 必需，DirectML.dll 提供 GPU 加速）。
+         缺失 → 运行时 SVS 引擎实例化会失败，AsrEngineFactory 会把它从引擎链剔除并自动降级走 Tencent。
+         可从 packages\Microsoft.ML.OnnxRuntime.DirectML.1.17.3\runtimes\win-x64\native\ (onnxruntime.dll)
+         与 packages\Microsoft.AI.DirectML.*\bin\x64\ (DirectML.dll) 复制到 repo 根目录。 -->
+    <Content Include="onnxruntime.dll" Condition="Exists('onnxruntime.dll')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DirectML.dll" Condition="Exists('DirectML.dll')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libstdc++-6.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libwinpthread-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resource\close.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resource\max.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resource\min.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\chrome.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\chrome.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\chrome_elf.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\chrome_proxy.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\chrome_pwa_launcher.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\chrome_wer.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\D3DCompiler_47.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\elevation_service.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\eventlog_provider.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\libEGL.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\libGLESv2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\mojo_core.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\notification_helper.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\vk_swiftshader.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ms-playwright\chromium-1041\chrome-win\vulkan-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resource\normal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resource\refresh.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resource\refresh1.png" />
+    <Content Include="script\clientVersion">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\juliang.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_online_num_new.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_online_num.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_online_num_new.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_total_online_num.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_upload_file_record.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_video_record.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tools\pdf-watermark.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tools\VC_redist.x64.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tools\wkhtmltopdf.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="updateExe\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="updateExe\Newtonsoft.Json.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="updateExe\ReviewAnalysisUpdate.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="updateExe\ReviewAnalysisUpdate.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="zlib1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="script\DisableDefender.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="script\dy.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_audio.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_audio_analysis.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_upload_file.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_upload_file_analysis.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_upload_file_audio.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="script\init_video_contrast.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tools\ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tools\ffplay.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tools\windowsdesktop-runtime-8.0.11-win-x86.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="plugins\collectors\AnchorLiveCollectorSimple.cs" />
+    <Compile Include="plugins\constant\PlatformConstants.cs" />
+    <Compile Include="plugins\collectors\EnterpriseCollectorSimple.cs" />
+    <Compile Include="plugins\collectors\JuliangedCollector.cs" />
+    <Compile Include="plugins\collectors\LifeCollectorSimple.cs" />
+    <Compile Include="plugins\collectors\QianchuanCollectorSimple.cs" />
+    <Compile Include="plugins\core\AnchorInstance.cs" />
+    <Compile Include="plugins\core\CollectionScheduler.cs" />
+    <Compile Include="plugins\core\SupplementCollectRecordStore.cs" />
+    <Compile Include="plugins\core\SupplementalDataCollectionScheduler.cs" />
+    <Compile Include="plugins\core\ModuleConfig.cs" />
+    <Compile Include="plugins\core\PermissionChecker.cs" />
+    <Compile Include="plugins\core\PlatformDataManager.cs" />
+
+    <Compile Include="plugins\interfaces\IDataCollector.cs" />
+    <Compile Include="plugins\interfaces\IPlatformCollector.cs" />
+    <Compile Include="plugins\interfaces\IDataAdapter.cs" />
+    <Compile Include="plugins\models\DataCollectedEventArgs.cs" />
+    <Compile Include="plugins\models\GatherDataEntityBase.cs" />
+    <Compile Include="plugins\models\UnifiedDataModel.cs" />
+    <Compile Include="plugins\models\CollectedDataItem.cs" />
+    <Compile Include="plugins\adapters\JuliangAdapter.cs" />
+    <Compile Include="plugins\adapters\QianchuanAdapter.cs" />
+    <Compile Include="plugins\adapters\EnterpriseAdapter.cs" />
+    <Compile Include="plugins\adapters\LifeAdapter.cs" />
+    <Compile Include="plugins\adapters\AnchorLiveAdapter.cs" />
+    <Compile Include="plugins\processors\DataMerger.cs" />
+    <Compile Include="plugins\upload\UploadSchedulerNew.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 和 x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CefSharp 108.4.13\x64\" />
+    <Folder Include="docs\" />
+    <Folder Include="plugins\constant\" />
+    <Folder Include="TcpHelp\" />
+    <Folder Include="Websocket\Douyin\Enums\" />
+    <Folder Include="Websocket\Douyin\Models\" />
+    <Folder Include="Websocket\socketAddress\js\" />
+    <Folder Include="Websocket\socketAddress\server\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
+    <Error Condition="!Exists('packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets'))" />
+    <Error Condition="!Exists('packages\chromiumembeddedframework.runtime.win-x64.135.0.17\build\chromiumembeddedframework.runtime.win-x64.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\chromiumembeddedframework.runtime.win-x64.135.0.17\build\chromiumembeddedframework.runtime.win-x64.props'))" />
+    <Error Condition="!Exists('packages\chromiumembeddedframework.runtime.win-x86.135.0.17\build\chromiumembeddedframework.runtime.win-x86.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\chromiumembeddedframework.runtime.win-x86.135.0.17\build\chromiumembeddedframework.runtime.win-x86.props'))" />
+    <Error Condition="!Exists('packages\CefSharp.Common.135.0.170\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.135.0.170\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('packages\CefSharp.Common.135.0.170\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.135.0.170\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('packages\Microsoft.Playwright.1.29.0\build\Microsoft.Playwright.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Playwright.1.29.0\build\Microsoft.Playwright.targets'))" />
+    <Error Condition="!Exists('packages\OpenCvSharp4.runtime.win.4.11.0.20250507\build\netstandard\OpenCvSharp4.runtime.win.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\OpenCvSharp4.runtime.win.4.11.0.20250507\build\netstandard\OpenCvSharp4.runtime.win.props'))" />
+    <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.Managed.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.Managed.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets'))" />
+    <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.DirectML.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.DirectML.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.props'))" />
+    <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.DirectML.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.DirectML.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.targets'))" />
+  </Target>
+  <Import Project="packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <Import Project="packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" />
+  <Import Project="packages\Microsoft.Playwright.1.29.0\build\Microsoft.Playwright.targets" Condition="Exists('packages\Microsoft.Playwright.1.29.0\build\Microsoft.Playwright.targets')" />
+  <Import Project="packages\CefSharp.Common.135.0.170\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.135.0.170\build\CefSharp.Common.targets')" />
+  <Import Project="packages\Microsoft.ML.OnnxRuntime.Managed.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.Managed.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets')" />
+  <Import Project="packages\Microsoft.ML.OnnxRuntime.DirectML.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.targets" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.DirectML.1.17.3\build\netstandard2.0\Microsoft.ML.OnnxRuntime.DirectML.targets')" />
+</Project>

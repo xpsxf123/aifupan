@@ -1,0 +1,35 @@
+$--color-primary: #444CFF; //框架主要颜色
+
+$--color-white: #fff;
+//----------------------------上面的颜色只是对框架进行重写。主要还是用下面的var设置颜色，后续会改掉框架的颜色，采用重写的方式来完成皮肤切换
+:root{
+    --color-main: #{$--color-primary};//主题颜色
+    --color-success: #28BD6C; 
+    --color-err: #FC4F52; 
+    --color-white: #fff;
+    --text-main: #151719; // 字体主要颜色
+    --text-1: #2E3742; //字体字体辅助色1
+    --text-2: #4D4D4D; // 字符辅助色2
+    --text-3: #7A7C80; // 字符辅助色2
+    --text-4: #484A4D;
+    --text-err: var(--color-err); //错误提示色
+    --text-c1: #0D6986; //对比分析颜色1
+    --text-c2: #B94E3B;//对比分析颜色2
+}
+
+$color-main: var(--color-main);
+
+
+
+$mgPdMap:(l:20,r:20,t:20,b:20,all:20);
+
+$c1: #0D6986;
+$c2: #B94E3B;
+$c3: #004793;
+$colorMap: (text:(Main: #151719,1: #2E3742,2:#4D4D4D,3:#95A1AF, 4:var(--text-4), Err: #FC4F52, c1: $c1, c2:  $c1,c3: $c3, Theme: $color-main));
+
+$fontMap: (s:30,w:9);
+
+$borderColor:(1:#DCE0E7,2:#e8e8e8, Theme: $color-main);
+
+$borderMap:(l:$borderColor,r:$borderColor,t:$borderColor,b:$borderColor,all: $borderColor);

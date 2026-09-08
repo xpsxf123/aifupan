@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "projectName": "{project}",
+  "pages": [
+    {
+      "pageId": "{module}_{page}",
+      "pageName": "{page_name}",
+      "pageType": "list|form|detail|dashboard",
+      "module": "{module_name}",
+      "route": "{route}",
+      "layout": { "type": "flex", "direction": "column", "gap": "16px" },
+      "sections": []
+    }
+  ]
+}
+

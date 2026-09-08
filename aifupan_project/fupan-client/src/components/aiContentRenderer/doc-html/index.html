@@ -1,0 +1,1631 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AiContentRenderer 标签说明与样式预览</title>
+    <style>
+        :root{
+            --doc-bg:#f6f9ff;
+            --doc-surface:#ffffff;
+            --doc-card:#ffffff;
+            --doc-text:#0f172a;
+            --doc-muted:#475569;
+            --doc-border:rgba(15,23,42,.10);
+            --doc-accent:#2563eb;
+            --doc-accent-2:#0ea5e9;
+            --doc-code-bg:#f8fafc;
+        }
+        *{box-sizing:border-box;}
+        html,body{height:100%;}
+        body{
+            margin:0;
+            font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+            color:var(--doc-text);
+            background:linear-gradient(180deg,#f6f9ff 0%, #ffffff 60%, #ffffff 100%);
+            line-height:1.75;
+        }
+        a{color:var(--doc-accent);text-decoration:none;border-bottom:1px dashed rgba(37,99,235,.45);}
+        a:hover{color:#1d4ed8;border-bottom-color:#1d4ed8;}
+        .doc{
+            max-width:1200px;
+            margin:0 auto;
+            padding:32px 20px 64px;
+        }
+        .hero{
+            padding:22px 22px;
+            border-radius:18px;
+            border:1px solid rgba(37,99,235,.16);
+            background:linear-gradient(180deg,#ffffff 0%, #f3f7ff 100%);
+            box-shadow:0 12px 30px rgba(15,23,42,.06);
+        }
+        .hero h1{
+            margin:0 0 10px;
+            font-size:22px;
+            letter-spacing:.02em;
+        }
+        .hero p{margin:6px 0;color:var(--doc-muted);}
+        .toc{
+            margin-top:18px;
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+        }
+        .toc a{
+            padding:6px 10px;
+            border-radius:999px;
+            background:#eff6ff;
+            border:1px solid rgba(37,99,235,.16);
+            color:#1d4ed8;
+            text-decoration:none;
+        }
+        .section{
+            margin-top:22px;
+            padding:18px 18px;
+            border-radius:18px;
+            border:1px solid var(--doc-border);
+            background:var(--doc-surface);
+            box-shadow:0 10px 22px rgba(15,23,42,.04);
+        }
+        .section h2{
+            margin:0 0 12px;
+            font-size:18px;
+        }
+        .section h3{
+            margin:16px 0 10px;
+            font-size:15px;
+            color:#1e40af;
+        }
+        .meta{
+            color:var(--doc-muted);
+            font-size:13px;
+        }
+        .kv{
+            display:grid;
+            grid-template-columns:160px 1fr;
+            gap:8px 14px;
+            margin-top:10px;
+            padding:12px 14px;
+            border:1px solid rgba(15,23,42,.10);
+            border-radius:14px;
+            background:#f8fafc;
+        }
+        .kv b{color:#0f172a;}
+        .demo{
+            margin-top:14px;
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap:14px;
+        }
+        @media (max-width: 980px){
+            .demo{grid-template-columns:1fr;}
+        }
+        pre{
+            margin:0;
+            padding:14px 14px;
+            border-radius:14px;
+            border:1px solid rgba(15,23,42,.10);
+            background:var(--doc-code-bg);
+            overflow:auto;
+            color:#0f172a;
+            font-size:12px;
+            line-height:1.65;
+            white-space:pre;
+        }
+        .previewWrap{
+            border-radius:14px;
+            border:1px solid rgba(15,23,42,.10);
+            background:#ffffff;
+            padding:12px 12px;
+            overflow:hidden;
+        }
+        .previewWrap .caption{
+            font-size:12px;
+            color:#475569;
+            margin-bottom:10px;
+            font-weight:700;
+            letter-spacing:.02em;
+        }
+        .previewWrap .ai-mdtag-render-root,
+        .previewWrap .ai-json-render-root{
+            font-size:14px;
+        }
+        .noteBox{
+            margin-top:10px;
+            padding:10px 12px;
+            border-radius:12px;
+            background:#eff6ff;
+            border:1px solid rgba(37,99,235,.16);
+            color:#1e40af;
+            font-size:13px;
+        }
+        .tagPalette{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-top:10px;
+        }
+    </style>
+
+    <style>
+        .ai-mdtag-render-root{
+            --ai-tag-primary:#6d5dfc;
+            --ai-tag-secondary:#2ec5ff;
+            --ai-tag-success:#22c55e;
+            --ai-tag-warning:#f59e0b;
+            --ai-tag-danger:#ef4444;
+            --ai-tag-text:#1f2937;
+            --ai-tag-muted:#667085;
+            line-height:1.85;
+            color:var(--ai-tag-text);
+            word-break:break-word;
+        }
+        .ai-mdtag-render-root.ai-mdtag-theme-aurora{
+            --ai-tag-primary:#6d5dfc;
+            --ai-tag-secondary:#2ec5ff;
+        }
+        .ai-mdtag-render-root.ai-mdtag-theme-business{
+            --ai-tag-primary:#1d4ed8;
+            --ai-tag-secondary:#0891b2;
+            --ai-tag-text:#0f172a;
+            --ai-tag-muted:#475569;
+        }
+        .ai-mdtag-render-root.ai-mdtag-theme-warm{
+            --ai-tag-primary:#c2410c;
+            --ai-tag-secondary:#f59e0b;
+            --ai-tag-text:#431407;
+            --ai-tag-muted:#9a3412;
+        }
+        .ai-mdtag-render-root.ai-mdtag-skin-glass .aifupan-card,
+        .ai-mdtag-render-root.ai-mdtag-skin-glass .aifupan-chart,
+        .ai-mdtag-render-root.ai-mdtag-skin-glass .aifupan-statistic,
+        .ai-mdtag-render-root.ai-mdtag-skin-glass .aifupan-alert,
+        .ai-mdtag-render-root.ai-mdtag-skin-glass .aifupan-note,
+        .ai-mdtag-render-root.ai-mdtag-skin-glass .aifupan-collapse details{
+            backdrop-filter:blur(10px);
+            background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(247,249,255,.62));
+        }
+        .ai-mdtag-render-root.ai-mdtag-skin-paper{
+            background:linear-gradient(180deg,#fffdf8 0%,#fffaf0 100%);
+            padding:18px;
+            border-radius:18px;
+            box-shadow:0 14px 34px rgba(120,53,15,.06);
+        }
+        .ai-mdtag-render-root.ai-mdtag-skin-minimal .aifupan-card,
+        .ai-mdtag-render-root.ai-mdtag-skin-minimal .aifupan-chart,
+        .ai-mdtag-render-root.ai-mdtag-skin-minimal .aifupan-statistic,
+        .ai-mdtag-render-root.ai-mdtag-skin-minimal .aifupan-alert,
+        .ai-mdtag-render-root.ai-mdtag-skin-minimal .aifupan-note,
+        .ai-mdtag-render-root.ai-mdtag-skin-minimal .aifupan-collapse details{
+            box-shadow:none;
+            border-radius:12px;
+        }
+        .ai-mdtag-render-root .aifupan-block{margin:14px 0;}
+        .ai-mdtag-render-root .aifupan-title{
+            margin:18px 0 12px;
+            color:#312e81;
+            font-weight:800;
+            letter-spacing:.02em;
+        }
+        .ai-mdtag-render-root .aifupan-title-1{
+            padding:16px 18px;
+            border-radius:18px;
+            background:linear-gradient(135deg,rgba(109,93,252,.16),rgba(46,197,255,.12));
+            box-shadow:0 14px 30px rgba(109,93,252,.12);
+        }
+        .ai-mdtag-render-root .aifupan-title-2,
+        .ai-mdtag-render-root .aifupan-title-3{
+            padding-left:12px;
+            border-left:4px solid var(--ai-tag-primary);
+        }
+        .ai-mdtag-render-root .aifupan-title-filled{
+            padding:14px 16px;
+            border-radius:16px;
+            background:linear-gradient(135deg,rgba(109,93,252,.14),rgba(46,197,255,.10));
+            box-shadow:0 12px 26px rgba(109,93,252,.10);
+        }
+        .ai-mdtag-render-root .aifupan-title-bordered{
+            padding:12px 14px;
+            border-radius:16px;
+            border:1px solid rgba(109,93,252,.22);
+            background:rgba(255,255,255,.55);
+        }
+        .ai-mdtag-render-root .aifupan-title-leftbar{
+            padding-left:12px;
+            border-left:6px solid var(--ai-tag-primary);
+        }
+        .ai-mdtag-render-root .aifupan-title-underline{
+            padding-bottom:8px;
+            border-bottom:3px double rgba(109,93,252,.35);
+        }
+        .ai-mdtag-render-root .aifupan-card,
+        .ai-mdtag-render-root .aifupan-chart,
+        .ai-mdtag-render-root .aifupan-statistic,
+        .ai-mdtag-render-root .aifupan-alert,
+        .ai-mdtag-render-root .aifupan-collapse details{
+            border:1px solid rgba(109,93,252,.14);
+            border-radius:18px;
+            background:linear-gradient(180deg,rgba(248,250,255,.96),rgba(240,244,255,.9));
+            box-shadow:0 12px 28px rgba(15,23,42,.06);
+        }
+        .ai-mdtag-render-root .aifupan-card{
+            overflow:hidden;
+            padding:0;
+        }
+        .ai-mdtag-render-root .aifupan-card-head{
+            padding:16px 20px 14px;
+            border-bottom:1px solid rgba(109,93,252,.1);
+            background:linear-gradient(180deg,rgba(109,93,252,.08),rgba(109,93,252,.02));
+        }
+        .ai-mdtag-render-root .aifupan-card-head > :first-child,
+        .ai-mdtag-render-root .aifupan-card-body > :first-child,
+        .ai-mdtag-render-root .aifupan-column > :first-child{
+            margin-top:0;
+        }
+        .ai-mdtag-render-root .aifupan-card-head > :last-child,
+        .ai-mdtag-render-root .aifupan-card-body > :last-child,
+        .ai-mdtag-render-root .aifupan-column > :last-child{
+            margin-bottom:0;
+        }
+        .ai-mdtag-render-root .aifupan-card-title{
+            margin:0;
+            font-size:16px;
+            font-weight:800;
+            color:#312e81;
+        }
+        .ai-mdtag-render-root .aifupan-card-body{
+            padding:8px 10px 9px;
+        }
+        .ai-mdtag-render-root .aifupan-alert{
+            padding:14px 16px;
+            border-left:4px solid var(--ai-tag-secondary);
+            background:linear-gradient(135deg,rgba(46,197,255,.12),rgba(46,197,255,.04));
+        }
+        .ai-mdtag-render-root .aifupan-alert-success{
+            border-left-color:var(--ai-tag-success);
+            background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(34,197,94,.04));
+        }
+        .ai-mdtag-render-root .aifupan-alert-warning{
+            border-left-color:var(--ai-tag-warning);
+            background:linear-gradient(135deg,rgba(245,158,11,.14),rgba(245,158,11,.04));
+        }
+        .ai-mdtag-render-root .aifupan-alert-error{
+            border-left-color:var(--ai-tag-danger);
+            background:linear-gradient(135deg,rgba(239,68,68,.14),rgba(239,68,68,.04));
+        }
+        .ai-mdtag-render-root .aifupan-note{
+            padding:14px 16px;
+            border-radius:18px;
+            border:1px dashed rgba(168,85,247,.32);
+            background:linear-gradient(135deg,rgba(168,85,247,.10),rgba(236,72,153,.06));
+            box-shadow:0 14px 34px rgba(168,85,247,.08);
+        }
+        .ai-mdtag-render-root .aifupan-note-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            margin-bottom:10px;
+        }
+        .ai-mdtag-render-root .aifupan-note-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:6px 10px;
+            border-radius:999px;
+            font-weight:800;
+            font-size:12px;
+            letter-spacing:.06em;
+            color:#6b21a8;
+            background:rgba(168,85,247,.14);
+            border:1px solid rgba(168,85,247,.22);
+        }
+        .ai-mdtag-render-root .aifupan-note-body{color:var(--ai-tag-text);}
+        .ai-mdtag-render-root .aifupan-progress-inline{
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            min-width:220px;
+            margin:0 6px;
+            vertical-align:middle;
+        }
+        .ai-mdtag-render-root .aifupan-progress-track{
+            flex:1;
+            height:12px;
+            border-radius:999px;
+            background:rgba(109,93,252,.12);
+            overflow:hidden;
+            box-shadow:inset 0 1px 4px rgba(15,23,42,.08);
+        }
+        .ai-mdtag-render-root .aifupan-progress-bar{
+            display:block;
+            height:100%;
+            width:0;
+            border-radius:999px;
+            background:linear-gradient(90deg,var(--ai-tag-primary),var(--ai-tag-secondary));
+            box-shadow:0 0 16px rgba(109,93,252,.24);
+            transition:width .4s ease;
+        }
+        .ai-mdtag-render-root .aifupan-progress-success{
+            background:linear-gradient(90deg,#22c55e,#4ade80);
+            box-shadow:0 0 16px rgba(34,197,94,.22);
+        }
+        .ai-mdtag-render-root .aifupan-progress-warning{
+            background:linear-gradient(90deg,#f59e0b,#fbbf24);
+            box-shadow:0 0 16px rgba(245,158,11,.22);
+        }
+        .ai-mdtag-render-root .aifupan-progress-error{
+            background:linear-gradient(90deg,#ef4444,#f87171);
+            box-shadow:0 0 16px rgba(239,68,68,.22);
+        }
+        .ai-mdtag-render-root .aifupan-progress-value{
+            min-width:54px;
+            font-weight:800;
+            color:var(--ai-tag-primary);
+        }
+        .ai-mdtag-render-root .aifupan-tag,
+        .ai-mdtag-render-root .aifupan-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:2px 6px;
+            margin:0 6px 6px 0;
+            border-radius:6px;
+            border:1px solid rgba(109,93,252,.12);
+            background:rgba(109,93,252,.08);
+            color:var(--ai-tag-primary);
+            font-size:12px;
+            font-weight:800;
+            letter-spacing:.03em;
+            box-shadow:0 8px 16px rgba(109,93,252,.08);
+        }
+        .ai-mdtag-render-root .aifupan-tag-success{
+            background:rgba(34,197,94,.12);
+            border-color:rgba(34,197,94,.16);
+            color:var(--ai-tag-success);
+        }
+        .ai-mdtag-render-root .aifupan-tag-warning{
+            background:rgba(245,158,11,.14);
+            border-color:rgba(245,158,11,.18);
+            color:#b45309;
+        }
+        .ai-mdtag-render-root .aifupan-tag-error{
+            background:rgba(239,68,68,.14);
+            border-color:rgba(239,68,68,.18);
+            color:var(--ai-tag-danger);
+        }
+        .ai-mdtag-render-root .aifupan-tag-1{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.18);color:#ef4444;}
+        .ai-mdtag-render-root .aifupan-tag-2{background:rgba(249,115,22,.12);border-color:rgba(249,115,22,.18);color:#f97316;}
+        .ai-mdtag-render-root .aifupan-tag-3{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.18);color:#f59e0b;}
+        .ai-mdtag-render-root .aifupan-tag-4{background:rgba(234,179,8,.12);border-color:rgba(234,179,8,.18);color:#eab308;}
+        .ai-mdtag-render-root .aifupan-tag-5{background:rgba(132,204,22,.12);border-color:rgba(132,204,22,.18);color:#84cc16;}
+        .ai-mdtag-render-root .aifupan-tag-6{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.18);color:#22c55e;}
+        .ai-mdtag-render-root .aifupan-tag-7{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.18);color:#10b981;}
+        .ai-mdtag-render-root .aifupan-tag-8{background:rgba(20,184,166,.12);border-color:rgba(20,184,166,.18);color:#14b8a6;}
+        .ai-mdtag-render-root .aifupan-tag-9{background:rgba(6,182,212,.12);border-color:rgba(6,182,212,.18);color:#06b6d4;}
+        .ai-mdtag-render-root .aifupan-tag-10{background:rgba(14,165,233,.12);border-color:rgba(14,165,233,.18);color:#0ea5e9;}
+        .ai-mdtag-render-root .aifupan-tag-11{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.18);color:#3b82f6;}
+        .ai-mdtag-render-root .aifupan-tag-12{background:rgba(37,99,235,.12);border-color:rgba(37,99,235,.18);color:#2563eb;}
+        .ai-mdtag-render-root .aifupan-tag-13{background:rgba(79,70,229,.12);border-color:rgba(79,70,229,.18);color:#4f46e5;}
+        .ai-mdtag-render-root .aifupan-tag-14{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.18);color:#6366f1;}
+        .ai-mdtag-render-root .aifupan-tag-15{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.18);color:#8b5cf6;}
+        .ai-mdtag-render-root .aifupan-tag-16{background:rgba(168,85,247,.12);border-color:rgba(168,85,247,.18);color:#a855f7;}
+        .ai-mdtag-render-root .aifupan-tag-17{background:rgba(192,38,211,.12);border-color:rgba(192,38,211,.18);color:#c026d3;}
+        .ai-mdtag-render-root .aifupan-tag-18{background:rgba(217,70,239,.12);border-color:rgba(217,70,239,.18);color:#d946ef;}
+        .ai-mdtag-render-root .aifupan-tag-19{background:rgba(236,72,153,.12);border-color:rgba(236,72,153,.18);color:#ec4899;}
+        .ai-mdtag-render-root .aifupan-tag-20{background:rgba(244,63,94,.12);border-color:rgba(244,63,94,.18);color:#f43f5e;}
+        .ai-mdtag-render-root .aifupan-tag-21{background:rgba(190,18,60,.12);border-color:rgba(190,18,60,.18);color:#be123c;}
+        .ai-mdtag-render-root .aifupan-tag-22{background:rgba(180,83,9,.12);border-color:rgba(180,83,9,.18);color:#b45309;}
+        .ai-mdtag-render-root .aifupan-tag-23{background:rgba(146,64,14,.12);border-color:rgba(146,64,14,.18);color:#92400e;}
+        .ai-mdtag-render-root .aifupan-tag-24{background:rgba(101,163,13,.12);border-color:rgba(101,163,13,.18);color:#65a30d;}
+        .ai-mdtag-render-root .aifupan-tag-25{background:rgba(21,128,61,.12);border-color:rgba(21,128,61,.18);color:#15803d;}
+        .ai-mdtag-render-root .aifupan-tag-26{background:rgba(15,118,110,.12);border-color:rgba(15,118,110,.18);color:#0f766e;}
+        .ai-mdtag-render-root .aifupan-tag-27{background:rgba(13,148,136,.12);border-color:rgba(13,148,136,.18);color:#0d9488;}
+        .ai-mdtag-render-root .aifupan-tag-28{background:rgba(3,105,161,.12);border-color:rgba(3,105,161,.18);color:#0369a1;}
+        .ai-mdtag-render-root .aifupan-tag-29{background:rgba(29,78,216,.12);border-color:rgba(29,78,216,.18);color:#1d4ed8;}
+        .ai-mdtag-render-root .aifupan-tag-30{background:rgba(51,65,85,.12);border-color:rgba(51,65,85,.18);color:#334155;}
+        .ai-mdtag-render-root .aifupan-badge{
+            background:rgba(46,197,255,.12);
+            border-color:rgba(46,197,255,.18);
+            color:#0369a1;
+        }
+        .ai-mdtag-render-root .aifupan-table{
+            width:100%;
+            border-collapse:separate;
+            border-spacing:0;
+            overflow:hidden;
+            border-radius:14px;
+            border:1px solid rgba(109,93,252,.14);
+            background:rgba(255,255,255,.9);
+            box-shadow:0 12px 24px rgba(15,23,42,.06);
+        }
+        .ai-mdtag-render-root .aifupan-table thead{
+            background:linear-gradient(180deg,rgba(109,93,252,.12),rgba(109,93,252,.06));
+        }
+        .ai-mdtag-render-root .aifupan-table th,
+        .ai-mdtag-render-root .aifupan-table td{
+            padding:10px 12px;
+            border-bottom:1px solid rgba(109,93,252,.10);
+            font-size:13px;
+        }
+        .ai-mdtag-render-root .aifupan-table th{
+            text-align:left;
+            font-weight:800;
+            color:#312e81;
+        }
+        .ai-mdtag-render-root .aifupan-table-striped tbody tr:nth-child(even){
+            background:rgba(99,102,241,.04);
+        }
+        .ai-mdtag-render-root .aifupan-timeline{
+            padding:10px 6px 10px 14px;
+            border-left:2px solid rgba(109,93,252,.22);
+        }
+        .ai-mdtag-render-root .aifupan-timeline-item{
+            position:relative;
+            padding:10px 12px;
+            margin:10px 0;
+            border-radius:14px;
+            background:rgba(109,93,252,.08);
+            border:1px solid rgba(109,93,252,.14);
+        }
+        .ai-mdtag-render-root .aifupan-timeline-item::before{
+            content:'';
+            position:absolute;
+            left:-6px;
+            top:6px;
+            width:10px;
+            height:10px;
+            border-radius:50%;
+            background:linear-gradient(180deg,var(--ai-tag-primary),var(--ai-tag-secondary));
+            box-shadow:0 0 0 3px rgba(109,93,252,.12);
+        }
+        .ai-mdtag-render-root .aifupan-timeline-time{
+            color:var(--ai-tag-primary);
+            font-weight:800;
+            font-size:12px;
+            margin-bottom:4px;
+        }
+        .ai-mdtag-render-root .aifupan-step{
+            display:flex;
+            gap:10px;
+            align-items:flex-start;
+            margin:12px 0;
+        }
+        .ai-mdtag-render-root .aifupan-step-index{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:28px;
+            height:28px;
+            border-radius:12px;
+            font-weight:800;
+            background:linear-gradient(135deg,rgba(109,93,252,.18),rgba(46,197,255,.12));
+            color:#312e81;
+            border:1px solid rgba(109,93,252,.18);
+            flex:0 0 28px;
+        }
+        .ai-mdtag-render-root .aifupan-step-title{
+            font-weight:800;
+            color:#0f172a;
+            margin-bottom:4px;
+        }
+        .ai-mdtag-render-root .aifupan-step-content{
+            margin-top:6px;
+            color:var(--ai-tag-muted);
+            font-size:13px;
+        }
+        .ai-mdtag-render-root .aifupan-list{
+            padding-left:0;
+            list-style:none;
+            margin:12px 0;
+        }
+        .ai-mdtag-render-root .aifupan-list li{
+            display:flex;
+            gap:10px;
+            padding:8px 10px;
+            margin:8px 0;
+            border-radius:12px;
+            border:1px solid rgba(109,93,252,.12);
+            background:rgba(109,93,252,.06);
+        }
+        .ai-mdtag-render-root .aifupan-list-marker{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:22px;
+            height:22px;
+            border-radius:10px;
+            background:rgba(46,197,255,.14);
+            border:1px solid rgba(46,197,255,.20);
+            color:#075985;
+            font-weight:800;
+            flex:0 0 22px;
+        }
+        .ai-mdtag-render-root .aifupan-divider{
+            margin:16px 0;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            font-weight:800;
+            color:#334155;
+            letter-spacing:.04em;
+        }
+        .ai-mdtag-render-root .aifupan-divider::before,
+        .ai-mdtag-render-root .aifupan-divider::after{
+            content:'';
+            height:1px;
+            flex:1;
+            background:linear-gradient(90deg,transparent,rgba(109,93,252,.28),transparent);
+        }
+        .ai-mdtag-render-root .aifupan-tooltip{
+            color:var(--ai-tag-secondary);
+            border-bottom:1px dashed rgba(46,197,255,.45);
+            cursor:help;
+        }
+        .ai-mdtag-render-root .aifupan-emoji{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:28px;
+            height:28px;
+            border-radius:12px;
+            background:rgba(251,191,36,.16);
+            border:1px solid rgba(251,191,36,.22);
+        }
+        .ai-mdtag-render-root .aifupan-emoji-large{width:34px;height:34px;font-size:20px;}
+        .ai-mdtag-render-root .aifupan-emoji-xl{width:40px;height:40px;font-size:24px;}
+        .ai-mdtag-render-root .aifupan-highlight{
+            padding:2px 6px;
+            border-radius:8px;
+            background:linear-gradient(120deg,rgba(250,204,21,.32),rgba(250,204,21,.14));
+            color:#92400e;
+        }
+        .ai-mdtag-render-root .aifupan-mark-red{
+            padding:2px 6px;
+            border-radius:8px;
+            background:rgba(239,68,68,.18);
+            color:#7f1d1d;
+            font-weight:800;
+        }
+        .ai-mdtag-render-root .aifupan-text-red{
+            color:#dc2626;
+            font-weight:800;
+        }
+        .ai-mdtag-render-root .aifupan-spoiler{
+            background:#0f172a;
+            color:transparent;
+            border-radius:8px;
+            padding:2px 6px;
+        }
+        .ai-mdtag-render-root .aifupan-spoiler:hover{color:#e2e8f0;}
+        .ai-mdtag-render-root .aifupan-kbd{
+            padding:2px 8px;
+            border-radius:8px;
+            border:1px solid rgba(148,163,184,.26);
+            background:rgba(148,163,184,.12);
+            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+            font-size:12px;
+            font-weight:700;
+            color:#0f172a;
+        }
+        .ai-mdtag-render-root .aifupan-collapse details{padding:12px 14px;}
+        .ai-mdtag-render-root .aifupan-collapse summary{
+            cursor:pointer;
+            color:#312e81;
+            font-weight:800;
+        }
+        .ai-mdtag-render-root .aifupan-columns{
+            display:grid;
+            gap:12px;
+        }
+        .ai-mdtag-render-root .aifupan-columns-2{grid-template-columns:1fr 1fr;}
+        .ai-mdtag-render-root .aifupan-columns-3{grid-template-columns:1fr 1fr 1fr;}
+        .ai-mdtag-render-root .aifupan-column{
+            padding:12px 12px;
+            border-radius:16px;
+            border:1px solid rgba(109,93,252,.14);
+            background:rgba(109,93,252,.06);
+        }
+        .ai-mdtag-render-root .aifupan-code{
+            border:1px solid rgba(109,93,252,.14);
+            border-radius:18px;
+            overflow:hidden;
+            background:rgba(15,23,42,.96);
+            box-shadow:0 12px 28px rgba(15,23,42,.20);
+        }
+        .ai-mdtag-render-root .aifupan-code-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:10px 12px;
+            background:linear-gradient(180deg,rgba(109,93,252,.22),rgba(46,197,255,.12));
+            color:#e2e8f0;
+            font-weight:800;
+            font-size:12px;
+        }
+        .ai-mdtag-render-root .aifupan-code pre{
+            margin:0;
+            padding:12px 12px;
+            overflow:auto;
+            background:transparent;
+            border:none;
+            border-radius:0;
+            color:#e2e8f0;
+            font-size:12px;
+            line-height:1.7;
+        }
+        .ai-mdtag-render-root .aifupan-code code{
+            font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+        }
+        .ai-mdtag-render-root .aifupan-chart{
+            padding:14px 16px;
+        }
+        .ai-mdtag-render-root .aifupan-chart-title{
+            font-weight:800;
+            color:#0f172a;
+            margin-bottom:10px;
+        }
+        .ai-mdtag-render-root .aifupan-chart-visual{
+            display:flex;
+            align-items:flex-end;
+            gap:10px;
+            height:120px;
+            padding:12px 10px;
+            border-radius:14px;
+            background:rgba(109,93,252,.06);
+            border:1px solid rgba(109,93,252,.12);
+        }
+        .ai-mdtag-render-root .aifupan-chart-bar{
+            flex:1;
+            border-radius:10px 10px 6px 6px;
+            background:linear-gradient(180deg,var(--ai-tag-primary),var(--ai-tag-secondary));
+            box-shadow:0 10px 18px rgba(109,93,252,.16);
+            min-width:18px;
+        }
+        .ai-mdtag-render-root .aifupan-meter{
+            padding:14px 16px;
+            border:1px solid rgba(109,93,252,.14);
+            border-radius:18px;
+            background:linear-gradient(180deg,rgba(248,250,255,.96),rgba(240,244,255,.9));
+            box-shadow:0 12px 28px rgba(15,23,42,.06);
+        }
+        .ai-mdtag-render-root .aifupan-meter-track{
+            height:14px;
+            border-radius:999px;
+            background:rgba(109,93,252,.10);
+            overflow:hidden;
+            box-shadow:inset 0 1px 4px rgba(15,23,42,.08);
+        }
+        .ai-mdtag-render-root .aifupan-meter-bar{
+            height:100%;
+            border-radius:999px;
+            background:linear-gradient(90deg,var(--ai-tag-primary),var(--ai-tag-secondary));
+            box-shadow:0 0 18px rgba(109,93,252,.26);
+        }
+        .ai-mdtag-render-root .aifupan-meter-meta{
+            margin-top:10px;
+            font-size:12px;
+            color:var(--ai-tag-muted);
+            font-weight:700;
+        }
+        .ai-mdtag-render-root .aifupan-tabs{
+            border:1px solid rgba(109,93,252,.14);
+            border-radius:18px;
+            overflow:hidden;
+            background:rgba(255,255,255,.9);
+            box-shadow:0 12px 28px rgba(15,23,42,.06);
+        }
+        .ai-mdtag-render-root .aifupan-tabs-nav{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            padding:10px 12px;
+            background:linear-gradient(180deg,rgba(109,93,252,.10),rgba(109,93,252,.04));
+            border-bottom:1px solid rgba(109,93,252,.10);
+        }
+        .ai-mdtag-render-root .aifupan-tab-chip{
+            padding:6px 10px;
+            border-radius:999px;
+            font-weight:800;
+            font-size:12px;
+            color:#312e81;
+            background:rgba(109,93,252,.10);
+            border:1px solid rgba(109,93,252,.14);
+        }
+        .ai-mdtag-render-root .aifupan-tab-panel{
+            padding:12px 14px;
+        }
+        .ai-mdtag-render-root .aifupan-quote-modern{
+            padding:14px 16px;
+            border-radius:18px;
+            border:1px solid rgba(46,197,255,.16);
+            background:linear-gradient(135deg,rgba(46,197,255,.10),rgba(46,197,255,.04));
+            color:#0f172a;
+            box-shadow:0 12px 28px rgba(15,23,42,.06);
+        }
+        .ai-mdtag-render-root .aifupan-mermaid,
+        .ai-mdtag-render-root .aifupan-flowchart{
+            border:1px solid rgba(109,93,252,.14);
+            border-radius:18px;
+            background:rgba(15,23,42,.96);
+            color:#e2e8f0;
+            overflow:hidden;
+            box-shadow:0 12px 28px rgba(15,23,42,.20);
+        }
+        .ai-mdtag-render-root .aifupan-mermaid pre,
+        .ai-mdtag-render-root .aifupan-flowchart pre{
+            margin:0;
+            padding:12px 12px;
+            overflow:auto;
+            background:transparent;
+            border:none;
+            border-radius:0;
+            color:#e2e8f0;
+            font-size:12px;
+            line-height:1.7;
+        }
+        .ai-json-render-root{
+            --ai-primary:#6d5dfc;
+            --ai-primary-light:#8b7fff;
+            --ai-secondary:#2ec5ff;
+            --ai-success:#22c55e;
+            --ai-warning:#f59e0b;
+            --ai-danger:#ef4444;
+            --ai-text:#1f2937;
+            --ai-text-light:#667085;
+            --ai-border:rgba(109,93,252,.16);
+            --ai-surface:#ffffff;
+            --ai-surface-soft:linear-gradient(180deg,rgba(248,250,255,.96) 0%,rgba(240,244,255,.92) 100%);
+            line-height:1.85;
+            color:var(--ai-text);
+            word-break:break-word;
+        }
+        .ai-json-render-root .ai-json-card{
+            padding:18px 20px;
+            border:1px solid var(--ai-border);
+            border-radius:18px;
+            background:var(--ai-surface-soft);
+            box-shadow:0 12px 30px rgba(99,102,241,.08);
+            overflow:hidden;
+            position:relative;
+        }
+        .ai-json-render-root .ai-json-card::before{
+            content:'';
+            position:absolute;
+            inset:0 auto 0 0;
+            width:4px;
+            background:linear-gradient(180deg,var(--ai-primary),var(--ai-secondary));
+        }
+        .ai-json-render-root .ai-json-card-title{
+            margin-bottom:12px;
+            font-size:16px;
+            font-weight:700;
+            color:#312e81;
+        }
+        .ai-json-render-root .ai-json-progress{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin:12px 0;
+        }
+        .ai-json-render-root .ai-json-progress-track{
+            flex:1;
+            height:12px;
+            border-radius:999px;
+            background:rgba(109,93,252,.12);
+            overflow:hidden;
+            box-shadow:inset 0 1px 4px rgba(15,23,42,.08);
+        }
+        .ai-json-render-root .ai-json-progress-bar{
+            height:100%;
+            background:linear-gradient(90deg,var(--ai-primary),var(--ai-secondary));
+            border-radius:999px;
+            box-shadow:0 0 18px rgba(109,93,252,.32);
+        }
+        .ai-json-render-root .ai-json-progress span{
+            min-width:52px;
+            font-weight:700;
+            color:var(--ai-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc">
+        <div class="hero">
+            <h1>AiContentRenderer 标签说明与样式预览（HTML 可导出 PDF）</h1>
+            <p>本文件用于说明 <b>mdTag 自定义标签</b>、<b>data-block</b>、以及 <b>[!##] 指令语法</b>。每个标签都包含：用途说明、参数要求、示例输入与“最终渲染 HTML”样式预览。</p>
+            <p class="meta">提示：本 HTML 以静态方式展示“最终渲染 HTML”。真实业务中由 AiContentRenderer 解析 Markdown + aifupan 标签后输出相同结构与样式。</p>
+            <div class="toc">
+                <a href="#directive">[!##] 指令</a>
+                <a href="#data-block">data-block</a>
+                <a href="#theme-skin">theme / skin</a>
+                <a href="#title">title</a>
+                <a href="#card">card</a>
+                <a href="#alert-callout-note">alert / callout / note</a>
+                <a href="#statistic">statistic</a>
+                <a href="#tag-badge">tag / badge</a>
+                <a href="#progress">progress</a>
+                <a href="#font">font</a>
+                <a href="#inline">inline 标记</a>
+                <a href="#timeline">timeline</a>
+                <a href="#steps">steps</a>
+                <a href="#collapse">collapse / accordion</a>
+                <a href="#columns">columns / column</a>
+                <a href="#list">list</a>
+                <a href="#table">table</a>
+                <a href="#echarts">echarts</a>
+                <a href="#meter">meter</a>
+                <a href="#tabs">tabs</a>
+                <a href="#quote">quote-modern</a>
+                <a href="#flow">mermaid / flowchart</a>
+                <a href="#divider">divider</a>
+                <a href="#code">code</a>
+            </div>
+        </div>
+
+        <div class="section" id="directive">
+            <h2>[!##] 指令（Markdown 指令 → aifupan 标签）</h2>
+            <div class="kv">
+                <b>用途</b><div>在“纯 Markdown”中，用指令语法生成自定义标签，避免直接输出 HTML 标签。</div>
+                <b>开始指令</b><div><code>[!##]{element="xxx", ...attrs}</code>（等价于 <code>&lt;aifupan-xxx ...&gt;</code>）</div>
+                <b>结束指令</b><div><code>[##!]</code>（等价于 <code>&lt;/aifupan-xxx&gt;</code>，根据栈匹配闭合）</div>
+                <b>自闭合指令</b><div><code>[!##!]{element="xxx", ...attrs}</code>（等价于 <code>&lt;aifupan-xxx ... /&gt;</code>）</div>
+                <b>属性语法</b><div>支持 <code>key=value</code>（可带引号/不带引号），以及“裸 token”布尔属性（如 <code>resource-data</code>）。</div>
+            </div>
+            <div class="demo">
+                <pre>[!##]{element="note",title="提示"}
+这里是内容（支持 Markdown 与 aifupan 嵌套）
+[##!]</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（渲染后 HTML）</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <aside class="aifupan-block aifupan-note" role="note">
+                            <div class="aifupan-note-head"><span class="aifupan-note-badge">提示</span></div>
+                            <div class="aifupan-note-body">
+                                <p>这里是内容（支持 Markdown 与 aifupan 嵌套）</p>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="data-block">
+            <h2>&lt;aifupan-data-block&gt;（结构化数据块：缓存 + 可选可视化）</h2>
+            <div class="kv">
+                <b>用途</b><div>承载结构化数据（尤其是 JSON）。支持 “可见渲染” 与 “隐藏缓存”。隐藏时不展示，但会缓存数据供后续逻辑读取。</div>
+                <b>visible</b><div><code>true|false</code>。默认 <code>false</code>（隐藏）。</div>
+                <b>type</b><div>当 <code>visible=true</code> 时建议必填，默认 <code>structured</code>。内置：<code>structured</code>、<code>scriptQualityReport</code>。</div>
+                <b>cacheKey</b><div>可选。作为缓存 key；不传会自动生成。</div>
+                <b>contentType</b><div><code>json|text|html</code>。可选。若内部包含 fenced code（如 <code>```json</code>）可自动推断；都没有时默认 <code>text</code>。</div>
+                <b>resource-data</b><div>可选布尔属性，用于标记“资源数据”（主要供后端截取/消费）。</div>
+            </div>
+            <h3>用法 A：visible=false（隐藏，仅缓存）</h3>
+            <div class="demo">
+                <pre>&lt;aifupan-data-block visible="false" cacheKey="k_resource" resource-data&gt;
+{"a":1,"b":2}
+&lt;/aifupan-data-block&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="noteBox">该 data-block 为隐藏模式：前端不会渲染内容，但会将数据缓存到 dataBlockStore（key = k_resource）。</div>
+                </div>
+            </div>
+            <h3>用法 B：visible=true + type=structured（JSON 可视化）</h3>
+            <div class="demo">
+                <pre>&lt;aifupan-data-block visible="true" type="structured" cacheKey="k1"&gt;
+{"name":"张三","score":98,"tags":["A","B"]}
+&lt;/aifupan-data-block&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（示意：structured 会渲染为 JSON 结构展示）</div>
+                    <div class="ai-json-render-root">
+                        <div class="ai-json-card">
+                            <div class="ai-json-card-title">JSON 数据（structured）</div>
+                            <div><b>name</b>：张三</div>
+                            <div><b>score</b>：98</div>
+                            <div><b>tags</b>：["A","B"]</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3>用法 C：visible=true + type=scriptQualityReport（话术质检报告 JSON）</h3>
+            <div class="demo">
+                <pre>&lt;aifupan-data-block visible="true" type="scriptQualityReport" cacheKey="qc_1"&gt;
+{"meta":{"roomName":"示例直播间"},"summary":{"totalNegativeCount":8}}
+&lt;/aifupan-data-block&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（说明）</div>
+                    <div class="noteBox">该 type 会挂载业务组件（scriptQualityReportContent）进行可视化渲染；本 HTML 文档不加载业务组件，故仅说明渲染位置与作用。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="theme-skin">
+            <h2>theme / skin（主题与皮肤）</h2>
+            <div class="kv">
+                <b>用途</b><div>影响根容器的配色与背景质感。theme 影响变量色；skin 影响卡片质感（paper/glass/minimal）。</div>
+                <b>theme 值域</b><div><code>aurora | business | warm</code></div>
+                <b>skin 值域</b><div><code>glass | paper | minimal</code></div>
+                <b>写法</b><div>既支持属性写法（<code>&lt;aifupan-theme name="business"&gt;</code>），也支持写进标签名（<code>&lt;aifupan-theme-business /&gt;</code>）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-theme name="business" /&gt;
+&lt;aifupan-skin name="paper" /&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（business + paper）</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block"><h2 class="aifupan-title aifupan-title-2 aifupan-title-leftbar">主题示例</h2></div>
+                        <div class="aifupan-block aifupan-card">
+                            <div class="aifupan-card-head"><div class="aifupan-card-title"><p>纸张皮肤（paper）</p></div></div>
+                            <div class="aifupan-card-body"><p>用于“报告/PDF”质感输出。</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-theme-warm /&gt;
+&lt;aifupan-skin-glass /&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（warm + glass）</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-warm ai-mdtag-skin-glass">
+                        <div class="aifupan-block"><h2 class="aifupan-title aifupan-title-2 aifupan-title-filled">暖色主题</h2></div>
+                        <div class="aifupan-block aifupan-alert aifupan-alert-warning"><p>玻璃皮肤更偏视觉展示。</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="title">
+            <h2>aifupan-title（标题）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-title-{level}-{variant}&gt;</code>，level=1~6；variant 可选：<code>filled|bordered|leftbar|underline</code>。</div>
+                <b>内容来源</b><div>双标签内部文本优先；也可用 <code>title="..."</code> 作为兜底。</div>
+                <b>自闭合用法</b><div><code>&lt;aifupan-title-2 /&gt;本行标题</code>（绑定行：会读取同一行剩余文本作为标题内容）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-title-2-filled&gt;经营复盘（示例）&lt;/aifupan-title-2-filled&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block"><h2 class="aifupan-title aifupan-title-2 aifupan-title-filled">经营复盘（示例）</h2></div>
+                    </div>
+                </div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-title-3-underline /&gt;标题绑定行（示例）</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block"><h3 class="aifupan-title aifupan-title-3 aifupan-title-underline">标题绑定行（示例）</h3></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="card">
+            <h2>aifupan-card（卡片）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-card&gt;</code></div>
+                <b>标题</b><div>可用 <code>title="..."</code>；也支持子块：<code>&lt;aifupan-card-head&gt;</code> / <code>&lt;aifupan-card-body&gt;</code>。</div>
+                <b>内容</b><div>card-body 支持 Markdown 与 aifupan 嵌套。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-card title="摘要"&gt;
+&lt;aifupan-card-body&gt;
+- GMV：&lt;aifupan-tag-success&gt;+12%&lt;/aifupan-tag-success&gt;
+- 完成率：&lt;aifupan-progress value="86" status="success"&gt;86%&lt;/aifupan-progress&gt;
+&lt;/aifupan-card-body&gt;
+&lt;/aifupan-card&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-card">
+                            <div class="aifupan-card-head"><div class="aifupan-card-title"><p>摘要</p></div></div>
+                            <div class="aifupan-card-body">
+                                <ul>
+                                    <li>GMV：<span class="aifupan-tag aifupan-tag-success">+12%</span></li>
+                                    <li>完成率：<span class="aifupan-progress-inline"><span class="aifupan-progress-track"><span class="aifupan-progress-bar aifupan-progress-success" style="width:86%"></span></span><span class="aifupan-progress-value">86%</span></span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="alert-callout-note">
+            <h2>alert / callout / note（提示块）</h2>
+            <div class="kv">
+                <b>alert</b><div><code>&lt;aifupan-alert-{type}&gt;</code>，type：<code>info|success|warning|error</code>。</div>
+                <b>callout</b><div><code>&lt;aifupan-callout type="info"&gt;</code>（等价于 alert，但通过属性指定 type）。</div>
+                <b>note</b><div><code>&lt;aifupan-note title="备注"&gt;</code>（强调“备注/附注”卡片）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-alert-warning&gt;
+请注意：该指标受活动期影响较大。
+&lt;/aifupan-alert-warning&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-alert aifupan-alert-warning"><p>请注意：该指标受活动期影响较大。</p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-note title="结论"&gt;
+本场直播未发现该类问题话术。
+&lt;/aifupan-note&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <aside class="aifupan-block aifupan-note" role="note">
+                            <div class="aifupan-note-head"><span class="aifupan-note-badge">结论</span></div>
+                            <div class="aifupan-note-body"><p>本场直播未发现该类问题话术。</p></div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="statistic">
+            <h2>statistic / statistic-trend（统计卡）</h2>
+            <div class="kv">
+                <b>statistic</b><div><code>&lt;aifupan-statistic title="..." value="..." prefix="" suffix="" description="" col="1~6"&gt;</code></div>
+                <b>statistic-trend</b><div><code>&lt;aifupan-statistic-trend title="..." value="..." trend="up|down|flat" description=""&gt;</code></div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-statistic title="负面话术总数" value="8" suffix="处" description="去重后计数" col="3"&gt;&lt;/aifupan-statistic&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（示意结构）</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <section class="aifupan-block aifupan-statistic aifupan-statistic-col-3" data-aifupan-statistic="1">
+                            <div class="aifupan-statistic-title">负面话术总数</div>
+                            <div class="aifupan-statistic-value">8处</div>
+                            <div class="aifupan-statistic-meta">去重后计数</div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+            <div class="noteBox">statistic / trend 的完整样式与栅格布局由 mdTag 内置 CSS 控制；实际页面中可在同一行输出多个 statistic 并通过 col 控制宽度。</div>
+        </div>
+
+        <div class="section" id="tag-badge">
+            <h2>tag / badge（徽标）</h2>
+            <div class="kv">
+                <b>tag</b><div>保留 <code>success / warning / danger / error / info / default</code> 语义色，同时新增 <code>&lt;aifupan-tag-1&gt;</code> 到 <code>&lt;aifupan-tag-30&gt;</code> 编号色。</div>
+                <b>自定义色</b><div><code>color</code> 控制文字色；<code>bgColor</code> 控制背景基准色。无论只传 <code>color</code> 还是同时传 <code>color + bgColor</code>，背景与边框都会自动转成透明色，而不是直接使用纯实色。</div>
+                <b>badge</b><div><code>&lt;aifupan-badge&gt;</code>，常用于“状态/提示”。</div>
+            </div>
+            <div class="demo">
+                <pre>标签示例：
+&lt;aifupan-tag-success&gt;已完成&lt;/aifupan-tag-success&gt;
+&lt;aifupan-tag-warning&gt;需关注&lt;/aifupan-tag-warning&gt;
+&lt;aifupan-tag-error&gt;异常&lt;/aifupan-tag-error&gt;
+&lt;aifupan-tag-7&gt;直播分类&lt;/aifupan-tag-7&gt;
+&lt;aifupan-tag-18&gt;高亮主题&lt;/aifupan-tag-18&gt;
+&lt;aifupan-tag color="#1d4ed8"&gt;仅自定义文字色&lt;/aifupan-tag&gt;
+&lt;aifupan-tag color="#0f172a" bgColor="#2ec5ff"&gt;自定义双色标签&lt;/aifupan-tag&gt;
+&lt;aifupan-badge&gt;未读&lt;/aifupan-badge&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <span class="aifupan-tag aifupan-tag-success">已完成</span>
+                        <span class="aifupan-tag aifupan-tag-warning">需关注</span>
+                        <span class="aifupan-tag aifupan-tag-error">异常</span>
+                        <span class="aifupan-tag aifupan-tag-7">直播分类</span>
+                        <span class="aifupan-tag aifupan-tag-18">高亮主题</span>
+                        <span class="aifupan-tag" style="color:#1d4ed8;background:rgba(29,78,216,.12);border-color:rgba(29,78,216,.18)">仅自定义文字色</span>
+                        <span class="aifupan-tag" style="color:#0f172a;background:rgba(46,197,255,.12);border-color:rgba(46,197,255,.18)">自定义双色标签</span>
+                        <span class="aifupan-badge">未读</span>
+                    </div>
+                </div>
+            </div>
+            <div class="demo">
+                <pre>编号色预览：
+&lt;aifupan-tag-1&gt;1&lt;/aifupan-tag-1&gt; ... &lt;aifupan-tag-30&gt;30&lt;/aifupan-tag-30&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（1~30 常用色）</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="tagPalette">
+                            <span class="aifupan-tag aifupan-tag-1">1</span>
+                            <span class="aifupan-tag aifupan-tag-2">2</span>
+                            <span class="aifupan-tag aifupan-tag-3">3</span>
+                            <span class="aifupan-tag aifupan-tag-4">4</span>
+                            <span class="aifupan-tag aifupan-tag-5">5</span>
+                            <span class="aifupan-tag aifupan-tag-6">6</span>
+                            <span class="aifupan-tag aifupan-tag-7">7</span>
+                            <span class="aifupan-tag aifupan-tag-8">8</span>
+                            <span class="aifupan-tag aifupan-tag-9">9</span>
+                            <span class="aifupan-tag aifupan-tag-10">10</span>
+                            <span class="aifupan-tag aifupan-tag-11">11</span>
+                            <span class="aifupan-tag aifupan-tag-12">12</span>
+                            <span class="aifupan-tag aifupan-tag-13">13</span>
+                            <span class="aifupan-tag aifupan-tag-14">14</span>
+                            <span class="aifupan-tag aifupan-tag-15">15</span>
+                            <span class="aifupan-tag aifupan-tag-16">16</span>
+                            <span class="aifupan-tag aifupan-tag-17">17</span>
+                            <span class="aifupan-tag aifupan-tag-18">18</span>
+                            <span class="aifupan-tag aifupan-tag-19">19</span>
+                            <span class="aifupan-tag aifupan-tag-20">20</span>
+                            <span class="aifupan-tag aifupan-tag-21">21</span>
+                            <span class="aifupan-tag aifupan-tag-22">22</span>
+                            <span class="aifupan-tag aifupan-tag-23">23</span>
+                            <span class="aifupan-tag aifupan-tag-24">24</span>
+                            <span class="aifupan-tag aifupan-tag-25">25</span>
+                            <span class="aifupan-tag aifupan-tag-26">26</span>
+                            <span class="aifupan-tag aifupan-tag-27">27</span>
+                            <span class="aifupan-tag aifupan-tag-28">28</span>
+                            <span class="aifupan-tag aifupan-tag-29">29</span>
+                            <span class="aifupan-tag aifupan-tag-30">30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="noteBox">透明度逻辑与正式渲染器保持一致：默认背景约为主色 12% 透明度，边框约为主色 18% 透明度，避免 tag 色块过重。</div>
+        </div>
+
+        <div class="section" id="progress">
+            <h2>progress（行内进度条）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-progress&gt;</code></div>
+                <b>数值</b><div><code>value</code> 或 <code>percentage</code>（如 86 / 86%）。也支持通过内部文本识别。</div>
+                <b>状态</b><div><code>status=success|warning|error</code>（可选）。</div>
+                <b>自闭合用法</b><div><code>&lt;aifupan-progress /&gt;86%</code>（绑定行：读取同一行剩余文本）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-progress value="86" status="success"&gt;86%&lt;/aifupan-progress&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <span class="aifupan-progress-inline">
+                            <span class="aifupan-progress-track">
+                                <span class="aifupan-progress-bar aifupan-progress-success" style="width:86%"></span>
+                            </span>
+                            <span class="aifupan-progress-value">86%</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="font">
+            <h2>font（行内字体样式）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-font&gt;</code></div>
+                <b>常用属性</b><div><code>color</code>、<code>bgColor</code>、<code>weight</code>、<code>size</code>、<code>italic</code>、<code>underline</code></div>
+                <b>说明</b><div>font 是“轻量行内样式”，优先用于少量强调文字。</div>
+            </div>
+            <div class="demo">
+                <pre>示例：
+&lt;aifupan-font color="#dc2626" weight="800" underline&gt;重点&lt;/aifupan-font&gt;
+&lt;aifupan-font bgColor="rgba(34,197,94,.14)" color="#14532d"&gt;已通过&lt;/aifupan-font&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <span class="aifupan-font" style="color:#dc2626;font-weight:800;text-decoration:underline">重点</span>
+                        <span class="aifupan-font" style="color:#14532d;background:rgba(34,197,94,.14);padding:2px 6px;border-radius:8px">已通过</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="inline">
+            <h2>inline 标记（tooltip / emoji / highlight / mark-red / text-red / spoiler / kbd）</h2>
+            <div class="kv">
+                <b>tooltip</b><div><code>&lt;aifupan-tooltip text="提示内容"&gt;悬停查看&lt;/aifupan-tooltip&gt;</code></div>
+                <b>emoji</b><div><code>&lt;aifupan-emoji size="normal|large|xl"&gt;✨&lt;/aifupan-emoji&gt;</code></div>
+                <b>highlight</b><div><code>&lt;aifupan-highlight&gt;高亮&lt;/aifupan-highlight&gt;</code></div>
+                <b>mark-red</b><div><code>&lt;aifupan-mark-red&gt;红底强调&lt;/aifupan-mark-red&gt;</code></div>
+                <b>text-red</b><div><code>&lt;aifupan-text-red&gt;红字&lt;/aifupan-text-red&gt;</code></div>
+                <b>spoiler</b><div><code>&lt;aifupan-spoiler&gt;遮罩文本&lt;/aifupan-spoiler&gt;</code>（hover 显示）</div>
+                <b>kbd</b><div><code>&lt;aifupan-kbd&gt;Ctrl+K&lt;/aifupan-kbd&gt;</code></div>
+            </div>
+            <div class="demo">
+                <pre>示例：
+&lt;aifupan-tooltip text="这是提示"&gt;悬停查看&lt;/aifupan-tooltip&gt;
+&lt;aifupan-emoji size="xl"&gt;🔥&lt;/aifupan-emoji&gt;
+&lt;aifupan-highlight&gt;高亮&lt;/aifupan-highlight&gt;
+&lt;aifupan-mark-red&gt;红底强调&lt;/aifupan-mark-red&gt;
+&lt;aifupan-text-red&gt;红字&lt;/aifupan-text-red&gt;
+&lt;aifupan-spoiler&gt;隐藏信息&lt;/aifupan-spoiler&gt;
+&lt;aifupan-kbd&gt;Ctrl+K&lt;/aifupan-kbd&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <p>
+                            <span class="aifupan-tooltip" title="这是提示">悬停查看</span>
+                            <span class="aifupan-emoji aifupan-emoji-xl">🔥</span>
+                            <mark class="aifupan-highlight">高亮</mark>
+                            <span class="aifupan-mark-red">红底强调</span>
+                            <span class="aifupan-text-red">红字</span>
+                            <span class="aifupan-spoiler">隐藏信息</span>
+                            <kbd class="aifupan-kbd">Ctrl+K</kbd>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="timeline">
+            <h2>timeline（时间线）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-timeline&gt;</code></div>
+                <b>内容格式</b><div>推荐按行：<code>时间点 空格 内容</code>（例如 <code>10:00 开场</code>）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-timeline&gt;
+- 10:00 开场引导
+- 10:05 介绍产品卖点
+- 10:20 回答售后问题
+&lt;/aifupan-timeline&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-timeline">
+                            <div class="aifupan-timeline-item"><div class="aifupan-timeline-time">10:00</div><div>开场引导</div></div>
+                            <div class="aifupan-timeline-item"><div class="aifupan-timeline-time">10:05</div><div>介绍产品卖点</div></div>
+                            <div class="aifupan-timeline-item"><div class="aifupan-timeline-time">10:20</div><div>回答售后问题</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="steps">
+            <h2>steps（步骤）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-steps&gt;</code></div>
+                <b>用法 A</b><div>普通列表：内部按 <code>-</code> 开头的行解析为步骤列表。</div>
+                <b>用法 B</b><div>结构化：支持 “步骤x:” 标题段落，或自闭合标记：<code>&lt;aifupan-steps-item name="步骤名称" /&gt;</code>。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-steps&gt;
+- 选择直播间
+- 点击生成报告
+- 查看报告结果
+&lt;/aifupan-steps&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-steps">
+                            <div class="aifupan-step"><span class="aifupan-step-index">1</span><div class="aifupan-step-main"><div class="aifupan-step-title">选择直播间</div></div></div>
+                            <div class="aifupan-step"><span class="aifupan-step-index">2</span><div class="aifupan-step-main"><div class="aifupan-step-title">点击生成报告</div></div></div>
+                            <div class="aifupan-step"><span class="aifupan-step-index">3</span><div class="aifupan-step-main"><div class="aifupan-step-title">查看报告结果</div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="collapse">
+            <h2>collapse / accordion（折叠）</h2>
+            <div class="kv">
+                <b>collapse</b><div><code>&lt;aifupan-collapse title="展开查看"&gt;...&lt;/aifupan-collapse&gt;</code></div>
+                <b>accordion</b><div><code>&lt;aifupan-accordion&gt;</code> 内部用 <code>### 标题</code> 分段，渲染为多个 <code>&lt;details&gt;</code>。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-collapse title="展开查看话术明细"&gt;
+这里是折叠内容（支持 Markdown）
+&lt;/aifupan-collapse&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-collapse">
+                            <details open>
+                                <summary>展开查看话术明细</summary>
+                                <p>这里是折叠内容（支持 Markdown）</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-accordion&gt;
+### 第一段
+这里是第一段内容
+### 第二段
+这里是第二段内容
+&lt;/aifupan-accordion&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（accordion）</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-collapse">
+                            <details open>
+                                <summary>第一段</summary>
+                                <p>这里是第一段内容</p>
+                            </details>
+                            <details>
+                                <summary>第二段</summary>
+                                <p>这里是第二段内容</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="columns">
+            <h2>columns / column（分栏）</h2>
+            <div class="kv">
+                <b>columns</b><div><code>&lt;aifupan-columns-2&gt;</code> 或 <code>&lt;aifupan-columns-3&gt;</code></div>
+                <b>column</b><div>可用子标签 <code>&lt;aifupan-column&gt;</code>，或用 <code>---</code> 分隔多栏内容（兜底）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-columns-2&gt;
+&lt;aifupan-column&gt;左侧内容&lt;/aifupan-column&gt;
+&lt;aifupan-column&gt;右侧内容&lt;/aifupan-column&gt;
+&lt;/aifupan-columns-2&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-columns aifupan-columns-2">
+                            <div class="aifupan-column"><p>左侧内容</p></div>
+                            <div class="aifupan-column"><p>右侧内容</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="list">
+            <h2>list（列表）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-list-{variant}&gt;</code>，variant：<code>check</code>（默认）、<code>steps</code>、<code>icon</code>。</div>
+                <b>icon 变体</b><div><code>variant=icon</code> 时需配合 <code>icon</code> 属性（如 <code>icon="warning"</code>）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-list-check&gt;
+- 支持自定义标签混排
+- 支持 Markdown
+&lt;/aifupan-list-check&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <ul class="aifupan-list aifupan-list-check">
+                            <li><span class="aifupan-list-marker">✓</span><span>支持自定义标签混排</span></li>
+                            <li><span class="aifupan-list-marker">✓</span><span>支持 Markdown</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-list-steps&gt;
+- 第一步
+- 第二步
+&lt;/aifupan-list-steps&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <ul class="aifupan-list aifupan-list-steps">
+                            <li><span class="aifupan-list-marker">1</span><span>第一步</span></li>
+                            <li><span class="aifupan-list-marker">2</span><span>第二步</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="table">
+            <h2>table（样式化 Markdown 表格）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-table-{variant}&gt;</code>，variant：<code>striped</code>（默认）。</div>
+                <b>内容</b><div>内部需要是 Markdown table（竖线表格）。</div>
+                <b>自闭合用法</b><div><code>&lt;aifupan-table /&gt;</code> 可读取后续紧跟的 Markdown table 块。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-table-striped&gt;
+| 指标 | 值 |
+| --- | --- |
+| 负面话术 | 8 |
+| 售后风险 | 0 |
+&lt;/aifupan-table-striped&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block">
+                            <table class="aifupan-table aifupan-table-striped">
+                                <thead>
+                                    <tr><th>指标</th><th>值</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>负面话术</td><td>8</td></tr>
+                                    <tr><td>售后风险</td><td>0</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="echarts">
+            <h2>echarts（图表：line / bar / pie）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-echarts-line&gt;</code> / <code>&lt;aifupan-echarts-bar&gt;</code> / <code>&lt;aifupan-echarts-pie&gt;</code></div>
+                <b>title</b><div>可选：<code>title="..."</code>，用于展示图表标题。</div>
+                <b>内容</b><div>推荐内部放 Markdown 表格作为数据源（渲染器会解析为图表 + 表格）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-echarts-bar title="示例柱状图"&gt;
+| 日期 | 值 |
+| --- | --- |
+| 06-01 | 3 |
+| 06-02 | 8 |
+| 06-03 | 5 |
+&lt;/aifupan-echarts-bar&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（示意：图表区 + 表格区）</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-chart">
+                            <div class="aifupan-chart-title">示例柱状图</div>
+                            <div class="aifupan-chart-visual">
+                                <div class="aifupan-chart-bar" style="height:32%"></div>
+                                <div class="aifupan-chart-bar" style="height:86%"></div>
+                                <div class="aifupan-chart-bar" style="height:54%"></div>
+                            </div>
+                            <div class="aifupan-chart-table" style="margin-top:12px;">
+                                <table class="aifupan-table aifupan-table-striped">
+                                    <thead><tr><th>日期</th><th>值</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>06-01</td><td>3</td></tr>
+                                        <tr><td>06-02</td><td>8</td></tr>
+                                        <tr><td>06-03</td><td>5</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="meter">
+            <h2>meter（区间进度）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-meter value="..." min="0" max="100"&gt;</code></div>
+                <b>用途</b><div>展示一个数值在区间内的占比，适合“得分/阈值/完成度”的可视化。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-meter value="72" min="0" max="100"&gt;&lt;/aifupan-meter&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-meter">
+                            <div class="aifupan-meter-track"><div class="aifupan-meter-bar" style="width:72%"></div></div>
+                            <div class="aifupan-meter-meta">当前值：72 / 100</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="tabs">
+            <h2>tabs（分段内容：Tab 导航）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-tabs&gt;</code></div>
+                <b>内容格式</b><div>内部用 <code>### Tab标题</code> 分段，每段内容作为一个 panel。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-tabs&gt;
+### 总览
+这里是总览内容
+### 明细
+这里是明细内容
+&lt;/aifupan-tabs&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（静态示意：实际交互由业务容器决定）</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-tabs">
+                            <div class="aifupan-tabs-nav">
+                                <span class="aifupan-tab-chip">总览</span>
+                                <span class="aifupan-tab-chip">明细</span>
+                            </div>
+                            <div class="aifupan-tab-panel"><p>这里是总览内容</p></div>
+                            <div class="aifupan-tab-panel"><p>这里是明细内容</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="quote">
+            <h2>quote-modern（现代引用块）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-quote-modern&gt;</code></div>
+                <b>用途</b><div>强调“引用/观点/重点结论”的块级样式。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-quote-modern&gt;
+关键结论：本场直播未发现崩盘话术。
+&lt;/aifupan-quote-modern&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-quote-modern"><p>关键结论：本场直播未发现崩盘话术。</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="flow">
+            <h2>mermaid / flowchart（流程图与步骤流程）</h2>
+            <div class="kv">
+                <b>mermaid</b><div><code>&lt;aifupan-mermaid title="流程图"&gt;...&lt;/aifupan-mermaid&gt;</code>（内部为 mermaid 文本）。</div>
+                <b>flowchart</b><div><code>&lt;aifupan-flowchart&gt;</code>（内部按行解析为步骤流程）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-mermaid title="流程图"&gt;
+flowchart TD
+  A[开始] --> B[生成报告]
+  B --> C[查看结果]
+&lt;/aifupan-mermaid&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览（示意：本 HTML 不执行 mermaid 渲染，仅展示容器样式）</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-mermaid">
+                            <div class="aifupan-code-head"><span>流程图</span></div>
+                            <pre><code>flowchart TD
+  A[开始] --> B[生成报告]
+  B --> C[查看结果]</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="divider">
+            <h2>divider（分割线）</h2>
+            <div class="kv">
+                <b>标签名</b><div><code>&lt;aifupan-divider&gt;标题&lt;/aifupan-divider&gt;</code> 或 <code>&lt;aifupan-divider text="标题" /&gt;</code></div>
+                <b>用途</b><div>用于分隔章节，并在分割线中间显示章节标题。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-divider&gt;Section&lt;/aifupan-divider&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-divider">Section</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="code">
+            <h2>code / code-diff（代码块）</h2>
+            <div class="kv">
+                <b>code</b><div><code>&lt;aifupan-code title="代码片段"&gt;```js ... ```&lt;/aifupan-code&gt;</code></div>
+                <b>code-diff</b><div><code>&lt;aifupan-code-diff&gt;```diff ... ```&lt;/aifupan-code-diff&gt;</code>（语言默认 diff）。</div>
+                <b>行号</b><div>布尔属性：<code>line-numbers</code>（出现即开启）。</div>
+            </div>
+            <div class="demo">
+                <pre>&lt;aifupan-code title="示例" line-numbers&gt;
+```js
+export function sum(a, b) {
+  return a + b
+}
+```
+&lt;/aifupan-code&gt;</pre>
+                <div class="previewWrap">
+                    <div class="caption">预览</div>
+                    <div class="ai-mdtag-render-root ai-mdtag-theme-business ai-mdtag-skin-paper">
+                        <div class="aifupan-block aifupan-code">
+                            <div class="aifupan-code-head"><span>示例</span><span>js</span></div>
+                            <pre><code class="language-js">01  export function sum(a, b) {
+02    return a + b
+03  }</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="noteBox">本 HTML 文档不做语法高亮，仅展示容器样式。真实渲染器输出同结构，并根据语言标记给 <code>code</code> 添加 class。</div>
+        </div>
+
+        <div class="section">
+            <h2>补充：其它标签（未单独展示但同样受 CSS 控制）</h2>
+            <div class="meta">
+                <div>除本页演示外，渲染器还支持：<code>aifupan-divider</code>（分割线标签）、<code>aifupan-accordion</code>（多段折叠）等。</div>
+                <div>建议在提示词中始终保持标签闭合与属性双引号（<code>key="value"</code>），避免解析歧义。</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

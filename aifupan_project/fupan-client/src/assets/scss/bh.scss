@@ -1,0 +1,70 @@
+
+
+@keyframes big_mini{
+    0%{
+  
+    }
+    50%{
+      color: transparent;
+    }
+    100%{
+      
+    }
+}
+
+.recordStatus {
+  font-size: 20px;
+  animation: big_mini 2s infinite;
+}
+
+@keyframes flyIn {
+  0% {
+    left: 600px;
+    opacity: 0;
+  }
+  100% {
+    left: 0px;
+    opacity: 1;
+  }
+}
+
+.fly-in {
+  // transform: translateX(-100vw);
+  position: relative;
+  // padding-top: 3px;
+  .bg{
+    position: relative;
+    color: transparent;
+    opacity: 0;
+    visibility: hidden;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .slide{
+    position: absolute;
+    top: 0;
+    left: 600px;
+    width: 100%;
+    // height: 100%;
+    animation: flyIn 1s ease-out forwards;
+    // margin-right: -300px;
+  }
+}
+
+@import "./../fonts/font/iconfont.css";
+// 变量
+@import "./element-variables.scss";
+
+// 功能
+@import './commonClass.scss';
+
+// 公共样式
+@import "./common.scss";
+
+// 自定义主题
+@import "./custom-theme.scss";
+
+//全局自定义class
+@import "./custom-global.scss";
+

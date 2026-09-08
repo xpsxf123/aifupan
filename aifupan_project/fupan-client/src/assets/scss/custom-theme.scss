@@ -1,0 +1,291 @@
+// =============================
+// 🌈 Element UI 自定义主题样式
+// =============================
+
+// ⬇️ 全局变量
+:root {
+  --radius: 34px;
+
+  // 高度
+  --height-default: 34px;
+  --height-medium: 28px;
+  --height-small: 22px;
+  --height-mini: 22px;
+
+  // 字体
+  --font-default: 15px;
+  --font-medium: 14px;
+  --font-small: 12px;
+  --font-mini: 12px;
+}
+
+.color-main{
+  color: var(--color-main);
+}
+
+/**************************************************
+******************  按钮类组件  ********************
+**************************************************/
+$button-types: default var(--height-default) var(--font-default),
+medium var(--height-medium) var(--font-medium),
+small var(--height-small) var(--font-small),
+mini var(--height-mini) var(--font-mini);
+
+// ⭐ 按钮样式
+@mixin custom-button($height, $font-size) {
+  height: $height;
+  line-height: calc(#{$height} - 2px);
+  font-size: $font-size;
+  padding: 0 12px;
+}
+
+@each $type, $height, $font in $button-types {
+  .el-button {
+    &.el-button--#{$type}:not(.is-circle){
+      @include custom-button($height, $font);
+    }
+  }
+}
+
+.el-button {
+  &.el-button--text {
+    height: auto;
+    line-height: 1
+  }
+}
+
+
+/**************************************************
+******************  输入类组建  ********************
+**************************************************/
+// 输入类组件 样式选择器
+$types: default var(--height-default) var(--font-medium),
+medium var(--height-medium) var(--font-medium),
+small var(--height-small) var(--font-small);
+//mini var(--height-small) var(--font-small);
+
+// ⭐ 输入类组件统一样式
+@mixin custom-input($height, $font-size) {
+  height: $height;
+  line-height: $height;
+  font-size: $font-size;
+  border-radius: var(--radius);
+}
+
+// ⭐ 单选按钮组样式
+@mixin radio-button-style($height, $font-size) {
+  height: $height;
+  line-height: $height;
+  font-size: $font-size;
+  border-radius: var(--radius);
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+@each $type, $height, $font in $types {
+  .el-input--#{$type} .el-input__inner,
+  .el-select--#{$type},
+  .el-select--#{$type} .el-input__inner,
+  .el-cascader--#{$type},
+  .el-cascader--#{$type} .el-input__inner,
+  .el-date-editor--#{$type},
+  .el-time-picker--#{$type} .el-input__inner,
+  .el-range-editor--#{$type} {
+    @include custom-input($height, $font);
+  }
+  .el-range-editor--#{$type} {
+    .el-range-separator {
+      padding: 0;
+    }
+
+    .el-range__icon {
+      line-height: calc(#{$height} - 6px);;
+    }
+  }
+
+  .el-input--#{$type} {
+    .el-input-group__prepend {
+      border-radius: $height 0 0 $height;
+
+      & + .el-input__inner {
+        border-radius: 0 $height $height 0;
+      }
+    }
+
+    .el-input__icon {
+      line-height: $height;
+    }
+  }
+
+  .el-radio-button--#{$type} {
+    .el-radio-button__inner {
+      @include radio-button-style($height, $font);
+    }
+
+    @extend %apply-radio-style;
+  }
+
+  .el-date-editor.is-range.el-date-editor--#{$type} {
+    @include custom-input($height, $font);
+  }
+
+  .el-tag--#{$type} {
+    @include custom-button($height, $font);
+  }
+
+
+  .el-form-item.el-form-item--#{$type} {
+    .el-form-item__label,
+    .el-form-item__content {
+      //height: $height;
+      line-height: $height;
+      font-size: $font;
+      border-radius: var(--radius);
+    }
+  }
+}
+
+
+// ⭐ 按钮样式的单选组合
+%apply-radio-style {
+  .el-radio-button__inner {
+    border-radius: 0;
+  }
+
+  &:first-child .el-radio-button__inner {
+    border-radius: var(--radius) 0 0 var(--radius);
+  }
+
+  &:last-child .el-radio-button__inner {
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+    color: var(--color-main);
+    background-color: #fff;
+    border-color: var(--color-main);
+  }
+
+  .el-radio-button__orig-radio:disabled + .el-radio-button__inner {
+    color: #C0C4CC;
+    cursor: not-allowed;
+    background-color: #fff;
+    border-color: #EBEEF5;
+    box-shadow: none;
+  }
+}
+
+
+/**************************************************
+**************  MessageBox 弹框 按钮  **************
+**************************************************/
+.el-message-box__btns .el-button {
+  height: var(--height-default) !important;
+  line-height: calc(#{var(--height-default)} - 2px) !important;
+  font-size: var(--font-default) !important;
+  border-radius: var(--radius) !important;
+  padding-inline: 28px !important;
+}
+
+
+/**************************************************
+**************   全局过滤 & 缩固样式   **************
+**************************************************/
+.el-form-item {
+  margin-bottom: 18px;
+}
+
+.el-button,
+.el-input__inner,
+.el-select .el-input__inner {
+  transition: all 0.2s ease;
+}
+
+.el-button.is-disabled,
+.el-input.is-disabled .el-input__inner {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.el-card {
+  border-radius: 10px;
+  border: none;
+  box-shadow: none !important;
+}
+
+.el-dialog, .el-message-box {
+  border-radius: 10px;
+}
+
+// 核心表格搜索组件
+.core-search {
+  .core-search-del {
+    border: none !important;
+    background: none !important;
+  }
+}
+
+// 核心表格组件
+.core-table {
+
+  .operation-button {
+    > .afp-button {
+      margin: 2px;
+    }
+
+    // .ropdown-more-button {
+    //   // background: $--color-white;
+    // }
+
+    > .el-button--danger {
+      border: none;
+      background: none;
+      padding: 0 4px;
+    }
+  }
+}
+
+
+/**************************************************
+****************   日期组件   ****************
+**************************************************/
+//.el-date-editor {
+//  .el-range-separator {
+//    padding: 0;
+//  }
+//
+//  .el-range__icon {
+//    line-height: 28px;
+//  }
+//}
+
+
+.input-gray {
+  .el-input__inner {
+    background: #F0F3F8;
+  }
+}
+.input-border-none{
+    .el-input__inner {
+        border: none;
+        box-shadow: none;
+    }
+}
+
+.el-button--text, .el-button--text:hover, .el-button--text:focus {
+  color: var(--color-main);
+  //color: var(--color-main) !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+.el-button--text.is-disabled, .el-button--text.is-disabled:hover, .el-button--text.is-disabled:focus {
+  border: none !important;
+}
+
+.el-picker-panel__link-btn{
+  border-radius: 38px;
+}

@@ -1,0 +1,42 @@
+.interactionInspectCell{
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.cellText{
+  font-size: 12px;
+  color: #2E3742;
+}
+
+.cellMain{
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2px 0;
+  font-size: 12px;
+  color: #2E3742;
+}
+
+.cellStats{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cellRow{
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 16px;
+}
+
+.cellLabel{
+  color: #677583;
+}
+
+.cellValue{
+  color: #2E3742;
+  cursor: pointer;
+}
+

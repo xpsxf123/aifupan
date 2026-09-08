@@ -1,0 +1,37 @@
+/* Global SCSS Variables */
+/* Colors */
+$color-primary: var(--color-primary);
+$color-success: var(--color-success);
+$color-warning: var(--color-warning);
+$color-danger: var(--color-danger);
+$color-info: var(--color-info);
+
+$text-color-main: var(--text-color-main);
+$text-color-regular: var(--text-color-regular);
+$text-color-secondary: var(--text-color-secondary);
+$text-color-placeholder: var(--text-color-placeholder);
+
+$bg-color-base: var(--bg-color-base);
+$bg-color-main: var(--bg-color-main);
+
+$border-color-base: var(--border-color-base);
+$border-color-light: var(--border-color-light);
+
+/* Spacing */
+$spacing-base: 4px;
+
+/* Font Sizes */
+$font-size-14: var(--font-size-14);
+
+/* Mixins */
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

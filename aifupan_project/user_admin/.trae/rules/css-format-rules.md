@@ -1,0 +1,2 @@
+1. vars.scss（全局样式变量）定义完整的CSS变量，包括：颜色：主色调、文本色（3级）、背景色（2级）、边框色... 间距：内边距、外边距字号：常用范围布局：flex常用配置请补充完整的变量体系。
+2. common.scss（全局样式工具类）使用SCSS循环和变量生成以下工具类：颜色类：文本色：.text-colorMain, .text-color1, .text-color2, .text-colorPrimary背景色：.bg-main, .bg-color1, .bg-color2布局类：Flex布局：.flex, .flex-row, .flex-col, .flex-center, .flex-between, .flex-ai-center, .flex-justify-center, .flex-1溢出：.ov-h对齐：.text-center间距与尺寸：使用SCSS循环生成10-40px的间距类（padding, margin各方向）使用循环生成12-40px的字号类（如.font-s12）字重：.font-w500

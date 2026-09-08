@@ -1,0 +1,47 @@
+# 本仓库只同步爱复盘「客户端」源码，不含服务端。
+# 各子项目在公司仍使用各自的 origin，本仓库是个人备份。
+
+# 服务端（不纳入）
+aifupan_project/fupan-server/
+aifupan_project/fupan-governance-server/
+
+# 依赖与构建产物
+**/node_modules/
+**/.venv/
+**/dist/
+**/dist_electron/
+**/.output/
+**/bin/
+**/obj/
+**/packages/
+**/.vs/
+**/.idea/
+**/.vscode/
+**/playwright-report/
+**/test-results/
+**/blob-report/
+
+# 密钥与本地配置
+**/.env
+**/.env.*
+**/.env.local
+**/.env.*.local
+**/*.pem
+**/*.key
+**/credentials.json
+
+# 体积过大的二进制（GitHub 单文件 100MB 限制）
+**/*.exe
+**/*.zip
+**/*.7z
+**/*.rar
+**/src/assets/video/
+**/*.dll
+**/*.pdb
+**/*.so
+**/*.dylib
+
+# 系统
+.DS_Store
+Thumbs.db
+*.log

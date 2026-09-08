@@ -1,0 +1,49 @@
+.aiMonitorPreviewContent {
+    min-height: 18px;
+    line-height: 1.5;
+    color: #515c73;
+    cursor: pointer;
+}
+
+.aiMonitorPreviewMetric,
+.aiMonitorPreviewText {
+    font-size: 12px;
+}
+
+.aiMonitorPreviewMetric {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.aiMonitorPreviewMetricLabel {
+    color: #515c73;
+    flex: 1;
+    min-width: 0;
+}
+
+.aiMonitorPreviewMetricValue {
+    color: #f53f3f;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.aiMonitorPreviewText {
+    color: #515c73;
+    word-break: break-word;
+}
+
+.aiMonitorPreviewEmpty {
+    color: #95a1af;
+    font-size: 12px;
+}
+
+.aiMonitorPreviewDetailButton {
+    padding: 0;
+    font-size: 12px;
+}
+
+.aiMonitorPreviewContent--error {
+    cursor: pointer;
+}

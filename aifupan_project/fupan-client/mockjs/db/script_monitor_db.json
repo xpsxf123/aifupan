@@ -1,0 +1,2099 @@
+{
+  "anchors": {
+    "1": {
+      "anchorUrlUserId": 1,
+      "accountType": 0,
+      "isScriptQualityInspection": 1
+    }
+  },
+  "videos": {
+    "video_1": {
+      "videoId": "video_1",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "video_2": {
+      "videoId": "video_2",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 2644689291,
+        "summary": {
+          "crashCount": 1,
+          "slackCount": 1,
+          "brandDamageCount": 0,
+          "afterSalesCount": 1
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 2644689302,
+        "summary": {
+          "score": 96,
+          "speechSpeed": 276,
+          "deviationSummary": "整体节奏接近标准稿，部分段落存在遗漏"
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 2644689313,
+        "summary": {
+          "effectivenessPercentage": 88,
+          "summary": "本场共检测到需回复弹幕 16 条，其中有效回复 6 条，未及时回复 4 条。",
+          "interactionRate": 88,
+          "summaryText": "本场共检测到需回复弹幕 16 条，其中有效回复 6 条，未及时回复 4 条。",
+          "missedCount": 4
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "video_3": {
+      "videoId": "video_3",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 3,
+        "statusText": "生成失败",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": "AI 服务暂不可用，请稍后重试"
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "video_4": {
+      "videoId": "video_4",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 9824491381,
+        "summary": {
+          "crashCount": 1,
+          "slackCount": 3,
+          "brandDamageCount": 0,
+          "afterSalesCount": 1
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 4,
+        "statusText": "不可生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": "本场无弹幕数据"
+      }
+    },
+    "9b417631-3713-45d0-87bd-e3a4f432fc75": {
+      "videoId": "9b417631-3713-45d0-87bd-e3a4f432fc75",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 5962157591,
+        "summary": {
+          "crashCount": 0,
+          "slackCount": 2,
+          "brandDamageCount": 1,
+          "afterSalesCount": 0
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "b29b96a6-8362-4676-8965-f819b6f1b184": {
+      "videoId": "b29b96a6-8362-4676-8965-f819b6f1b184",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 1972114161,
+        "summary": {
+          "crashCount": 2,
+          "slackCount": 2,
+          "brandDamageCount": 1,
+          "afterSalesCount": 2
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 1972114152,
+        "summary": {
+          "score": 98,
+          "speechSpeed": 278,
+          "deviationSummary": "整体节奏接近标准稿，部分段落存在遗漏"
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 1972114143,
+        "summary": {
+          "effectivenessPercentage": 90,
+          "summary": "本场共检测到需回复弹幕 18 条，其中有效回复 4 条，未及时回复 6 条。",
+          "interactionRate": 90,
+          "summaryText": "本场共检测到需回复弹幕 18 条，其中有效回复 4 条，未及时回复 6 条。",
+          "missedCount": 6
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "9385a3e0-dca2-4615-acf8-2a5b95a63ff6": {
+      "videoId": "9385a3e0-dca2-4615-acf8-2a5b95a63ff6",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6326469431,
+        "summary": {
+          "crashCount": 2,
+          "slackCount": 0,
+          "brandDamageCount": 1,
+          "afterSalesCount": 2
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "c1666b00-91c1-4f63-9df9-b04f037d4cfb": {
+      "videoId": "c1666b00-91c1-4f63-9df9-b04f037d4cfb",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6814148011,
+        "summary": {
+          "crashCount": 2,
+          "slackCount": 2,
+          "brandDamageCount": 1,
+          "afterSalesCount": 2
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6814148002,
+        "summary": {
+          "score": 72,
+          "speechSpeed": 342,
+          "deviationSummary": "整体节奏接近标准稿，部分段落存在遗漏"
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6814147993,
+        "summary": {
+          "effectivenessPercentage": 68,
+          "summary": "本场共检测到需回复弹幕 12 条，其中有效回复 10 条，未及时回复 0 条。",
+          "interactionRate": 68,
+          "summaryText": "本场共检测到需回复弹幕 12 条，其中有效回复 10 条，未及时回复 0 条。",
+          "missedCount": 0
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0c8effbc-8c1a-4d43-aeb2-89f076b802ba": {
+      "videoId": "0c8effbc-8c1a-4d43-aeb2-89f076b802ba",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6761328981,
+        "summary": {
+          "crashCount": 1,
+          "slackCount": 1,
+          "brandDamageCount": 0,
+          "afterSalesCount": 1
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "d920439c-2136-4ca2-a498-6092680b07f3": {
+      "videoId": "d920439c-2136-4ca2-a498-6092680b07f3",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "4eccc738-f395-42b8-89e2-03ee42e79591": {
+      "videoId": "4eccc738-f395-42b8-89e2-03ee42e79591",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "e79fdde4-8a21-4551-b031-62b23865cc91": {
+      "videoId": "e79fdde4-8a21-4551-b031-62b23865cc91",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 3,
+        "statusText": "生成失败",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": "AI 服务暂不可用，请稍后重试"
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "f309f92d-f23a-4429-a86a-d4f1509619f5": {
+      "videoId": "f309f92d-f23a-4429-a86a-d4f1509619f5",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "cd8879d2-bc15-4e70-a1cb-f93e29984669": {
+      "videoId": "cd8879d2-bc15-4e70-a1cb-f93e29984669",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 3,
+        "statusText": "生成失败",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": "AI 服务暂不可用，请稍后重试"
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "caf4f3fa-f50a-494c-9288-22f60a087b3e": {
+      "videoId": "caf4f3fa-f50a-494c-9288-22f60a087b3e",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "00ff8eda-c4b4-4a8f-9090-769616543a5b": {
+      "videoId": "00ff8eda-c4b4-4a8f-9090-769616543a5b",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "5d4e18a6-ed90-4ff3-82d8-74213eab90d3": {
+      "videoId": "5d4e18a6-ed90-4ff3-82d8-74213eab90d3",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "V1": {
+      "videoId": "V1",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 3759699092,
+        "summary": {
+          "score": 86,
+          "speechSpeed": 280,
+          "deviationSummary": "整体节奏接近标准稿，部分段落存在遗漏"
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    }
+  },
+  "resources": {
+    "0_0_video_1": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "video_1",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_video_2": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "video_2",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 2644689291,
+        "summary": {
+          "crashCount": 1,
+          "slackCount": 1,
+          "brandDamageCount": 0,
+          "afterSalesCount": 1
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 2644689302,
+        "summary": {
+          "score": 96,
+          "speechSpeed": 276,
+          "deviationSummary": "整体节奏接近标准稿，部分段落存在遗漏"
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 2644689313,
+        "summary": {
+          "effectivenessPercentage": 88,
+          "summary": "本场共检测到需回复弹幕 16 条，其中有效回复 6 条，未及时回复 4 条。",
+          "interactionRate": 88,
+          "summaryText": "本场共检测到需回复弹幕 16 条，其中有效回复 6 条，未及时回复 4 条。",
+          "missedCount": 4
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_video_3": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "video_3",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 3,
+        "statusText": "生成失败",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": "AI 服务暂不可用，请稍后重试"
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_video_4": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "video_4",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 9824491381,
+        "summary": {
+          "crashCount": 1,
+          "slackCount": 3,
+          "brandDamageCount": 0,
+          "afterSalesCount": 1
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 4,
+        "statusText": "不可生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": "本场无弹幕数据"
+      }
+    },
+    "0_0_9b417631-3713-45d0-87bd-e3a4f432fc75": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "9b417631-3713-45d0-87bd-e3a4f432fc75",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 5962157591,
+        "summary": {
+          "crashCount": 0,
+          "slackCount": 2,
+          "brandDamageCount": 1,
+          "afterSalesCount": 0
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_b29b96a6-8362-4676-8965-f819b6f1b184": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "b29b96a6-8362-4676-8965-f819b6f1b184",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 1972114161,
+        "summary": {
+          "crashCount": 2,
+          "slackCount": 2,
+          "brandDamageCount": 1,
+          "afterSalesCount": 2
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 1972114152,
+        "summary": {
+          "score": 98,
+          "speechSpeed": 278,
+          "deviationSummary": "整体节奏接近标准稿，部分段落存在遗漏"
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 1972114143,
+        "summary": {
+          "effectivenessPercentage": 90,
+          "summary": "本场共检测到需回复弹幕 18 条，其中有效回复 4 条，未及时回复 6 条。",
+          "interactionRate": 90,
+          "summaryText": "本场共检测到需回复弹幕 18 条，其中有效回复 4 条，未及时回复 6 条。",
+          "missedCount": 6
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_9385a3e0-dca2-4615-acf8-2a5b95a63ff6": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "9385a3e0-dca2-4615-acf8-2a5b95a63ff6",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6326469431,
+        "summary": {
+          "crashCount": 2,
+          "slackCount": 0,
+          "brandDamageCount": 1,
+          "afterSalesCount": 2
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_c1666b00-91c1-4f63-9df9-b04f037d4cfb": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "c1666b00-91c1-4f63-9df9-b04f037d4cfb",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6814148011,
+        "summary": {
+          "crashCount": 2,
+          "slackCount": 2,
+          "brandDamageCount": 1,
+          "afterSalesCount": 2
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6814148002,
+        "summary": {
+          "score": 72,
+          "speechSpeed": 342,
+          "deviationSummary": "整体节奏接近标准稿，部分段落存在遗漏"
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6814147993,
+        "summary": {
+          "effectivenessPercentage": 68,
+          "summary": "本场共检测到需回复弹幕 12 条，其中有效回复 10 条，未及时回复 0 条。",
+          "interactionRate": 68,
+          "summaryText": "本场共检测到需回复弹幕 12 条，其中有效回复 10 条，未及时回复 0 条。",
+          "missedCount": 0
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_0c8effbc-8c1a-4d43-aeb2-89f076b802ba": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "0c8effbc-8c1a-4d43-aeb2-89f076b802ba",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 6761328981,
+        "summary": {
+          "crashCount": 1,
+          "slackCount": 1,
+          "brandDamageCount": 0,
+          "afterSalesCount": 1
+        },
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_d920439c-2136-4ca2-a498-6092680b07f3": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "d920439c-2136-4ca2-a498-6092680b07f3",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_4eccc738-f395-42b8-89e2-03ee42e79591": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "4eccc738-f395-42b8-89e2-03ee42e79591",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_e79fdde4-8a21-4551-b031-62b23865cc91": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "e79fdde4-8a21-4551-b031-62b23865cc91",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 3,
+        "statusText": "生成失败",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": "AI 服务暂不可用，请稍后重试"
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_f309f92d-f23a-4429-a86a-d4f1509619f5": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "f309f92d-f23a-4429-a86a-d4f1509619f5",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_cd8879d2-bc15-4e70-a1cb-f93e29984669": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "cd8879d2-bc15-4e70-a1cb-f93e29984669",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 3,
+        "statusText": "生成失败",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": "AI 服务暂不可用，请稍后重试"
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_caf4f3fa-f50a-494c-9288-22f60a087b3e": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "caf4f3fa-f50a-494c-9288-22f60a087b3e",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_00ff8eda-c4b4-4a8f-9090-769616543a5b": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "00ff8eda-c4b4-4a8f-9090-769616543a5b",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_5d4e18a6-ed90-4ff3-82d8-74213eab90d3": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "5d4e18a6-ed90-4ff3-82d8-74213eab90d3",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    },
+    "0_0_V1": {
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "V1",
+      "scriptQualityInspection": {
+        "monitorType": 0,
+        "monitorTypeText": "话术质检",
+        "status": 1,
+        "statusText": "生成中",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "scriptFidelityMonitor": {
+        "monitorType": 1,
+        "monitorTypeText": "话术还原度",
+        "status": 2,
+        "statusText": "已生成",
+        "reportId": 3759699092,
+        "summary": {
+          "score": 86,
+          "speechSpeed": 280,
+          "deviationSummary": "整体节奏接近标准稿，部分段落存在遗漏"
+        },
+        "isRead": true,
+        "canConfirm": true,
+        "unavailableReason": null
+      },
+      "interactionPatrol": {
+        "monitorType": 2,
+        "monitorTypeText": "互动巡检",
+        "status": 0,
+        "statusText": "未生成",
+        "reportId": null,
+        "summary": null,
+        "isRead": false,
+        "canConfirm": true,
+        "unavailableReason": null
+      }
+    }
+  },
+  "reports": {
+    "1972114143": {
+      "reportId": 1972114143,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "b29b96a6-8362-4676-8965-f819b6f1b184",
+      "monitorType": 2,
+      "status": 2,
+      "statusText": "已生成",
+      "effectivenessPercentage": 90,
+      "summary": "本场共检测到需回复弹幕 18 条，其中有效回复 4 条，未及时回复 6 条。",
+      "reportContent": "<p><strong>巡检摘要</strong></p><p>本场互动有效性：90%；未及时回复：6 条。</p><p><strong>建议</strong></p><p>建议在高频问题（价格/优惠/尺码/发货）出现后优先回复，并避免“随意发挥”导致信息不一致。</p>",
+      "details": [],
+      "anchorName": "主播2",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": true,
+      "canConfirm": true,
+      "createDate": "2026-05-19 17:40:00",
+      "__resourceKey": "0_0_b29b96a6-8362-4676-8965-f819b6f1b184"
+    },
+    "1972114152": {
+      "reportId": 1972114152,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "b29b96a6-8362-4676-8965-f819b6f1b184",
+      "monitorType": 1,
+      "status": 2,
+      "statusText": "已生成",
+      "speechMode": 0,
+      "speechModeText": "非循环模式",
+      "speechSpeed": 278,
+      "score": 98,
+      "deviationSummary": {
+        "missedSegments": 3,
+        "outOfOrderSegments": 0,
+        "deviatedSegments": 1,
+        "freePlaySegments": 1
+      },
+      "reportContent": "<p><strong>偏差摘要</strong></p><p>评分：98；语速：278 字/分钟。</p><p><strong>建议</strong></p><p>建议在关键卖点段落减少遗漏，并保持节奏一致。</p>",
+      "anchorName": "主播5",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": true,
+      "canConfirm": true,
+      "createDate": "2026-05-19 17:35:00",
+      "__resourceKey": "0_0_b29b96a6-8362-4676-8965-f819b6f1b184"
+    },
+    "1972114161": {
+      "reportId": 1972114161,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "b29b96a6-8362-4676-8965-f819b6f1b184",
+      "monitorType": 0,
+      "status": 2,
+      "statusText": "已生成",
+      "crashCount": 2,
+      "slackCount": 2,
+      "brandDamageCount": 1,
+      "afterSalesCount": 2,
+      "reportContent": "<p><strong>结论摘要</strong></p><p>本场共识别到负面话术风险点：7 处。</p><p>崩盘话术：2；摸鱼话术：2；有损品牌：1；增加售后：2。</p><p><strong>建议</strong></p><p>建议在关键卖点环节避免夸大承诺与绝对化表述，及时补充限制条件与售后口径。</p>",
+      "anchorName": "主播6",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": true,
+      "canConfirm": true,
+      "confirmedRecords": [
+        {
+          "role": 1,
+          "label": "运营已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 2,
+          "label": "主播已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 3,
+          "label": "主管已知晓",
+          "confirmed": false
+        }
+      ],
+      "createDate": "2026-05-19 17:30:00",
+      "__resourceKey": "0_0_b29b96a6-8362-4676-8965-f819b6f1b184"
+    },
+    "2644689291": {
+      "reportId": 2644689291,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "video_2",
+      "monitorType": 0,
+      "status": 2,
+      "statusText": "已生成",
+      "crashCount": 1,
+      "slackCount": 1,
+      "brandDamageCount": 0,
+      "afterSalesCount": 1,
+      "reportContent": "<p><strong>结论摘要</strong></p><p>本场共识别到负面话术风险点：3 处。</p><p>崩盘话术：1；摸鱼话术：1；有损品牌：0；增加售后：1。</p><p><strong>建议</strong></p><p>建议在关键卖点环节避免夸大承诺与绝对化表述，及时补充限制条件与售后口径。</p>",
+      "anchorName": "主播5",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": false,
+      "canConfirm": true,
+      "confirmedRecords": [
+        {
+          "role": 1,
+          "label": "运营已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 2,
+          "label": "主播已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 3,
+          "label": "主管已知晓",
+          "confirmed": false
+        }
+      ],
+      "createDate": "2026-05-19 17:30:00",
+      "__resourceKey": "0_0_video_2"
+    },
+    "2644689302": {
+      "reportId": 2644689302,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "video_2",
+      "monitorType": 1,
+      "status": 2,
+      "statusText": "已生成",
+      "speechMode": 0,
+      "speechModeText": "非循环模式",
+      "speechSpeed": 276,
+      "score": 96,
+      "deviationSummary": {
+        "missedSegments": 1,
+        "outOfOrderSegments": 1,
+        "deviatedSegments": 5,
+        "freePlaySegments": 2
+      },
+      "reportContent": "<p><strong>偏差摘要</strong></p><p>评分：96；语速：276 字/分钟。</p><p><strong>建议</strong></p><p>建议在关键卖点段落减少遗漏，并保持节奏一致。</p>",
+      "anchorName": "主播3",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": false,
+      "canConfirm": true,
+      "createDate": "2026-05-19 17:35:00",
+      "__resourceKey": "0_0_video_2"
+    },
+    "2644689313": {
+      "reportId": 2644689313,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "video_2",
+      "monitorType": 2,
+      "status": 2,
+      "statusText": "已生成",
+      "effectivenessPercentage": 88,
+      "summary": "本场共检测到需回复弹幕 16 条，其中有效回复 6 条，未及时回复 4 条。",
+      "reportContent": "<p><strong>巡检摘要</strong></p><p>本场互动有效性：88%；未及时回复：4 条。</p><p><strong>建议</strong></p><p>建议在高频问题（价格/优惠/尺码/发货）出现后优先回复，并避免“随意发挥”导致信息不一致。</p>",
+      "details": [],
+      "anchorName": "主播9",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": false,
+      "canConfirm": true,
+      "createDate": "2026-05-19 17:40:00",
+      "__resourceKey": "0_0_video_2"
+    },
+    "3759699092": {
+      "reportId": 3759699092,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "V1",
+      "monitorType": 1,
+      "status": 2,
+      "statusText": "已生成",
+      "speechMode": 1,
+      "speechModeText": "循环模式",
+      "speechSpeed": 280,
+      "score": 86,
+      "deviationSummary": {
+        "missedSegments": 2,
+        "outOfOrderSegments": 1,
+        "deviatedSegments": 3,
+        "freePlaySegments": 1
+      },
+      "reportContent": "<p><strong>偏差摘要</strong></p><p>（Mock）报告已生成。</p>",
+      "anchorName": "主播A",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": true,
+      "canConfirm": true,
+      "createDate": "2026-05-19 17:35:00",
+      "__resourceKey": "0_0_V1"
+    },
+    "9824491381": {
+      "reportId": 9824491381,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "video_4",
+      "monitorType": 0,
+      "status": 2,
+      "statusText": "已生成",
+      "crashCount": 1,
+      "slackCount": 3,
+      "brandDamageCount": 0,
+      "afterSalesCount": 1,
+      "reportContent": "<p><strong>结论摘要</strong></p><p>（Mock）报告已生成。</p>",
+      "anchorName": "主播8",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": true,
+      "canConfirm": true,
+      "confirmedRecords": [
+        {
+          "role": 1,
+          "label": "运营已知晓",
+          "confirmed": true
+        },
+        {
+          "role": 2,
+          "label": "主播已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 3,
+          "label": "主管已知晓",
+          "confirmed": false
+        }
+      ],
+      "createDate": "2026-05-19 17:30:00",
+      "__resourceKey": "0_0_video_4"
+    },
+    "6814148011": {
+      "reportId": 6814148011,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "c1666b00-91c1-4f63-9df9-b04f037d4cfb",
+      "monitorType": 0,
+      "status": 2,
+      "statusText": "已生成",
+      "crashCount": 2,
+      "slackCount": 2,
+      "brandDamageCount": 1,
+      "afterSalesCount": 2,
+      "reportContent": "<p><strong>结论摘要</strong></p><p>本场共识别到负面话术风险点：7 处。</p><p>崩盘话术：2；摸鱼话术：2；有损品牌：1；增加售后：2。</p><p><strong>建议</strong></p><p>建议在关键卖点环节避免夸大承诺与绝对化表述，及时补充限制条件与售后口径。</p>",
+      "anchorName": "主播3",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": false,
+      "canConfirm": true,
+      "confirmedRecords": [
+        {
+          "role": 1,
+          "label": "运营已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 2,
+          "label": "主播已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 3,
+          "label": "主管已知晓",
+          "confirmed": false
+        }
+      ],
+      "createDate": "2026-05-19 17:30:00",
+      "__resourceKey": "0_0_c1666b00-91c1-4f63-9df9-b04f037d4cfb"
+    },
+    "6814148002": {
+      "reportId": 6814148002,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "c1666b00-91c1-4f63-9df9-b04f037d4cfb",
+      "monitorType": 1,
+      "status": 2,
+      "statusText": "已生成",
+      "speechMode": 0,
+      "speechModeText": "非循环模式",
+      "speechSpeed": 342,
+      "score": 72,
+      "deviationSummary": {
+        "missedSegments": 2,
+        "outOfOrderSegments": 1,
+        "deviatedSegments": 5,
+        "freePlaySegments": 2
+      },
+      "reportContent": "<p><strong>偏差摘要</strong></p><p>评分：72；语速：342 字/分钟。</p><p><strong>建议</strong></p><p>建议在关键卖点段落减少遗漏，并保持节奏一致。</p>",
+      "anchorName": "主播6",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": false,
+      "canConfirm": true,
+      "createDate": "2026-05-19 17:35:00",
+      "__resourceKey": "0_0_c1666b00-91c1-4f63-9df9-b04f037d4cfb"
+    },
+    "6814147993": {
+      "reportId": 6814147993,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "c1666b00-91c1-4f63-9df9-b04f037d4cfb",
+      "monitorType": 2,
+      "status": 2,
+      "statusText": "已生成",
+      "effectivenessPercentage": 68,
+      "summary": "本场共检测到需回复弹幕 12 条，其中有效回复 10 条，未及时回复 0 条。",
+      "reportContent": "<p><strong>巡检摘要</strong></p><p>本场互动有效性：68%；未及时回复：0 条。</p><p><strong>建议</strong></p><p>建议在高频问题（价格/优惠/尺码/发货）出现后优先回复，并避免“随意发挥”导致信息不一致。</p>",
+      "details": [],
+      "anchorName": "主播3",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": false,
+      "canConfirm": true,
+      "createDate": "2026-05-19 17:40:00",
+      "__resourceKey": "0_0_c1666b00-91c1-4f63-9df9-b04f037d4cfb"
+    },
+    "5962157591": {
+      "reportId": 5962157591,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "9b417631-3713-45d0-87bd-e3a4f432fc75",
+      "monitorType": 0,
+      "status": 2,
+      "statusText": "已生成",
+      "crashCount": 0,
+      "slackCount": 2,
+      "brandDamageCount": 1,
+      "afterSalesCount": 0,
+      "reportContent": "<p><strong>结论摘要</strong></p><p>（Mock）报告已生成。</p>",
+      "anchorName": "主播1",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": false,
+      "canConfirm": true,
+      "confirmedRecords": [
+        {
+          "role": 1,
+          "label": "运营已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 2,
+          "label": "主播已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 3,
+          "label": "主管已知晓",
+          "confirmed": false
+        }
+      ],
+      "createDate": "2026-05-19 17:30:00",
+      "__resourceKey": "0_0_9b417631-3713-45d0-87bd-e3a4f432fc75"
+    },
+    "6326469431": {
+      "reportId": 6326469431,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "9385a3e0-dca2-4615-acf8-2a5b95a63ff6",
+      "monitorType": 0,
+      "status": 2,
+      "statusText": "已生成",
+      "crashCount": 2,
+      "slackCount": 0,
+      "brandDamageCount": 1,
+      "afterSalesCount": 2,
+      "reportContent": "<p><strong>结论摘要</strong></p><p>（Mock）报告已生成。</p>",
+      "anchorName": "主播9",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": false,
+      "canConfirm": true,
+      "confirmedRecords": [
+        {
+          "role": 1,
+          "label": "运营已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 2,
+          "label": "主播已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 3,
+          "label": "主管已知晓",
+          "confirmed": false
+        }
+      ],
+      "createDate": "2026-05-19 17:30:00",
+      "__resourceKey": "0_0_9385a3e0-dca2-4615-acf8-2a5b95a63ff6"
+    },
+    "6761328981": {
+      "reportId": 6761328981,
+      "sourceType": 0,
+      "sceneType": 0,
+      "sourceId": "0c8effbc-8c1a-4d43-aeb2-89f076b802ba",
+      "monitorType": 0,
+      "status": 2,
+      "statusText": "已生成",
+      "crashCount": 1,
+      "slackCount": 1,
+      "brandDamageCount": 0,
+      "afterSalesCount": 1,
+      "reportContent": "<p><strong>结论摘要</strong></p><p>（Mock）报告已生成。</p>",
+      "anchorName": "主播8",
+      "liveTitle": "示例直播",
+      "liveTime": "2026-05-19 14:00-16:00",
+      "isRead": false,
+      "canConfirm": true,
+      "confirmedRecords": [
+        {
+          "role": 1,
+          "label": "运营已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 2,
+          "label": "主播已知晓",
+          "confirmed": false
+        },
+        {
+          "role": 3,
+          "label": "主管已知晓",
+          "confirmed": false
+        }
+      ],
+      "createDate": "2026-05-19 17:30:00",
+      "__resourceKey": "0_0_0c8effbc-8c1a-4d43-aeb2-89f076b802ba"
+    }
+  },
+  "pendingJobs": {},
+  "standardScripts": {
+    "1082080862": {
+      "standardScriptId": 1082080862,
+      "anchorUrlUserId": null,
+      "secUid": "secUid_mock",
+      "speechMode": 0,
+      "speechModeText": "非循环模式",
+      "speechSpeed": 280,
+      "cycleDurationMinutes": null,
+      "referenceScript": "21312313123213213",
+      "timeAxisScript": [
+        {
+          "timeRange": "00:00-05:00",
+          "title": "开场暖场",
+          "content": "21312313123213213"
+        },
+        {
+          "timeRange": "05:00-10:00",
+          "title": "产品讲解",
+          "content": "（Mock）卖点讲解与优惠策略4444"
+        },
+        {
+          "timeRange": "10:00-15:00",
+          "title": "互动转化",
+          "content": "（Mock）答疑互动与转化话术22222"
+        }
+      ],
+      "createDate": "2026-05-29 11:04:20",
+      "updateDate": "2026-05-29 11:04:20"
+    },
+    "2575493702": {
+      "standardScriptId": 2575493702,
+      "anchorUrlUserId": null,
+      "secUid": "secUid_mock",
+      "speechMode": 1,
+      "speechModeText": "循环模式",
+      "speechSpeed": 280,
+      "cycleDurationMinutes": 123,
+      "referenceScript": "1111111",
+      "timeAxisScript": [
+        {
+          "timeRange": "00:00-05:00",
+          "title": "开场暖场",
+          "content": "111111111322223"
+        },
+        {
+          "timeRange": "05:00-10:00",
+          "title": "产品讲解",
+          "content": "（Mock）卖点讲解与优惠策略"
+        },
+        {
+          "timeRange": "10:00-15:00",
+          "title": "互动转化",
+          "content": "（Mock）答疑互动与转化话术44444444444"
+        }
+      ],
+      "createDate": "2026-05-29 10:20:37",
+      "updateDate": "2026-05-29 10:20:37"
+    },
+    "2576684112": {
+      "standardScriptId": 2576684112,
+      "anchorUrlUserId": null,
+      "secUid": "secUid_mock",
+      "speechMode": 1,
+      "speechModeText": "循环模式",
+      "speechSpeed": 280,
+      "cycleDurationMinutes": 123,
+      "referenceScript": "1111111",
+      "timeAxisScript": [
+        {
+          "timeRange": "00:00-05:00",
+          "title": "开场暖场",
+          "content": "111111111322223"
+        },
+        {
+          "timeRange": "05:00-10:00",
+          "title": "产品讲解",
+          "content": "（Mock）卖点讲解与优惠策略"
+        },
+        {
+          "timeRange": "10:00-15:00",
+          "title": "互动转化",
+          "content": "（Mock）答疑互动与转化话术44444444444"
+        }
+      ],
+      "createDate": "2026-05-29 10:20:33",
+      "updateDate": "2026-05-29 10:20:33"
+    },
+    "9381900652": {
+      "standardScriptId": 9381900652,
+      "anchorUrlUserId": null,
+      "secUid": "secUid_mock",
+      "speechMode": 0,
+      "speechModeText": "非循环模式",
+      "speechSpeed": 280,
+      "cycleDurationMinutes": null,
+      "referenceScript": "abc",
+      "timeAxisScript": [
+        {
+          "timeRange": "00:00-01:00",
+          "title": "t",
+          "content": "c"
+        }
+      ],
+      "createDate": "2026-05-29 09:50:32",
+      "updateDate": "2026-05-29 09:50:32"
+    },
+    "8484260902": {
+      "standardScriptId": 8484260902,
+      "anchorUrlUserId": null,
+      "secUid": "secUid_mock",
+      "speechMode": 1,
+      "speechModeText": "循环模式",
+      "speechSpeed": 280,
+      "cycleDurationMinutes": 111,
+      "referenceScript": "需要把“接口字段校验/错误码覆盖”做得更严格",
+      "timeAxisScript": [
+        {
+          "timeRange": "00:00-05:00",
+          "title": "开场暖场",
+          "content": "需要把“接口字段校验/错误码覆盖”做得更严格"
+        },
+        {
+          "timeRange": "05:00-10:00",
+          "title": "产品讲解",
+          "content": "（Mock）卖点讲解与优惠策略33333"
+        },
+        {
+          "timeRange": "10:00-15:00",
+          "title": "互动转化",
+          "content": "（Mock）答疑互动与转化话术"
+        }
+      ],
+      "createDate": "2026-05-29 09:56:18",
+      "updateDate": "2026-05-29 09:56:18"
+    },
+    "9514463922": {
+      "standardScriptId": 9514463922,
+      "anchorUrlUserId": 123,
+      "secUid": "secUid_mock",
+      "speechMode": 0,
+      "speechModeText": "非循环模式",
+      "speechSpeed": 280,
+      "cycleDurationMinutes": null,
+      "referenceScript": "test script",
+      "timeAxisScript": [
+        {
+          "timeRange": "00:00-05:00",
+          "title": "??",
+          "content": "???"
+        }
+      ],
+      "createDate": "2026-06-15 08:27:46",
+      "updateDate": "2026-06-15 08:27:46"
+    }
+  },
+  "standardScriptByAnchorUrlUserId": {
+    "123": "9514463922"
+  },
+  "anchorMonitorOccupation": {},
+  "mockConfig": {
+    "strict": true,
+    "tokenAmount": 200000,
+    "packageSupported": true,
+    "monitorPositions": {
+      "scriptQualityInspectionNum": {
+        "total": 20,
+        "use": 1
+      },
+      "scriptFidelityMonitorNum": {
+        "total": 20,
+        "use": 0
+      },
+      "interactionPatrolNum": {
+        "total": 20,
+        "use": 0
+      }
+    }
+  }
+}

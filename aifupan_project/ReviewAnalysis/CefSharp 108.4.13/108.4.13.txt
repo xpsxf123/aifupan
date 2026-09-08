@@ -1,0 +1,26 @@
+set CEF_USE_GN=1
+set GN_DEFINES=is_official_build=true use_thin_lto=false
+set GYP_MSVS_VERSION=2019
+set CEF_ARCHIVE_FORMAT=tar.bz2
+set GN_DEFINES=is_official_build=true use_thin_lto=false proprietary_codecs=true ffmpeg_branding=Chrome
+set GYP_GENERATORS=ninja,msvs-ninja
+set GN_ARGUMENTS=--ide=vs2019 --sln=cef --filters=//cef/*
+set WIN_CUSTOM_TOOLCHAIN=1
+set CEF_VCVARS=none
+set vs2019_install=C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional
+set GYP_MSVS_OVERRIDE_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional
+set SDK_ROOT=C:\Program Files (x86)\Windows Kits\10
+set VS_CRT_ROOT=C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\crt
+
+-x86-------------------------------------------------------------------------------------------------------------------------------------------------
+set INCLUDE=C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\shared;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\atlmfc\include;%INCLUDE%
+set LIB=C:\Program Files (x86)\Windows Kits\10\Lib\10.0.20348.0\um\x86;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.20348.0\ucrt\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\atlmfc\lib\x86;%LIB%
+set PATH=C:\Program Files (x86)\Windows Kits\10\bin\10.0.20348.0\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\bin\HostX64\x64;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\bin\Hostx86\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Redist\MSVC\14.29.30133\x86\Microsoft.VC142.CRT;%PATH%
+
+-x64-------------------------------------------------------------------------------------------------------------------------------------------------
+set INCLUDE=C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.20348.0\shared;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\include;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\atlmfc\include;%INCLUDE%
+set LIB=C:\Program Files (x86)\Windows Kits\10\Lib\10.0.20348.0\um\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.20348.0\ucrt\x64;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\lib\x64;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\atlmfc\lib\x64;%LIB%
+set PATH=C:\Program Files (x86)\Windows Kits\10\bin\10.0.20348.0\x64;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\bin\HostX64\x64;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\bin\Hostx86\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Redist\MSVC\14.29.30133\x64\Microsoft.VC142.CRT;%PATH%
+
+python automate-git.py --download-dir=e:\cef\source --branch=5359 --no-update --build-log-file --verbose-build --force-build --with-pgo-profiles
+python automate-git.py --download-dir=e:\cef\source --branch=5359 --no-update --build-log-file --verbose-build --force-build --x64-build --with-pgo-profiles 

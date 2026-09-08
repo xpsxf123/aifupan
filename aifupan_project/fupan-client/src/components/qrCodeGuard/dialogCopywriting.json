@@ -1,0 +1,8 @@
+{
+  "AI_SPEECH_QC_QUOTA": "<div class=\"font-s16 text-center\"><div class=\"font-s16 text-colorErr\">AI复盘话术质检监控直播间授权数量不足</div><div class=\"font-s16 text-colorErr\">请联系产品顾问购买增量包</div></div>",
+  "AI_SCRIPT_RESTORE_QUOTA": "<div class=\"font-s16 text-center\"><div class=\"font-s16 text-colorErr\">自动话术还原度监控直播间数量不足</div><div class=\"font-s16 text-colorErr\">请联系产品顾问购买增量包</div></div>",
+  "AI_INTERACTION_INSPECT_QUOTA": "<div class=\"font-s16 text-center\"><div class=\"font-s16 text-colorErr\">自动互动巡检直播间数量不足</div><div class=\"font-s16 text-colorErr\">请联系产品顾问购买增量包</div></div>",
+  "AI_POWER_INSUFFICIENT": "<div class=\"font-s16 text-center\"><div class=\"font-s16 text-colorErr\">您的算力数量不足</div><div class=\"font-s16 text-colorErr\">请联系产品顾问购买增量包</div></div>",
+  "NO_PERMISSION_FREE_VERSION": "<div class=\"font-s16 text-center\"><div class=\"font-s16 text-colorErr\">当前为免费版，暂无权限使用此功能</div><div class=\"font-s16 text-colorErr\">请联系产品顾问升级版本</div></div>"
+}
+

@@ -1,0 +1,820 @@
+[
+    {
+        "path": "/layout",
+        "filePath": "/layout",
+        "name": "layout",
+        "notLayout": true,
+        "meta": {
+            "title": "首页"
+        }
+    },
+    {
+        "path":"/aiAgent",
+        "filePath":"aiAgent/index",
+        "name":"aiAgent",
+        "meta": {
+            "title": "AI智能体",
+            "notTabs": true,
+            "hideTabs": true
+        }
+    },
+    {
+        "path":"/dataAnalysis",
+        "filePath":"dataAnalysis/index",
+        "name":"dataAnalysis",
+        "meta": {
+            "title": "直播间列表"
+        },
+        "children":[
+            {
+                "path": "hotList",
+                "name": "hotList",
+                "filePath": "dataAnalysis/hotList/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "优秀账号热度榜（每月更新）",
+                    "returnTitle": "数据大盘",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/addCompere",
+        "name":"addCompere",
+        "filePath": "addCompere/index",
+        "meta": {
+            "title": "添加主播"
+        },
+        "children":[
+            {
+                "path": "douyin",
+                "name": "douyin",
+                "filePath": "addCompere/douyin.vue",
+                "meta": {
+                    "title": "抖音",
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "kuaishou",
+                "name": "kuaishou",
+                "filePath": "addCompere/kuaishou.vue",
+                "meta": {
+                    "title": "快手",
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "shipinhao",
+                "name": "shipinhao",
+                "filePath": "addCompere/shipinhao.vue",
+                "meta": {
+                    "title": "视频号",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path": "/uploadVideo",
+        "name": "uploadVideo",
+        "filePath": "playBckAnalysis/uploadVideo.vue",
+        "meta": {
+            "title": "视频分析",
+            "notKeepAlive": true
+        },
+        "children":[
+            {
+                "path": "fileUploadAnalysis",
+                "name": "fileUploadAnalysis",
+                "filePath": "replay/fileUpload/file-upload-analysis.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/fileUpload/aiAnalysis.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true
+                }
+            },
+            {
+                "path": "analysisReadonly/:type",
+                "name": "analysisReadonly",
+                "filePath": "readonly/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path": "/uploadText",
+        "name": "uploadText",
+        "filePath": "playBckAnalysis/uploadText.vue",
+        "meta": {
+            "title": "文案预审",
+            "notKeepAlive": true
+        },
+        "children":[
+            {
+                "path": "fileUploadAnalysis",
+                "name": "fileUploadAnalysis",
+                "filePath": "replay/fileUpload/file-upload-analysis.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/fileUpload/aiAnalysis.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true
+                }
+            },
+            {
+                "path": "analysisReadonly/:type",
+                "name": "analysisReadonly",
+                "filePath": "readonly/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/playBckAnalysis",
+        "name":"playBckAnalysis",
+        "filePath": "playBckAnalysis/index",
+        "meta": {
+            "title": "文件分析",
+            "notTabs": true
+        },
+        "children":[
+            {
+                "path": "fileUploadAnalysis",
+                "name": "fileUploadAnalysis",
+                "filePath": "replay/fileUpload/file-upload-analysis.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/fileUpload/aiAnalysis.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true
+                }
+            },
+            {
+                "path": "analysisReadonly/:type",
+                "name": "analysisReadonly",
+                "filePath": "readonly/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path": "/uploadSlice",
+        "name": "uploadSlice",
+        "filePath": "playBckAnalysis/uploadSlice.vue",
+        "meta": {
+            "title": "切片复盘",
+            "notKeepAlive": true
+        },
+        "children":[
+            {
+                "path": "fileUploadAnalysis",
+                "name": "fileUploadAnalysis",
+                "filePath": "replay/fileUpload/file-upload-analysis.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/fileUpload/aiAnalysis.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true
+                }
+            },
+            {
+                "path": "analysisReadonly/:type",
+                "name": "analysisReadonly",
+                "filePath": "readonly/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path": "/uploadShort",
+        "name": "uploadShort",
+        "filePath": "playBckAnalysis/uploadShort.vue",
+        "meta": {
+            "title": "短视频切片",
+            "notKeepAlive": true
+        },
+        "children":[
+            {
+                "path": "fileUploadAnalysis",
+                "name": "fileUploadAnalysis",
+                "filePath": "replay/fileUpload/file-upload-analysis.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/fileUpload/aiAnalysis.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true
+                }
+            },
+            {
+                "path": "analysisReadonly/:type",
+                "name": "analysisReadonly",
+                "filePath": "readonly/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/extractDoc",
+        "name":"extractDoc",
+        "filePath": "shortVideo/extractDoc/index.vue",
+        "meta": {
+            "title": "提取文案",
+            "returnPath": false,
+            "notKeepAlive": true
+        }
+    },
+    {
+        "path":"/expert",
+        "name":"expert",
+        "filePath": "shortVideo/intelligence/index.vue",
+        "meta": {
+            "title": "短视频智能体",
+            "returnPath": false,
+            "notKeepAlive": true,
+            "hideTabs": true
+        },
+        "children":[
+            {
+                "path": "expertDetail",
+                "name": "expertDetail",
+                "filePath": "shortVideo/subscribeExpert/expertDetail/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "查看列表",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/subscribeExpert",
+        "name":"subscribeExpert",
+        "filePath": "shortVideo/subscribeExpert/index.vue",
+        "meta": {
+            "title": "订阅达人",
+            "returnPath": false,
+            "notKeepAlive": true
+        },
+        "children":[
+            {
+                "path": "expertDetail",
+                "name": "expertDetail",
+                "filePath": "shortVideo/subscribeExpert/expertDetail/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "查看列表",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/hotItem",
+        "name":"hotItem",
+        "filePath": "shortVideo/hotItem/index.vue",
+        "meta": {
+            "title": "搜爆款",
+            "returnPath": false,
+            "notKeepAlive": true,
+            "hideTabs": true
+        },
+        "children":[
+            {
+                "path": "hotItemList",
+                "name": "hotItemList",
+                "filePath": "shortVideo/hotItem/hotItemList/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "查看列表",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/subscribeHotItem",
+        "name":"subscribeHotItem",
+        "filePath": "shortVideo/subscribeHotItem/index.vue",
+        "meta": {
+            "title": "订阅爆款",
+            "returnPath": false,
+            "notKeepAlive": true
+        },
+        "children":[
+            {
+                "path": "hotItemList",
+                "name": "hotItemList",
+                "filePath": "shortVideo/hotItem/hotItemList/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "查看列表",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/replay",
+        "name":"replay",
+        "filePath": "replay/replayAll/index.vue",
+        "meta": {
+            "title": "AI整场复盘"
+        },
+        "children": [
+            {
+                "path":"analysis",
+                "name":"analysis",
+                "filePath": "replay/analysis/index.vue",
+                "meta": {
+                    "title": "复盘分析",
+                    "returnPath": true,
+                    "notKeepAlive": true,
+                    "logo": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/aiAnalysis/only.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            },
+            {
+                "path": "analysisReadonly/:type",
+                "name": "analysisReadonly",
+                "filePath": "readonly/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "分析详情",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/section",
+        "name":"section",
+        "filePath": "replay/replaySection/index.vue",
+        "meta": {
+            "title": "AI切片复盘"
+        },
+        "children": [
+            {
+                "path":"analysis",
+                "name":"analysis",
+                "filePath": "replay/analysis/index.vue",
+                "meta": {
+                    "title": "AI切片复盘分析",
+                    "returnPath": true,
+                    "notKeepAlive": true,
+                    "logo": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/aiAnalysis/only.vue",
+                "meta": {
+                    "title": "AI切片复盘助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            },
+            {
+                "path": "analysisReadonly/:type",
+                "name": "analysisReadonly",
+                "filePath": "readonly/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "AI切片复盘分析详情",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/short",
+        "name":"short",
+        "filePath": "replay/replayShort/index.vue",
+        "meta": {
+            "title": "短视频复盘"
+        },
+        "children": [
+            {
+                "path":"analysis",
+                "name":"analysis",
+                "filePath": "replay/analysis/index.vue",
+                "meta": {
+                    "title": "短视频复盘分析",
+                    "returnPath": true,
+                    "notKeepAlive": true,
+                    "logo": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/aiAnalysis/only.vue",
+                "meta": {
+                    "title": "短视频复盘助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            },
+            {
+                "path": "analysisReadonly/:type",
+                "name": "analysisReadonly",
+                "filePath": "readonly/index.vue",
+                "meta": {
+                    "returnPath": true,
+                    "title": "短视频复盘分析详情",
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/contrastReplay",
+        "name":"contrastReplay",
+        "filePath": "replay/contrast/contrastReplay/index.vue",
+        "meta": {
+            "title": "智能对比"
+        },
+        "children": [
+            {
+                "path": "analysis",
+                "filePath": "replay/contrast",
+                "name": "replayContrast",
+                "meta": {
+                    "title": "智能对比分析",
+                    "returnPath": true,
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/aiAnalysis/contrast.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/contrastSection",
+        "name":"contrastSection",
+        "filePath": "replay/contrast/contrastSection/index.vue",
+        "meta": {
+            "title": "智能对比"
+        },
+        "children": [
+            {
+                "path": "analysis",
+                "filePath": "replay/contrast",
+                "name": "replayContrast",
+                "meta": {
+                    "title": "智能对比分析",
+                    "returnPath": true,
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/aiAnalysis/contrast.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            }
+        ]
+    },
+    {
+        "path": "/scheduling",
+        "name": "scheduling",
+        "filePath": "scheduling/index.vue",
+        "meta": {
+            "notTabs": true,
+            "title": "排班业绩"
+        }
+    },
+    {
+        "path":"/online",
+        "name":"online",
+        "filePath": "replay/online/index.vue",
+        "meta": {
+            "title": "云空间"
+        },
+        "children": [
+            {
+                "path":"onlineVideo",
+                "name":"onlineVideo",
+                "filePath": "online/online-video.vue",
+                "meta": {
+                    "title": "云空间分析",
+                    "returnPath": false,
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path":"fileOnline",
+                "name":"fileOnline",
+                "filePath": "online/file-online.vue",
+                "meta": {
+                    "title": "云空间文件分析",
+                    "returnPath": false,
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "sliceOnline",
+                "name": "sliceOnline",
+                "filePath": "online/slice-online.vue",
+                "meta": {
+                    "title": "云空间切片播放",
+                    "returnPath": false,
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path":"onlineContrast",
+                "name":"onlineContrast",
+                "filePath": "online/online-contrast.vue",
+                "meta": {
+                    "title": "云空间对比分析",
+                    "returnPath": false,
+                    "notKeepAlive": true
+                }
+            },
+            {
+                "path": "*/aiAnalysis",
+                "name": "aiAnalysis",
+                "filePath": "replay/online/aiAnalysis.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true
+                }
+            },
+            {
+                "path": "*/aiContrast",
+                "name": "aiContrast",
+                "filePath": "replay/online/aiContrast.vue",
+                "meta": {
+                    "title": "AI对比助手",
+                    "returnPath": true
+                }
+            },
+            {
+                "path":"*/analysis",
+                "name":"analysis",
+                "filePath": "replay/online/analysis.vue",
+                "meta": {
+                    "title": "云空间分析详情",
+                    "returnPath": true,
+                    "notKeepAlive": true,
+                    "logo": true
+                }
+            },
+            {
+                "path":"*/contrast",
+                "name":"contrast",
+                "filePath": "replay/online/contrast.vue",
+                "meta": {
+                    "title": "云空间对比分析详情",
+                    "returnPath": true,
+                    "notKeepAlive": true
+                }
+            }
+        ]
+    },
+    
+    {
+        "path":"/system",
+        "name":"system",
+        "filePath": "system/index",
+        "meta": {
+            "title": "系统设置"
+        },
+        "children":[
+            {
+                "path":"lexiconword",
+                "name":"lexiconword",
+                "filePath": "lexicon/lexiconWord.vue",
+                "meta": {
+                    "title": "本地词库详情",
+                    "returnPath": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/aiAssistant",
+        "name":"aiAssistant",
+        "filePath": "aiAssistant/index",
+        "meta": {
+            "title": "AI运营助手",
+            "hideTabs": true
+        },
+        "children": [
+            {
+                "path": "aiVideo",
+                "name": "aiVideo",
+                "filePath": "replay/aiAnalysis/only.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            },
+            {
+                "path": "aiFile",
+                "name": "aiFile",
+                "filePath": "replay/fileUpload/aiAnalysis.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            },
+            {
+                "path": "aiContrast",
+                "name": "aiContrast",
+                "filePath": "replay/aiAnalysis/contrast.vue",
+                "meta": {
+                    "title": "AI对比助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/aiViolation",
+        "name":"aiViolation",
+        "filePath": "aiViolation/index",
+        "meta": {
+            "title": "AI违规助手",
+            "hideTabs": true
+        },
+        "children": [
+            {
+                "path": "aiVideo",
+                "name": "aiVideo",
+                "filePath": "replay/aiAnalysis/only.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            },
+            {
+                "path": "aiFile",
+                "name": "aiFile",
+                "filePath": "replay/fileUpload/aiAnalysis.vue",
+                "meta": {
+                    "title": "AI助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            },
+            {
+                "path": "aiContrast",
+                "name": "aiContrast",
+                "filePath": "replay/aiAnalysis/contrast.vue",
+                "meta": {
+                    "title": "AI对比助手",
+                    "returnPath": true,
+                    "hideTabs": true
+                }
+            }
+        ]
+    },
+    {
+        "path":"/invite",
+        "name":"invite",
+        "filePath": "invite/index",
+        "meta": {
+            "notTabs": true
+        }
+    },
+    {
+        "path":"/anniversary",
+        "name":"anniversary",
+        "filePath": "anniversary/index",
+        "meta": {
+            "title": "周年庆",
+            "notTabs": true,
+            "returnPath":true
+        }
+    },
+    {
+        "path":"/example",
+        "name":"example",
+        "filePath": "example/index",
+        "meta": {
+            "title": "复盘案例",
+            "notTabs": true,
+            "returnPath":true
+        },
+         "children": [
+            {
+                "path": "exampleOnly/:type/:id/:shareId/:aiType",
+                "name": "exampleOnly",
+                "filePath": "example/aiExample.vue",
+                "meta": {
+                    "title": "复盘案例",
+                    "returnPath": true
+                }
+            }
+        ]
+    },
+    {
+        "path": "/replayMonitorDetail",
+        "name": "replayMonitorDetail",
+        "filePath": "replay/monitorDetail/index",
+        "meta": {
+            "title": "AI监控详情",
+            "notTabs": true,
+            "returnPath": true,
+            "notKeepAlive": true
+        }
+    },
+    {
+        "path": "/redirect/:path*",
+        "name": "redirect",
+        "filePath": "redirect/index.vue",
+        "meta": {
+            "title": "中转"
+        }
+    }
+]

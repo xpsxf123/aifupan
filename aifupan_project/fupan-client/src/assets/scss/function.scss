@@ -1,0 +1,189 @@
+
+@function getDirection($k){
+    @if $k == 'l'{
+        @return 'left';
+    } @else if $k == 'r'{
+        @return 'right';
+    } @else if $k == 't'{
+        @return 'top';
+    } @else if $k == 'b'{
+        @return 'bottom';
+    } @else if $k == 'all'{
+        @return '';
+    }
+};
+@function getDirectionName($k){
+    @if $k != 'all'{
+        @return $k;
+    }@else{
+        @return ''
+    }
+};
+
+@function marginSum($n){
+    @return $n * 2;
+};
+
+@function getDirectionalDimension($k, $i){
+    @if $k == 'l'{
+        @return #{marginSum($i)}px 0 0 #{marginSum($i)}px;
+    } @else if $k == 'r'{
+        @return 0 #{marginSum($i)}px #{marginSum($i)}px 0;
+    } @else if $k == 't'{
+        @return #{marginSum($i)}px #{marginSum($i)}px 0 0;
+    } @else if $k == 'b'{
+        @return 0 0 #{marginSum($i)}px #{marginSum($i)}px;
+    } @else if $k == 'all'{
+        @return #{marginSum($i)}px;
+    }
+};
+
+
+
+@mixin marginPaddingAllClass($map) {
+    @each $key,$val in $map {
+        @if $key {
+            @for $i from 0 through $val {
+                .mg-#{getDirectionName($key)}#{marginSum($i)} { 
+                    @if getDirection($key) == ''{
+                        margin: #{marginSum($i)}px;
+                    }@else{
+                        margin-#{getDirection($key)}: #{marginSum($i)}px;
+                    }
+                };
+                .pd-#{getDirectionName($key)}#{marginSum($i)} {
+                    @if getDirection($key) == ''{
+                        padding: #{marginSum($i)}px;
+                    }@else{
+                        padding-#{getDirection($key)}: #{marginSum($i)}px;
+                    }
+                };
+                .brs-#{getDirectionName($key)}#{marginSum($i)}{
+                    border-radius: getDirectionalDimension($key,$i);
+                };
+            }
+        }
+    }
+}
+
+
+
+
+
+// $map:(text:(main: 'red',1:'blue'),bg:(main:'red',1: 'blue'))
+// .text-color-main{}
+// .text-color-1{}
+// .text-color-2{}
+// .bg-color-main{}
+// .bg-color-1{}
+// .bg-color-1{}
+
+@function getColorKey($k){
+    @if $k == 'text'{
+        @return 'color';
+    } @else if $k == 'bg'{
+        @return 'background';
+    }
+}
+// 设置颜色配置
+@mixin setColorClass($map){
+    @each $key,$val in $map{
+        @if $val {
+            @each $k,$v in $val{
+                .#{$key}-color#{$k}{
+                    #{getColorKey($key)}: $v;
+                }
+            }
+        }
+    }
+}
+
+
+
+/*
+$fontMap:(size: 15,w: 9,)
+.font-s12{}
+.font-w400{}
+.font-s16{}
+*/
+@function getFontNumber($t,$n){
+    @if $t == 's'{
+        @return $n + 10;
+    }@else if $t == 'w'{
+        @return $n * 100;
+    }
+}
+@function getFontType($t){
+    @if $t == 's'{
+        @return 'font-size';
+    }@else if $t == 'w'{
+        @return 'font-weight';
+    }
+}
+@function getFontUnit($k){
+    @if $k == 's'{
+        @return 'px';
+    } @else {
+        @return "";
+    }
+}
+// 设置字体大小
+@mixin setFontsClass($map){
+    @each $key,$val in $map{
+        @if $val {
+            @for $i from 1 through $val {
+                .font-#{$key}#{getFontNumber($key,$i)}{
+                    #{getFontType($key)}: #{getFontNumber($key,$i)}#{getFontUnit($key)}
+                }
+            }
+        }
+    }
+}
+
+/*
+$borderMap: (l:(1:'red',2:'blue',3:'black'))
+.b-r1{}
+.b-l2{}
+.b-t1{}
+.b-b2{}
+.b-c1{}
+.b-c2{}
+.b-c3{}
+*/
+@mixin setBroder($map,$colorMap){
+    @if $colorMap{
+        @each $k,$v in $colorMap{
+            .b-c#{$k}{
+                border-color: #{$v};
+            }
+        }
+    }
+    @each $key,$val in $map{
+        @if $val{
+            @for $i from 1 through 3 {
+                @if $key == 'all'{
+                    .b-#{$key}#{$i}{
+                        border-style: solid;
+                        border-width: #{$i}px;
+                    }
+                } @else{
+                    .b-#{$key}#{$i}{
+                        border-style: solid;
+                        border-#{getDirection($key)}-width: #{$i}px;
+                    };
+                }
+                @each $k,$v in $val{
+                    @if $key == 'all'{
+                        .b-#{$i}-c#{$k}{
+                            border: #{$i}px solid #{$v};
+                        }
+                    } @else{
+                        .b-#{$key}#{$i}-c#{$k}{
+                            border-#{getDirection($key)}: #{$i}px solid #{$v};
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

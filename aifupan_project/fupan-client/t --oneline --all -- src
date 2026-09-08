@@ -1,0 +1,151 @@
+[33m07679260[m Merge branch 'reslease-2.6.0.6' into test-2.6.0.8
+[33mc0a3c250[m feat: 对接智能体接口
+[33m194d6dd5[m fix: 加入云空间话术质检页面
+[33m13025761[m feat: 修改对比上一场
+[33md3bcc95a[m Merge branch 'reslease-2.6.0.5' into test-2.6.0.6
+[33m1a3c92d5[m fix: 修改接口地址参数
+[33md08ae7d3[m fix: 清除已读未读接口
+[33mba08fc09[m fix: 修改还原度逻辑
+[33m3c8b3a94[m fix: 调整内容
+[33m99c98d88[m feat: 互动巡检渲染功能修改
+[33m2633043e[m feat: 修改话术分析渲染逻辑
+[33m12b42002[m feat: 修改对应的ai接口相关内容
+[33m5bfbebc3[m feat: 加入话术质检数据结构解析
+[33ma1e03277[m feat: 更新接口信息
+[33mae5e3d15[m fix: 修改接口参数问题
+[33m1d77021d[m feat: 加入注释规则
+[33md60fb5a9[m feat: 更新接口信息
+[33m49f93ac4[m fix:话术质检 接口调试
+[33m11a336b1[m Merge remote-tracking branch 'origin/test-2.6.0.3' into test-2.6.0.3
+[33m7fbbc184[m fix:话术质检 接口调试
+[33mce325f75[m feat: 加入接口修改
+[33mb363de72[m feat: 调整负面话术质检相关接口以及交互
+[33m1f4ab2b8[m feta: 调整话术质检功能
+[33m1f18a274[m feat: 加入mock和部分接口对接调试
+[33m8cdeb9c9[m feat: 接口对接和mock
+[33mfdce8a8a[m feat: 修改文件名称
+[33mf25a0a3c[m Merge branch 'test-2.6.0' into test-2.6.0.3
+[33m8dcb96d1[m feat: 加入批量删除功能
+[33maa455420[m feat: 加入云空间批量删除能力
+[33m050d5cdf[m feat: 调整组件位置
+[33m02924903[m  feat: 加入接口对接
+[33mb2083f98[m feat: 加入pdf请求头
+[33mb607fe13[m Merge branch 'release-2.5.8.5' into test-2.6.0
+[33m240270ea[m feat: 修改ai模型由后端管理
+[33mb1735445[m feat：业绩统计
+[33m4605d504[m feat：复盘详情页=>新增AI数据诊断
+[33m5545ae99[m fix:格式优化联调
+[33ma0777499[m fix:优化格式
+[33m05a6282a[m fix:智能体
+[33ma42d3746[m fix:需求又变更
+[33m85234e02[m feat:基础设置 修改 "自动生成AI数据报告" 保存之后,再次修改导致的值丢失问题
+[33m409e4536[m fix:修改优化动作为空状态
+[33m12bcee0a[m fix:行业接口修改
+[33mf37fc124[m fix:再问一次
+[33mbc761e41[m feat:AI诊断test
+[33m81f30008[m feat:主播添加方言信息
+[33m0e2a39c2[m feat:AI复盘生成数据报告
+[33m4bde1c3f[m feat:添加/修改 主播
+[33m1200ee72[m feat:小胡和阿杰 AI提问是否携带 优化动作 的接口调试
+[33m62a9e92f[m feat:小胡的接口调试
+[33m12374d77[m feat:上传云空间添加备注
+[33mab4c171e[m feat:云空间添加星标
+[33m3ea438cf[m feat:ai分析页 接口调试
+[33mc36fb2bf[m feat:生成HTML图表
+[33m0004bf8d[m feat:2.5.8 ai诊断报告 第三部分
+[33m4d02fa0f[m fix: 修改背景配置处的接口调用
+[33m8f145bf8[m fix:背景配置区分客户端与网页端
+[33mb156376c[m fix:bug修改
+[33m8fb66d4f[m fix:修改人群画像为空时，提示语
+[33mdf52637f[m fix:UV/销售额
+[33mf1443c4d[m feat:新增UV价值和销售额
+[33m575cd7ac[m fix：删除打印信息
+[33md10a8848[m feat:切片编辑
+[33mf4f20518[m feat:切片编辑
+[33ma31e3112[m fix：地址栏参数调整
+[33m886ecca1[m fix: 修改导出弹幕功能
+[33m669de002[m fix: 修改页面样式
+[33mcfbe37a0[m fix: 修改验签问题，加入弹幕接口
+[33m59c760c3[m feat:  添加视频号主播
+[33mf2f89a8a[m feat: 加入提示词接口
+[33m316e09e9[m fix: 修改热榜，弹窗。
+[33m16080dcf[m Merge branch 'feture-2.5.4' into test-2.5.4
+[33m7f5ed556[m feat: 调试热度榜单
+[33mce6e6eda[m fix:样式调整及文案修改
+[33mb854b48e[m feat: 加入线上使用说明
+[33m2be7432b[m feat:2.5.3 新UI改版
+[33mafcce142[m fix:搜达人/搜爆款 禁止任何操作
+[33mf4fb131d[m fix: 修改路径跳转逻辑
+[33m7d25c148[m fix: 修改手机端跳转逻辑
+[33mf943d094[m fix: 修改h5跳转配置
+[33m63535e92[m fix: 修改快手默认不显示在线人数
+[33mf23616e1[m Merge branch 'refs/heads/feature-2.5.3-new' into test-2.5.3
+[33m22fc3813[m feat:主播列表修改
+[33meedfaca0[m fix: 修改重要弹幕接口名称
+[33mb6b40358[m Merge branch 'test-2.5.3' into feature-2.5.3-zxj
+[33m6ce375e2[m fix: 修改重要弹幕为手动获取方式
+[33m8b7763d6[m feat:AI复盘推荐行业
+[33m0a03c82e[m feat:子账号功能
+[33m518f3c05[m fix:bug修改
+[33mf80b275c[m feat:接口联调
+[33mc326637e[m feat:接口对接
+[33mfe6f25f2[m feat:接口联调
+[33m404c499e[m feat:接口联调
+[33mbf71f16d[m feat:达人接口调试
+[33m0a19ac99[m feat:提取文案接口调试
+[33m350cd7fa[m Merge branch 'refs/heads/release-2.5.2' into feature-2.5.3-new
+[33mad6916da[m[33m ([m[1;31morigin/hotfix/2.5.2[m[33m)[m 更新 index.vue 删除 判断是否为手机端打开的逻辑
+[33ma36e812a[m 更新 index.vue 暂时删除 判断是否手机端打开的逻辑
+[33mbe4b6f75[m fix:非弹幕助手不过滤福袋弹幕
+[33me41bc405[m fix:ai页面弹幕调整
+[33m39e72982[m fix:新增本段与截止数据
+[33mcf2c90bb[m feat:提取文案接口
+[33m1bd0f0b1[m Merge branch 'refs/heads/release-2.5.2' into feature-2.5.3-new
+[33m6b56b1e1[m feat:接口调试
+[33m8b121845[m feat:部分接口调试及客户端接口端口修改
+[33m28f9981f[m Merge branch 'release-2.5.1' into test-2.5.2
+[33m82b92341[m[33m ([m[1;32mrelease-2.5.1[m[33m)[m feat: 加入h5重定向逻辑
+[33ma849c883[m fix:联调
+[33m1458b2a1[m fix:文件迁移
+[33m4e8a5ba1[m refactor: 删除部分不需要的log代码
+[33mc6870bdd[m fix: 修改ai详情页面右键功能弹窗位置出错
+[33macff2910[m Merge branch 'test-2.5.1' of codeup.aliyun.com:665ec846262ae18c316677c2/fupan-client into test-2.5.1
+[33me753f837[m fix: 修改部分bug
+[33m24a95f8d[m feat:主播列表 新增跳转视频详情页
+[33m85ea9351[m feat: 1.加入wrod文档导出 2.修复批注跳转 3.修复批注在无视频情况下不展示播放按钮 4.加入笔记初始化功能 5.加入批注同步数据功能 6. 修改自然原文默认展示
+[33m10fbdd29[m fix: 修改保存笔记空的时候传空字符
+[33m47a189bc[m fix: 修改上传云空间接口报错
+[33mcb941e94[m fix: 修改显示问题
+[33m8750e8e2[m Merge branch 'refs/heads/release-2.5.0' into release-2.5.1
+[33m6c9ff083[m Merge branch 'refs/heads/feature-2.5.1-hy' into release-2.5.1
+[33m3ffb0dc1[m fix: 取消话术助手段落功能
+[33m1e737c44[m fix:接口调试
+[33m8c328e91[m feat: 修改上传云空间接口，云空间加入对比功能
+[33mf98ab460[m feat: 笔记接口对接
+[33m2e7cd746[m feat: 加入批注功能
+[33m8c1dae42[m fix: 修改ai页面弹幕数据获取接口
+[33m5aa58ea0[m fix: 修改bug
+[33m4469b58d[m fix:文件分析=》上传文件=》选择平台该用后端字典接口
+[33m2b3ff823[m Merge branch 'client-2.4.0' into client-2.5.0
+[33m0b895ccb[m[33m ([m[1;31morigin/client-2.4.1[m[33m, [m[1;31morigin/client-2.4.0[m[33m, [m[1;32mclient-2.4.1[m[33m, [m[1;32mclient-2.4.0[m[33m)[m fix: 修改客服二维码
+[33m4dc3d592[m feat:邀请有礼
+[33m04803563[m Merge branch client-2.5.0 into client-2.5.0-hy (Conflict resolved online)
+[33m6ef5ca5d[m fix: 修改分享功能接口问题
+[33m4009f85e[m fix:AI诊断接口联调19:00
+[33mb988a967[m fix:修改优化原文以及导出下载
+[33me544f5df[m Merge branch 'client-2.5.0-zxj' into client-2.5.0
+[33m733bac87[m fix: 调试接口
+[33mbdd30cdb[m fix:删除mock
+[33mf2eb5a07[m fix: 修改mock接口为测试接口
+[33mf3d57bad[m feat:文件分析 上传
+[33m77a1e3c7[m Merge branch 'client-2.5.0-zxj' into client-2.5.0
+[33m8713048a[m feat:AI诊断报告状态
+[33m900f3b77[m Merge branch 'client-2.5.0' into client-2.5.0-zxj
+[33m09016fc1[m feat: 加入ai分享页面功能
+[33m90e85acb[m feat: 加入分享页面
+[33m6df7cdaf[m feat: 加入ai问答id绑定
+[33m1bf0a316[m fix: 加入获取自然原文
+[33m1b0c3c2e[m Merge branch client-2.5.0-hy into client-2.5.0 (Conflict resolved online)
+[33mefbf70ca[m feat:mock接口
+[33m8f3329b4[m feat: 加入轮播
+[33m580f8060[m fix: 兼�

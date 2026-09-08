@@ -1,0 +1,19 @@
+{
+  "auth": {
+    "mode": "none",
+    "header": "Token",
+    "anonymous": []
+  },
+  "api": {
+    "successCode": 0,
+    "successMsg": "请求成功",
+    "timestamp": true
+  },
+  "timestamps": {
+    "enabled": true,
+    "createField": "createDate",
+    "updateField": "updateDate"
+  },
+  "routes": [],
+  "resources": []
+}

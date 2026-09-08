@@ -1,0 +1,3 @@
+#!/bin/sh
+node scripts/git-hooks/commitMsg.js "$1"
+
